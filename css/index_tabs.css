@@ -1,0 +1,114 @@
+	.aj_n_map {
+        display: inline-block;
+        width: 50%;
+        vertical-align: top;
+    }
+    .aj_n_map ul {
+		font-size: 0;
+		position: relative;
+		padding: 0;
+		width: 480px;
+		/*margin: 40px auto;*/
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+
+.aj_n_map ul li {
+		display: inline-block;
+		width: 160px;
+		height: 40px;
+		background-color: rgba(0,0,0,0.3);
+		background-color: #054B72;
+		font-size: 16px;
+		text-align: center;
+		line-height: 40px;
+		color: #fff;
+		text-transform: uppercase;
+		position: relative;
+		overflow: hidden;
+		cursor: pointer;
+	}
+
+.aj_n_map	.slider {
+		display: block;
+		position: absolute;
+		bottom: 1px;
+		left: 0;
+		height: 4px;
+		background: #47FCFC;
+        box-shadow: 0px 0px 10px #47FCFC;
+		-webkit-transition: all 0.5s;
+		transition: all 0.5s;
+	}
+	/*  Ripple */
+
+	.ripple {
+		width: 0;
+		height: 0;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.4);
+		-webkit-transform: scale(0);
+		-ms-transform: scale(0);
+		transform: scale(0);
+		position: absolute;
+		opacity: 1;
+	}
+
+	.rippleEffect {
+		-webkit-animation: rippleDrop .6s linear;
+		animation: rippleDrop .6s linear;
+	}
+
+	@-webkit-keyframes rippleDrop {
+		100% {
+			-webkit-transform: scale(2);
+			transform: scale(2);
+			opacity: 0;
+		}
+	}
+
+	@keyframes rippleDrop {
+		100% {
+			-webkit-transform: scale(2);
+			transform: scale(2);
+			opacity: 0;
+		}
+	}
+
+    /*首页选项卡内容面板*/
+    #aj_or_map_panel{
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        
+    }
+	.blue_bg{
+		background: url(../images/cz/aj_n_map_bg.png);
+	}
+    .nav_head{
+        padding: 4px 10px;
+        margin: 4px;
+        color:#fff;
+		line-height: 36px;
+    }
+    .nav_head_first{
+
+    }
+    .nav_head_last{
+        color:#68E7ED;
+        font-size: 0.8em;
+    }
+    #aj_or_map_panel{
+        position:relative;
+    }
+    #aj_box{
+        position:relative;
+		overflow: hidden;
+		height:100%;
+    }
+#aj_box_wraper{
+    position:absolute;
+    width: 2000px;
+}
