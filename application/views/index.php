@@ -190,41 +190,50 @@
                 </div>
                 <!--底部数据展示及说明-->
                 <div class="map-bottom">
-
-                  <div>
-                    原告：
-                    <ul class="inline-list map-bottom-list add-name" id="one-aj-yg-list">
-                    </ul>
-                    被告：
-                    <ul class="inline-list map-bottom-list add-name" id="one-aj-bg-list">
-                    </ul>
-                  </div>
-                  <div>
-                    <div>
+                  <ul style="display:inline-block;width:48%;vertical-align:top;">
+                    <li>
+                      原告：
+                      <ul class="inline-list map-bottom-list add-name" id="one-aj-yg-list">
+                      </ul>
+                    </li>
+                    <li>
+                      被告：
+                      <ul class="inline-list map-bottom-list add-name" id="one-aj-bg-list">
+                      </ul>
+                    </li>
+                    <li>
                       财产地址：
                       <ul class="inline-list map-bottom-list add-name" id="one-aj-cc-list">
                       </ul>
+                    </li>
+                    <li>
                       第三人：
                       <ul class="inline-list map-bottom-list add-name" id="one-aj-dsr-list">
                       </ul>
-                    </div>
-                    <div>
+                    </li>
+                  </ul>
+                  <ul style="display:inline-block;width:48%;vertical-align:top;">
+                    <li>
                       上诉人：
                       <ul class="inline-list map-bottom-list add-name" id="one-aj-ssr-list">
                       </ul>
+                    </li>
+                    <li>
                       被上诉人：
                       <ul class="inline-list map-bottom-list add-name" id="one-aj-bssr-list">
                       </ul>
-                    </div>
-                    <div>
+                    </li>
+                    <li>
                       申请执行人：
                       <ul class="inline-list map-bottom-list add-name" id="one-aj-sqzxr-list">
                       </ul>
+                    </li>
+                    <li>
                       被执行人：
                       <ul class="inline-list map-bottom-list add-name" id="one-aj-bzxr-list">
                       </ul>
-                    </div>
-                  </div>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -232,13 +241,24 @@
           </div>
           <!--aj_box end-->
           <!--列表单个案件详情弹出层-->
-          <div id="case_detail_panel" class="blue_bg"></div>
+          <div id="case_detail_panel" class="blue_bg">
+            <ul>
+              <li>地点数：&nbsp;&nbsp;&nbsp;&nbsp;当事人<span id="case_panel_dsr_num"></span>财产<span id="case_panel_cc_num"></span>总数<span id="case_panel_add_num"></span> </li>
+              <li>案号：<span id="case_panel_ah"></span> </li>
+              <li>案由：<span id="case_panel_ay"></span> </li>
+              <li>法院名称：<span id="case_panel_court"></span> </li>
+              <li>立案日期：<span id="case_panel_larq"></span> </li>
+              <li>标的：<span id="case_panel_bdje"></span> </li>
+              <li>合议庭成员：<span id="case_panel_hytcy"></span> </li>
+            </ul>
+          </div>
           <!--map_box-->
           <div id="map_box" style="display:none;height:100%;position:relative;">
             <!--百度地图容器-->
             <div style="width:100%;height:77%;border:#ccc solid 1px;" id="dituContent1"></div>
             <!--图标说明-->
             <div style="zoom: 0.6;position:absolute;top:0;background: burlywood;;width: 100%;">
+
               <ul class="inline-list map-bottom-list">
                 <li>
                   <img src="images/yg_bz_b.png" alt="">原告 <span class="badge bg-sub" id="map-box-yg-num">0</span>

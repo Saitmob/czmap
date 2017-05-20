@@ -5,7 +5,7 @@ function selectRegion(multiple, callbackFun) {
     var zTree;
     var demoIframe;
     regionSelectMultiple = multiple || false;//默认不多选
-    var callbackFun = callbackFun || function() {};
+    var callbackFun = callbackFun || function() {console.log('未定义回调方法')};
     var setting = {
         view: {
             dblClickExpand: false,

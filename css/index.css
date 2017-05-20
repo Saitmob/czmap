@@ -143,6 +143,9 @@
     margin-left:10px;
     padding: 4px 10px; 
 }
+.map-bottom>ul>li{
+	min-height:27px;
+}
 /*地图底部列表*/
 .add-name li{
 	cursor: pointer;
@@ -173,9 +176,24 @@
 }
 /*首页案件详细信息*/
 #case_detail_panel{
-	width:400px;
-	height:500px;
+	width:340px;
+	height:0;
+	overflow: hidden;
 	position: absolute;
-	left:-400px;
+	left:-340px;
 	top:0;
+	color:#fff;
+}
+#case_detail_panel ul{
+	padding:10px 20px;
+	overflow: auto;
+}
+#case_detail_panel ul li{
+	padding:4px 6px;
+	margin:8px 0;
+}
+#case_detail_panel ul li span{
+	margin:0 10px 0 10px;
+	color:#7AF5F3;
+	/*text-shadow: 0 0 3px #BDFCFB;*/
 }

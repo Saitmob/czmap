@@ -1,6 +1,6 @@
-// var weburl = 'http://127.0.0.1/czmapn/';
+var weburl = 'http://127.0.0.1/czmap/';
 // var weburl = 'http://qxp.tunnel.2bdata.com/czmapn/';
-var weburl = 'http://192.168.118.68/czmapn/';
+// var weburl = 'http://192.168.118.68/czmapn/';
 $(function() {
     $('.header').find('.title').on('click', function() {
         window.location.href = weburl;
