@@ -282,20 +282,20 @@ $(function () {
         }
     });
     $('#excelFile').fileupload({
-        acceptFileTypes: /(\.|\/)(xls|xlsx)$/i,
+        // acceptFileTypes: /(\.|\/)(xls|xlsx)$/i,
         add: function (e, data) {
-            var allow_file_arr = ['xls','xlsx'];
-            var fileType = data.files[0].name;
-            fileType = fileType.split('.');
-            fileType = fileType[fileType.length-1];
-			console.log(fileType);
-            if($.inArray(fileType.toLowerCase(), allow_file_arr) == -1)
-            {
-                layer.alert('请上传excel格式文件');
-            }else{
+            // var allow_file_arr = ['xls','xlsx'];
+            // var fileType = data.files[0].name;
+            // fileType = fileType.split('.');
+            // fileType = fileType[fileType.length-1];
+			// console.log(fileType);
+            // if($.inArray(fileType.toLowerCase(), allow_file_arr) == -1)
+            // {
+            //     layer.alert('请上传excel格式文件');
+            // }else{
                 // layer.alert('图片格式正确');
                 data.submit();
-            }
+            // }
             // data.context = $('<p/>').text('Uploading...').appendTo(document.body);
             // data.submit();
         },

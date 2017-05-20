@@ -790,8 +790,8 @@ public function getPersonInfo($id)
     $query = $this->db->query($sql);
     $res = $query->row();
     $img = $res->photo;
-    unlink('./test.jpg');
-    $a = file_put_contents('./test.jpg', $img);
+    $res->photo_name = time();
+    $a = file_put_contents('./'.$res->photo_name.'.jpg', $img);
     $res->photo = '';
     return $res;
 }

@@ -169,7 +169,7 @@ function cz_map() {
 // 	});
 // }
 // 案件展示地图
-function show_map(aj_type,aj_id) {
+function show_map(aj_type, aj_id) {
 	$('#map1_is_show').val('0');
 	$('#map2_is_show').val('1');
 	var left = $('#aj_or_map_panel').outerWidth();
@@ -208,21 +208,19 @@ function show_map(aj_type,aj_id) {
 		} else if (v.ADD_TYPE == '财产') {
 			cc_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
 			cc_num++;
-		}
-		else if (v.ADD_TYPE == '上诉人') {
+		} else if (v.ADD_TYPE == '上诉人') {
 			ssr_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
 			ssr_num++;
-		}
-		else if (v.ADD_TYPE == '被上诉人') {
+		} else if (v.ADD_TYPE == '被上诉人') {
 			bssr_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
 			bssr_num++;
-		}else if (v.ADD_TYPE == '第三人') {
+		} else if (v.ADD_TYPE == '第三人') {
 			dsr_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
 			dsr_num++;
-		}else if (v.ADD_TYPE == '申请执行人') {
+		} else if (v.ADD_TYPE == '申请执行人') {
 			sqzxr_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
 			sqzxr_num++;
-		}else if (v.ADD_TYPE == '被执行人') {
+		} else if (v.ADD_TYPE == '被执行人') {
 			bzxr_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
 			bzxr_num++;
 		}
@@ -244,7 +242,9 @@ function show_map(aj_type,aj_id) {
 	$('#one-aj-sqzxr-list').html(sqzxr_str);
 	$('#one-aj-bzxr-list').html(bzxr_str);
 	// 弹出案件面板
-	$('#case_detail_panel').animate({'height':'400px'},300);
+	$('#case_detail_panel').animate({
+		'height': '400px'
+	}, 300);
 	$.ajax({
 		type: 'post',
 		url: weburl + 'index.php/case_data/get_case_base_data',
@@ -252,7 +252,7 @@ function show_map(aj_type,aj_id) {
 			aj_type: aj_type,
 			aj_id: aj_id
 		},
-		dataType:'json',
+		dataType: 'json',
 		success: function (data) {
 			$('#case_panel_add_num').html(data.ADD_NUM);
 			$('#case_panel_dsr_num').html(data.ADD_DSR_NUM);
@@ -264,8 +264,7 @@ function show_map(aj_type,aj_id) {
 			$('#case_panel_hytcy').html(data.HYTCY);
 			$('#case_panel_bdje').html(data.BDJE);
 		},
-		error:function(a,b,c)
-		{
+		error: function (a, b, c) {
 			console.log(a);
 		}
 	});
@@ -279,7 +278,9 @@ function centerPoint(x, y) {
 function show_ajList() {
 	$('#map1_is_show').val('0');
 	$('#map2_is_show').val('0');
-	$('#case_detail_panel').animate({'height':'0'},300);
+	$('#case_detail_panel').animate({
+		'height': '0'
+	}, 300);
 	var left = $('#aj_or_map_panel').outerWidth();
 	$('#aj_box_wraper').animate({
 		'left': '0'
@@ -298,7 +299,9 @@ function show_aj_box() {
 function show_map_box() {
 	$('#map1_is_show').val('1');
 	$('#map2_is_show').val('0');
-	$('#case_detail_panel').animate({'height':'0'},300);
+	$('#case_detail_panel').animate({
+		'height': '0'
+	}, 300);
 	$('#map_box').css('display', 'block');
 	$('#aj_box').css('display', 'none');
 	var r_id = $('#current_region').val();
@@ -331,7 +334,7 @@ function show_case_list(page, fjm, case_type) {
 			var i = 1;
 			$.each(data, function (k, v) {
 				var ajType = getAjType(v.ah)
-				str += '<tr><td>' + i + '</td><td>' + v.ah + '</td><td>' + v.ay + '</td><td>' + v.bdje + '</td><td>' + ((v.ajzt == undefined || v.ajzt == '') ? '未结' : v.ajzt) + '</td><td>' + v.larq + '</td><td><button class="button button--rayen button--border-medium button--text-thin button--size-s button--inverted" data-text="地图" onclick="getRdataById(\'' + fjm + '\',\'' + ajType + '\',\'' + v.aj_id + '\');initMap(\'' + fjm + '\',2);show_map(\'' + ajType + '\','+v.aj_id+');"><span>地图</span></button></td></tr>';
+				str += '<tr><td>' + i + '</td><td>' + v.ah + '</td><td>' + v.ay + '</td><td>' + v.bdje + '</td><td>' + ((v.ajzt == undefined || v.ajzt == '') ? '未结' : v.ajzt) + '</td><td>' + v.larq + '</td><td><button class="button button--rayen button--border-medium button--text-thin button--size-s button--inverted" data-text="地图" onclick="getRdataById(\'' + fjm + '\',\'' + ajType + '\',\'' + v.aj_id + '\');initMap(\'' + fjm + '\',2);show_map(\'' + ajType + '\',' + v.aj_id + ');"><span>地图</span></button></td></tr>';
 				i++;
 			});
 			$('#index-case-list').html(str);
@@ -450,8 +453,7 @@ function region_click(r_id) {
 	if ($('#map1_is_show').val() == '1') {
 		show_map_box();
 	}
-	if($('#map2_is_show').val() == '1')
-	{
+	if ($('#map2_is_show').val() == '1') {
 		show_ajList();
 	}
 }
@@ -475,7 +477,7 @@ function court_select_event() {
 		} else {
 			initMap(fjm, 1);
 		}
-		
+
 	});
 
 }
@@ -506,8 +508,18 @@ function get_person_info(id) {
 		area: ['320px', '480px'], //宽高
 		btn: ['确定'],
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div style="padding:10px;" class="map-person-info"><ul><li>姓名：' + person_info.name + '</li><li>性别：' + ((person_info.sex) ? person_info.sex : '') + '</li><li>出生年月：' + ((person_info.csny) ? person_info.csny : '') + '</li><li>职务：' + ((person_info.duty) ? person_info.duty : '') + '</li><li>人员类型：' + ((person_info.rybs) ? person_info.rybs : '') + '</li><li>联系电话：' + ((person_info.phone) ? person_info.phone : '') + '</li><li style="text-align:center"><img style="width:100px;height:120px;" src="' + weburl + 'test.jpg?v=' + Math.random() + '"/></li></ul></div>',
+		content: '<div style="padding:10px;" class="map-person-info"><ul><li>姓名：' + person_info.name + '</li><li>性别：' + ((person_info.sex) ? person_info.sex : '') + '</li><li>出生年月：' + ((person_info.csny) ? person_info.csny : '') + '</li><li>职务：' + ((person_info.duty) ? person_info.duty : '') + '</li><li>人员类型：' + ((person_info.rybs) ? person_info.rybs : '') + '</li><li>联系电话：' + ((person_info.phone) ? person_info.phone : '') + '</li><li style="text-align:center"><img style="width:100px;height:120px;" src="' + weburl + person_info.photo_nam + '.jpg?v=' + Math.random() + '"/></li></ul></div>',
 		yes: function (i) {
+			// 关闭则删除文件
+			$.ajax({
+				type: 'post',
+				url: weburl + 'index.php/common/file_delete/delete_file',
+				data: {
+					file_name: person_info.file_name+'.jpg'
+				},
+				success: function (data) {
+				},
+			});
 			layer.close(i);
 		},
 		end: function () {}

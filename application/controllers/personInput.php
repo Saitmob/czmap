@@ -6,6 +6,7 @@ class personInput extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
+        $this->load->database();
         $this->load->model('map_case_model','mapcase');
     }
     // public function excel_out(){
@@ -105,11 +106,13 @@ class personInput extends CI_Controller {
         // $filePath = "upload/".$path["name"];
         $fileType = explode('.',$path["name"]);
         $fileType = $fileType[count($fileType)-1];
-        $filePath = "upload/tmp.".$fileType;
+        $time = time();
+        $filePath = "upload/.".$time.$fileType;
         $fileSize = $path['size'];
         move_uploaded_file($path["tmp_name"],$filePath);
         $handle = fopen($filePath,'rb');
         $content = fread($handle,$fileSize);
+        // $this->insert_2jz($content);die();
         fclose($handle); 
         $content = base64_encode($content);
         // var_dump($content);die();
@@ -124,5 +127,13 @@ class personInput extends CI_Controller {
         // var_dump($p);die();
         $res=$soap->saveRyxx($json_str);
         var_dump($res);
+        unlink("upload/.".$time.$fileType);
+    }
+    // 二进制文件插入测试
+    public function insert_2jz($content)
+    {
+        $content = addslashes($content);
+        $sql = "INSERT INTO test_2jz (2jz,t) VALUES ('{$content}','123')";
+        $query = $this->db->query($sql);
     }
 }
