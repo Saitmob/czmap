@@ -13,13 +13,13 @@ class RegionMatch extends CI_Model {
         $idArr = explode(',',$id);
         $addArr=array();
         foreach ($idArr as $key => $value) {
-            $sql = "SELECT ADDRESS,P_ID FROM cz_gis_library_copy WHERE ID={$value}";
+            $sql = "SELECT ADDRESS,P_ID FROM cz_gis_library WHERE ID={$value}";
             $query=$this->db->query($sql);
             $res = $query->row();
             $add = $res->ADDRESS;
             $pId = $res->P_ID;
             while($pId!=0){
-                $sql = "SELECT ADDRESS,P_ID FROM cz_gis_library_copy WHERE ID={$pId}";
+                $sql = "SELECT ADDRESS,P_ID FROM cz_gis_library WHERE ID={$pId}";
                 $query=$this->db->query($sql);
                 $res = $query->row();
                 $pId = $res->P_ID;
@@ -113,7 +113,7 @@ class RegionMatch extends CI_Model {
                     $add = '扶绥县';
                     break;
         }
-        $sql = "SELECT POINT_X,POINT_Y FROM cz_gis_library_copy WHERE ADDRESS='{$add}'";
+        $sql = "SELECT POINT_X,POINT_Y FROM cz_gis_library WHERE ADDRESS='{$add}'";
         $query = $this->db->query($sql);
         $res = $query->row();
         return array('x'=>$res->POINT_X,'y'=>$res->POINT_Y,'fjm'=>$fjm);
@@ -218,14 +218,14 @@ public function getTWByGis($gis_id)
 }
 //gis_id获取R_ID
 public function gisToRid($gisId){
-    $sql = "SELECT ADDRESS,P_ID FROM cz_gis_library_copy WHERE ID={$gisId}";
+    $sql = "SELECT ADDRESS,P_ID FROM cz_gis_library WHERE ID={$gisId}";
     $query=$this->db->query($sql);
     $res = $query->row();
     $add = $res->ADDRESS;
     $R_ID='';
     $pId = $res->P_ID;
     while($pId!=0){
-        $sql = "SELECT ADDRESS,P_ID FROM cz_gis_library_copy WHERE ID={$pId}";
+        $sql = "SELECT ADDRESS,P_ID FROM cz_gis_library WHERE ID={$pId}";
         $query=$this->db->query($sql);
         $res = $query->row();
         $pId = $res->P_ID;
@@ -247,7 +247,7 @@ public function getPointById($gisId)
     $data = array();
     if(!empty($gisId)&&$gisId!=0)
     {
-        $sql = "SELECT POINT_X,POINT_Y FROM cz_gis_library_copy WHERE ID={$gisId}";
+        $sql = "SELECT POINT_X,POINT_Y FROM cz_gis_library WHERE ID={$gisId}";
         $query = $this->db->query($sql);
         $res=$query->row();
         $x=(isset($res->POINT_X))?$res->POINT_X:'';

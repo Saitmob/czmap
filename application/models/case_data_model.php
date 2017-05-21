@@ -39,12 +39,13 @@ class case_data_model extends CI_Model {
             $hytcy_name[] = $value->xm."（".$value->jsmc."）";
         }
         $hytcy_name = implode('、',$hytcy_name);
+        $bdje = substr($res1->bdje,0,-4);
         $data = array(
             'AH'=>$res1->ah,
             'LARQ'=>$res1->larq,
             'COURT'=>$res1->fymc,
             'AY'=>$res1->ay,
-            'BDJE'=>$res1->bdje,
+            'BDJE'=>$bdje,
             'ADD_NUM'=>$add_num,
             'ADD_DSR_NUM'=>$add_dsr_num,
             'ADD_CC_NUM'=>$add_cc_num,

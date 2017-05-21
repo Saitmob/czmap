@@ -234,7 +234,7 @@ class map_case_model extends CI_Model {
                     }
                     // $tjy = (empty($person_arr['tjy']))?'无':$person_arr['tjystr'];
                     // $wgy = (empty($person_arr['wgy']))?'无':$person_arr['wgystr'];
-                    $ssdw=$val->ssdw;
+                    $ssdw=(isset($val->ssdw))?$val->ssdw:'诉讼地位：无';
                     $xb = (isset($val->xb))?$val->xb:'性别：无';
                     $mz = (isset($val->mz))?$val->mz:'民族：无';
                     $bz_info .= $i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>当事人：'.$val->xm.'('.$val->ssdw.')、'.$xb.'、'.$mz.'、身份证：'.$val->sfzh.'、联系电话：'.$val->lxdh."<br>";
@@ -457,7 +457,7 @@ class map_case_model extends CI_Model {
             $sql = "SELECT a.gis_id, b.xian, b.village, b.cun FROM person_add_lib AS a LEFT JOIN cz_gis_library AS b ON a.gis_id = b.id WHERE person_id = ? AND b.xian IS NOT NULL AND b.village IS NOT NULL AND b.cun IS NOT NULL";
             $query = $this->db->query($sql, array($pId));
             $result = $query->result_array();
-            if (!empty($result)) 
+            if (!empty($result))
             {
                 foreach ($result as $key => $value) {
                     $gis_id .= $value['gis_id'].",";
@@ -478,7 +478,7 @@ class map_case_model extends CI_Model {
             );
         }
         else{
-             $data = array(
+            $data = array(
             'photo'=>"",
             'photo_type'=>"",
             'gis_id'=>"",
@@ -489,12 +489,12 @@ class map_case_model extends CI_Model {
             'zzmm'=>"",
             'duty'=>"",
             'rybs'=>""
-            );           
+            );
         }
         return $data;
     }
     //保存个人信息
-    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$duty,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photo,$phototype,$gis_id,$gis_name,$phone,$email,$rybs)
+    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$duty,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photo,$phototype,$gis_id,$gis_name,$phone,$email)
     {
         $result=0;//插入
         // if (!empty($photo)) {
@@ -514,7 +514,7 @@ class map_case_model extends CI_Model {
             $query = $this->db->query($sql);
             $result = $this->db->insert_id();
         }else{
-
+            
             $sql = "UPDATE person SET name='{$name}',sex='{$sex}',csny='{$csny}',nation='{$nation}',education='{$education}',company='{$company}',ndsfd='{$ndsfd}',zzmm='{$zzmm}',rybs='{$rybs}',zzet='{$zzet}', photo_url = '{$photo}', photo_type = '{$phototype}', phone = '{$phone}', duty = '{$duty}', address = '{$gis_name}' WHERE ID = {$pId}";
             //echo $sql;die();
             $query = $this->db->query($sql);
@@ -551,17 +551,17 @@ class map_case_model extends CI_Model {
                             $row = $query->row_array();
                             $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
                             $query = $this->db->query($sql, array($gis_id,$sql['ADDRESS'],$pId));
-                        }                        
+                        }
                     }
                     $result=2;//更新
                 }
                 else{
                     $result=0;//更新失败
                 }
-            }else 
+            }else
             {
                 $result=0;//更新失败
-            }          
+            }
         }
         // if( $query==0 ||$query==false)
         // {
@@ -654,7 +654,7 @@ class map_case_model extends CI_Model {
     //获取名称
     public function getAddName()
     {
-        $sql="SELECT ID,ADDRESS,P_ID FROM cz_gis_library_copy";
+        $sql="SELECT ID,ADDRESS,P_ID FROM cz_gis_library";
         $query = $this->db->query($sql);
         $res = $query->result();
         $data = array();
@@ -663,7 +663,7 @@ class map_case_model extends CI_Model {
             $bfadd=$value->ADDRESS;
             if($value->P_ID!=0){
                 $PID = $value->P_ID;
-                $sql = "SELECT ADDRESS FROM cz_gis_library_copy WHERE ID ={$PID}";
+                $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID ={$PID}";
                 $query = $this->db->query($sql);
                 $res2 = $query->row();
                 $p_name = $res2->ADDRESS;
@@ -676,19 +676,19 @@ class map_case_model extends CI_Model {
     //插入坐标库脚本
     public function insertPoint($id,$x,$y)
     {
-        // $sql="SELECT P_ID FROM cz_gis_library_copy WHERE ADDRESS='{$add}'";
+        // $sql="SELECT P_ID FROM cz_gis_library WHERE ADDRESS='{$add}'";
         // $query = $this->db->query($sql);
         // $res = $query->row();
         // $pid = $res->P_ID;
         // if($pid!=0&&isset($pid))
         // {
-        //     $sql = "SELECT ADDRESS FROM cz_gis_library_copy WHERE ID={$pid}";
+        //     $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID={$pid}";
         //     $query = $this->db->query($sql);
         //     $res = $query->row();
         //     $res = $res->ADDRESS;
         //     $add =$res.$add;
         // }
-        $sql = "UPDATE cz_gis_library_copy SET POINT_X={$x},POINT_Y={$y} WHERE ID={$id}";
+        $sql = "UPDATE cz_gis_library SET POINT_X={$x},POINT_Y={$y} WHERE ID={$id}";
         $query = $this->db->query($sql);
         if($this->db->affected_rows()==0)
         {
@@ -700,7 +700,7 @@ class map_case_model extends CI_Model {
     //获得区域树形结构
     public function regionNode()
     {
-        $sql = "SELECT ID,P_ID,ADDRESS FROM cz_gis_library_copy order by P_ID,ID";
+        $sql = "SELECT ID,P_ID,ADDRESS FROM cz_gis_library WHERE ID!=1 and ID!=2 order by P_ID,ID";
         $query=$this->db->query($sql);
         $res=$query->result();
         $data = array();
@@ -713,31 +713,28 @@ class map_case_model extends CI_Model {
     //显示人员数
     public function showPersonNum()
     {
-        $sql = "SELECT USER_DUTY FROM cz_person";
+        $sql = "SELECT rybs FROM person";
         $query = $this->db->query($sql);
         $res = $query->result();
         $data = array();
         foreach ($res as $key => $value) {
-            $name = $value->USER_DUTY;
+            $name = $value->rybs;
             switch ($name) {
-                case '陪审员':
-                    $name='psy';
-                    break;
-                case '执行员':
-                    $name='zxy';
+                case '法律顾问':
+                    $name='flgw';
                     break;
                 case '网格员':
                     $name='wgy';
                     break;
+            }
+                if(!isset($data[$name]))
+                {
+                    $data[$name]=0;
+                }
+                $data[$name]+=1;
+            }
+            return $data;
         }
-        if(!isset($data[$name]))
-        {
-            $data[$name]=0;
-        }
-        $data[$name]+=1;
-    }
-    return $data;
-}
 //显示案件列表
 public function showCaseList($page,$perPageNum,$searchType,$typeVal)
 {
@@ -785,7 +782,7 @@ public function indexShowCaseList($currpage,$perPageNum,$fjm,$case_type='ALL'){
     $currpage = (int)$currpage;
     $start = ($currpage-1)*$perPageNum;
     if($case_type=='ALL'){
-        $sql="(SELECT * FROM sp_ajxx WHERE fjm='{$fjm}') union all (SELECT * FROM zx_ajxx WHERE fjm='{$fjm}')  ORDER BY larq  LIMIT {$start},{$perPageNum}";
+        $sql="(SELECT * FROM sp_ajxx WHERE fjm='{$fjm}' AND s=1) union all (SELECT * FROM zx_ajxx WHERE fjm='{$fjm}' AND s=1)  ORDER BY larq  LIMIT {$start},{$perPageNum}";
         $query = $this->ajxq->query($sql);
         $res = $query->result();
     }
@@ -796,7 +793,7 @@ public function indexShowPageNum($type,$val,$fjm='')
     $num=0;
     if($type=='CASE'&&$fjm!=''){
         if($val=='ALL'){
-            $sql = "(SELECT aj_id FROM sp_ajxx WHERE fjm='{$fjm}') union all (SELECT aj_id FROM zx_ajxx WHERE fjm='{$fjm}') ";
+            $sql = "(SELECT aj_id FROM sp_ajxx WHERE fjm='{$fjm}' AND s=1) union all (SELECT aj_id FROM zx_ajxx WHERE fjm='{$fjm}' AND s=1) ";
             $query = $this->ajxq->query($sql);
             $res = $query->result();
             $num = count($res);
@@ -823,6 +820,8 @@ public function getBaseData($type='all')
     $data=array();
     $aj_num=0;
     $aj_p_num=0;
+    $wgy_num=0;
+    $flgw_num=0;
     if($type=='all')
     {
         $arr = $this->getAjNumAndPNum('sp');
@@ -831,6 +830,7 @@ public function getBaseData($type='all')
         $arr = $this->getAjNumAndPNum('zx');
         $aj_num+=$arr['AJ_NUM'];
         $aj_p_num+=$arr['AJ_P_NUM'];
+        
     }
     $data= array(
     'AJ_NUM'=>$aj_num,
@@ -875,7 +875,7 @@ public function getSpZxNum()
 }
 private function getAjNum($fjm,$type)
 {
-    $sql = "SELECT aj_id from {$type}_ajxx where fjm='{$fjm}'";
+    $sql = "SELECT aj_id from {$type}_ajxx where fjm='{$fjm}' and s=1";
     $query = $this->ajxq->query($sql);
     $aj_res = $query->result();
     $aj_num = count($aj_res);
@@ -887,8 +887,8 @@ public function getPersonInfo($id)
     $query = $this->db->query($sql);
     $res = $query->row();
     $img = $res->photo;
-    $res->photo_name = time();
-    $a = file_put_contents('./'.$res->photo_name.'.jpg', $img);
+    // $res->photo_name = time();
+    // $a = file_put_contents('./'.$res->photo_name.'.jpg', $img);
     $res->photo = '';
     return $res;
 }

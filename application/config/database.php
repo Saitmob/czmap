@@ -75,9 +75,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '',
+	'hostname' => '147.1.4.104',
+	'username' => 'lby',
+	'password' => 'lby/1234',
 	'database' => 'cz_map_data',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
@@ -164,10 +164,10 @@ $db['portal'] = array(
 //案件详情
 $db['ajxq'] = array(
     'dsn'	=> '',
-    'hostname' => 'localhost',
+    'hostname' => '147.1.4.104',
     'port' => 3306,
-    'username' => 'root',
-    'password' => '',
+    'username' => 'lby',
+    'password' => 'lby/1234',
     'database' => 'inputaj',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',

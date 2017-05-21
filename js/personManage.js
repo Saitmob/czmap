@@ -162,10 +162,10 @@ function editorPerson(ele) {
 	// region = regionChange(region);
 	switch (sex) {
 		case '男':
-			sex = 'male';
+			sex = '男';
 			break;
 		case '女':
-			sex = 'female';
+			sex = '女';
 			break;
 		default:
 			break;
@@ -394,7 +394,7 @@ function addPersonClick() {
 	$('#ry-photoId').val('');
 	//编辑页赋值
 	$('#editor-name').val('');
-	$('#editor-sex').val('male');
+	$('#editor-sex').val('男');
 	$('#editor-age').val('');
 	$('#editor-duty').val('陪审员');
 	// $('#editor-region').val('cz_td');
@@ -456,8 +456,7 @@ function showPersonNum() {
 		url: weburl + 'index.php/welcome/showPersonNum',
 		dataType: 'json',
 		success: function (data) {
-			$('#psy-num').html(data.psy);
-			$('#zxy-num').html(data.zxy);
+			$('#flgw-num').html(data.flgw);
 			$('#wgy-num').html(data.wgy);
 		}
 	});

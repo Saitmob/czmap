@@ -101,7 +101,7 @@ function creatDataInfo() {
 	console.log(region_arr);
 	if (region_arr.length > 0) { //如果地点大于0
 		$.each(region_arr, function (k, v) {
-			if (v.POINT.x != undefined&&v.POINT.x !=0 && v.POINT.y != undefined&&v.POINT.y != 0) {
+			if (v.POINT.x != undefined&&v.POINT.x !=0&&v.POINT.x !='' && v.POINT.y != undefined&&v.POINT.y != 0&&v.POINT.y != '') {
 				// xx先判断坐标是否重复，重复则做偏移处理
 				var point = new BMap.Point(v.POINT.x, v.POINT.y);
 				var point_str = v.POINT.x+','+v.POINT.y;
@@ -135,6 +135,8 @@ function creatDataInfo() {
 					iconUrl = 'images/bzxr_bz.png';
 				} else if (v.ADD_TYPE == '第三人') {
 					iconUrl = 'images/dsr_bz.png';
+				}else{
+					iconUrl = 'images/bg_bz.png';
 				}
 				// var myIcon = new BMap.Icon(iconUrl, new BMap.Size(40,40),{imageOffset:new BMap.Size(100, 40) });
 				var myIcon = new BMap.Icon(iconUrl, size);
@@ -150,7 +152,7 @@ function creatDataInfo() {
 				}); //offset设置偏移量
 				marker.setLabel(label);
 			} else {
-				noPoint += v.NAME + '、';
+				noPoint += v.ADD_NAME + '、';
 
 			}
 

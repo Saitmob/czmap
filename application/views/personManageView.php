@@ -107,10 +107,7 @@
         <!--人员数展示-->
 			<div class="person-num" style="display:inline-block">
 				<div>
-					陪审员 <span class="badge bg-sub" id="psy-num">0</span>
-				</div>
-				<div>
-					执行员 <span class="badge bg-sub" id="zxy-num">0</span>
+					法律顾问 <span class="badge bg-sub" id="flgw-num">0</span>
 				</div>
 				<div>
 					网格员 <span class="badge bg-sub" id="wgy-num">0</span>
