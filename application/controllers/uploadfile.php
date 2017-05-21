@@ -42,7 +42,6 @@ class Uploadfile extends CI_Controller {
     public function uploadexl()
     {
         $path=$_FILES['file'];
-        // var_dump($_FILES);die();
         // $filePath = "upload/".$path["name"];
         $fileType = explode('.',$path["name"]);
         $fileType = $fileType[count($fileType)-1];
@@ -55,8 +54,9 @@ class Uploadfile extends CI_Controller {
         // $this->insert_2jz($content);die();
         fclose($handle); 
         $content = base64_encode($content);
-        // var_dump($content);die();
+        // var_dump($_FILES);die();
         $soap = new SoapClient("http://192.168.100.146:8080/services/dyhjmd/RyxxService?wsdl");
+        // echo $content;die();
         $json_str = '{"excelFile":"'.$content.'","fileSuffix":"'.$fileType.'"}';
         // $json_str = mb_convert_encoding($json_str,'GB2312','UTF-8');
         // $json_str = mb_check_encoding($json_str,'UTF-8');
@@ -66,7 +66,9 @@ class Uploadfile extends CI_Controller {
         // $p = array('excelFile'=>$json_str);
         // var_dump($p);die();
         $res=$soap->saveRyxx($json_str);
-        var_dump($res);
+        unset($json_str);
+        unset($content);
+        unset($_FILES);
         unlink("upload/.".$time.$fileType);
         $message = 1;
         echo json_encode(array("result" => $message,"filename" =>"","filedir" => "","filetype" => ""));

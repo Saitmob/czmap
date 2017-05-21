@@ -430,7 +430,7 @@ class map_case_model extends CI_Model {
     //获取个人其他信息
     public function getPersonOtherInfo($pId)
     {
-        $sql = "SELECT photo_url, photo_type FROM person  WHERE ID = '{$pId}'";
+        $sql = "SELECT photo_url, photo_type, nation, education, company, zzmm, duty  FROM person  WHERE ID = '{$pId}'";
         $query=$this->db->query($sql);
         $res = $query->row();
         $gis_id = "";
@@ -450,7 +450,12 @@ class map_case_model extends CI_Model {
             'photo'=>$res->photo_url,
             'photo_type'=>$res->photo_type,
             'gis_id'=>$gis_id,
-            'gis_name'=>$gis_name
+            'gis_name'=>$gis_name,
+            'nation'=>$res->nation,
+            'education'=>$res->education,
+            'company'=>$res->company,
+            'zzmm'=>$res->zzmm,
+            'duty'=>$res->duty
             );
         }
         else{
@@ -458,7 +463,12 @@ class map_case_model extends CI_Model {
             'photo'=>"",
             'photo_type'=>"",
             'gis_id'=>"",
-            'gis_name'=>""
+            'gis_name'=>"",
+            'nation'=>"",
+            'education'=>"",
+            'company'=>"",
+            'zzmm'=>"",
+            'duty'=>""
             );           
         }
         return $data;

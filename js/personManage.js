@@ -191,15 +191,21 @@ function editorPerson(ele) {
 			showPhoto(data.photo);
 			// $('.layui-layer-content .editor-photo').html('<img src=\"\"/>');
 			// $('.layui-layer-content .editor-photo').find('img').attr('src',data.photo);
-			$('.layui-layer-content .editor-photo').css('background-image', 'url(' + weburl + data.photo + ')');
+			if (data.photo != null) {
+				$('.layui-layer-content .editor-photo').css('background-image', 'url(' + weburl + data.photo + ')');
+			}
 			$('.layui-layer-content .editor-photo').css('background-size', '100% 100%');
 			$('.layui-layer-content .editor-photo').find('img').css('width', '100%');
 			$('.layui-layer-content .editor-photo').find('img').css('height', '100%');
+			$('.layui-layer-content .editor-nation').val(data.nation);
+			$('.layui-layer-content .editor-education').val(data.education);
+			$('.layui-layer-content .editor-company').val(data.company);
+			$('.layui-layer-content .editor-zzmm').val(data.zzmm);
+			$('.layui-layer-content .editor-duty').val(data.duty);
 			if (data.gis_id != "") {
 				$('.icon-map-marker').css('font-size', '12px');
 				$('.layui-layer-content .editor-select-region t').html('修改区域');
 				var name = data.gis_name.split(",")[0];
-				console.log(data.gis_name);
 				$('.layui-layer-content .icon-map-marker').html(name);
 				$('.layui-layer-content .icon-map-marker').data('id', data.gis_id);
 				$('.layui-layer-content .icon-map-marker').data('name', data.gis_name);
