@@ -37,7 +37,6 @@ function createMap(i) {
 	// map.addEventListener("click", function(e) {
 	//     alert(e.point.lng + ", " + e.point.lat);
 	// });
-	console.log(region_address);
 	var point = new BMap.Point(region_address.REGION_POINT.x, region_address.REGION_POINT.y); //定义一个中心点坐标
 	map.centerAndZoom(point, 11); //设定地图的中心点和坐标并将地图显示在地图容器中
 	window.map = map; //将map变量存储在全局
@@ -102,7 +101,11 @@ function creatDataInfo() {
 	if (region_arr.length > 0) { //如果地点大于0
 		$.each(region_arr, function (k, v) {
 			if (v.POINT.x != undefined && v.POINT.y != undefined) {
+				// xx先判断坐标是否重复，重复则做偏移处理
 				var point = new BMap.Point(v.POINT.x, v.POINT.y);
+				if($.inArray(point,points)!=-1){
+					point = new BMap.Point(v.POINT.x+0.0003, v.POINT.y+0.0003);
+				}
 				points.push(point);
 				var content = v.BZ_INFO;
 				var iconUrl = '';
