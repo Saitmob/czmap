@@ -154,7 +154,7 @@ class Welcome extends CI_Controller {
         if(!empty($name))
         {
             $pId = $this->input->post('pId');
-            $r_id = $this->input->post('gis_id');
+            $gis_id = $this->input->post('gis_id');
             $photoId = empty($this->input->post('photoId'))?0:$this->input->post('photoId');
             $phototype = $this->input->post('phototype');
             $photourl = $this->input->post('photourl');
@@ -168,7 +168,7 @@ class Welcome extends CI_Controller {
             $duty = $this->input->post('duty');
             $zzet = $this->input->post('zzet');
             $operator = (isset($_SESSION['user_email']))?$_SESSION['user_email']:"test";
-            $data = $this->mapcase->savePersonInfo($pId,$name,$sex,$csny,$nation,$sex,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photourl,$phototype);
+            $data = $this->mapcase->savePersonInfo($pId,$name,$sex,$csny,$nation,$sex,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photourl,$phototype,$gis_id);
             echo $data;
         }
         else{
