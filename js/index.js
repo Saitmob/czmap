@@ -29,7 +29,10 @@ $(function () {
 });
 // 绘制svg地图
 function cz_map() {
+<<<<<<< HEAD
 	// var bodyW = document.body.clientWidth;
+=======
+>>>>>>> origin/master
 	var bodyW = window.screen.width;
 	var bodyH = document.body.clientHeight;
 	var scale = (0.385*bodyW)/520;

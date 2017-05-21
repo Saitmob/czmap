@@ -154,20 +154,25 @@ class Welcome extends CI_Controller {
         if(!empty($name))
         {
             $pId = $this->input->post('pId');
-            $r_id = $this->input->post('gis_id');
+            $gis_id = $this->input->post('gis_id');
             $photoId = empty($this->input->post('photoId'))?0:$this->input->post('photoId');
-            // if(empty($this->input->post('photoId'))){
-            //     $photoId=$this->input->post('photoId');
-            // }else{
-            //     $photoId=0;
-            // }
+            $phototype = $this->input->post('phototype');
+            $photourl = $this->input->post('photourl');
             $sex = $this->input->post('sex');
-            $age = $this->input->post('age');
+            $csny = $this->input->post('csny');
+            $nation = $this->input->post('nation');
+            $education = $this->input->post('education');
+            $company = $this->input->post('company');
+            $ndsfd = $this->input->post('ndsfd');
+            $zzmm = $this->input->post('zzmm');
             $duty = $this->input->post('duty');
-            $phone = $this->input->post('phone');
-            $intro = $this->input->post('intro');
-            $operator = $_SESSION['user_email'];
-            $data = $this->mapcase->savePersonInfo($pId,$email,$r_id,$name,$photoId,$sex,$age,$duty,$phone,$intro,$operator);
+            $zzet = $this->input->post('zzet');
+            $operator = (isset($_SESSION['user_email']))?$_SESSION['user_email']:"test";
+            $data = $this->mapcase->savePersonInfo($pId,$name,$sex,$csny,$nation,$sex,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photourl,$phototype,$gis_id);
+            echo $data;
+        }
+        else{
+            $data = 0;
             echo $data;
         }
     }
