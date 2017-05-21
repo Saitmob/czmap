@@ -235,7 +235,9 @@ class map_case_model extends CI_Model {
                     // $tjy = (empty($person_arr['tjy']))?'无':$person_arr['tjystr'];
                     // $wgy = (empty($person_arr['wgy']))?'无':$person_arr['wgystr'];
                     $ssdw=$val->ssdw;
-                    $bz_info .= $i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>当事人：'.$val->xm.'('.$val->ssdw.')、'.$val->xb.'、'.$val->mz.'、身份证：'.$val->sfzh.'、联系电话：'.$val->lxdh."<br>";
+                    $xb = (isset($val->xb))?$val->xb:'性别：无';
+                    $mz = (isset($val->mz))?$val->mz:'民族：无';
+                    $bz_info .= $i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>当事人：'.$val->xm.'('.$val->ssdw.')、'.$xb.'、'.$mz.'、身份证：'.$val->sfzh.'、联系电话：'.$val->lxdh."<br>";
                     $ADDRESS[]=array(
                     'ADD_TYPE'=>$ssdw,
                     'POINT'=>$point,
