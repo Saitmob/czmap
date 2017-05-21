@@ -448,7 +448,7 @@ class map_case_model extends CI_Model {
     //获取个人其他信息
     public function getPersonOtherInfo($pId)
     {
-        $sql = "SELECT photo_url, photo_type FROM person  WHERE ID = '{$pId}'";
+        $sql = "SELECT photo_url, photo_type, nation, education, company, zzmm, duty, rybs  FROM person  WHERE ID = '{$pId}'";
         $query=$this->db->query($sql);
         $res = $query->row();
         $gis_id = "";
@@ -468,7 +468,13 @@ class map_case_model extends CI_Model {
             'photo'=>$res->photo_url,
             'photo_type'=>$res->photo_type,
             'gis_id'=>$gis_id,
-            'gis_name'=>$gis_name
+            'gis_name'=>$gis_name,
+            'nation'=>$res->nation,
+            'education'=>$res->education,
+            'company'=>$res->company,
+            'zzmm'=>$res->zzmm,
+            'duty'=>$res->duty,
+            'rybs'=>$res->rybs
             );
         }
         else{
@@ -476,7 +482,13 @@ class map_case_model extends CI_Model {
             'photo'=>"",
             'photo_type'=>"",
             'gis_id'=>"",
-            'gis_name'=>""
+            'gis_name'=>"",
+            'nation'=>"",
+            'education'=>"",
+            'company'=>"",
+            'zzmm'=>"",
+            'duty'=>"",
+            'rybs'=>""
             );           
         }
         return $data;
@@ -484,20 +496,6 @@ class map_case_model extends CI_Model {
     //保存个人信息
     public function savePersonInfo($pId,$name,$sex,$csny,$nation,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photo,$phototype,$gis_id)
     {
-        $pId = (empty($pId))?"":$pId;
-        $name = (empty($name))?"":$name;
-        $sex = (empty($sex))?"":$sex;
-        $csny = (empty($csny))?"":$csny;
-        $nation = (empty($nation))?"":$nation;
-        $sex = (empty($sex))?"":$sex;
-        $education = (empty($education))?"":$education;
-        $company = (empty($company))?"":$company;
-        $ndsfd = (empty($ndsfd))?"":$ndsfd;
-        $zzmm = (empty($zzmm))?"":$zzmm;
-        $duty = (empty($duty))?"":$duty;
-        $zzet = (empty($zzet))?"":$zzet;
-        $photo = (empty($photo))?"":$photo;
-        $phototype = (empty($phototype))?"":$phototype;
         $result=0;//插入
         // if (!empty($photo)) {
         //     //echo $photo;
@@ -512,12 +510,12 @@ class map_case_model extends CI_Model {
         if(empty($pId))
         {
             // var_dump($phone);die();
-            $sql = "INSERT INTO person (name,sex,csny,nation,sex,education,company,ndsfd,zzmm,duty,zzet,photo_url,photo_type) VALUES ('{$name}','{$sex}','{$csny}',{$nation},'{$education}',{$company},'{$ndsfd}',{$zzmm},'{$duty}','{$zzet}','{$phone}','{$phototype}')";
+            $sql = "INSERT INTO person (name,sex,csny,nation,education,company,ndsfd,zzmm,rybs,zzet,photo_url,photo_type,phone,duty,address) VALUES ('{$name}','{$sex}','{$csny}','{$nation}','{$education}','{$company}','{$ndsfd}','{$zzmm}','{$rybs}','{$zzet}','{$photo}','{$phototype}','{$phone}','{$duty}','{$gis_name}')";
             $query = $this->db->query($sql);
             $result = $this->db->insert_id();
         }else{
 
-            $sql = "UPDATE person SET name='{$name}',sex='{$sex}',csny='{$csny}',nation='{$nation}',education='{$education}',company='{$company}',ndsfd='{$ndsfd}',zzmm='{$zzmm}',duty='{$duty}',zzet='{$zzet}', photo_url = '{$photo}', photo_type = '{$phototype}' WHERE ID = {$pId}";
+            $sql = "UPDATE person SET name='{$name}',sex='{$sex}',csny='{$csny}',nation='{$nation}',education='{$education}',company='{$company}',ndsfd='{$ndsfd}',zzmm='{$zzmm}',rybs='{$rybs}',zzet='{$zzet}', photo_url = '{$photo}', photo_type = '{$phototype}', phone = '{$phone}', duty = '{$duty}', address = '{$gis_name}' WHERE ID = {$pId}";
             //echo $sql;die();
             $query = $this->db->query($sql);
             if ($this->db->affected_rows() > 0)
@@ -542,7 +540,6 @@ class map_case_model extends CI_Model {
                         }
                     }
                     else{
-                        echo "1111b1";die();
                         $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE id = ? AND person_id = ?";
                         $query = $this->db->query($sql, array($pId, $gis_id));
                         $row = $query->row_array();
@@ -566,10 +563,10 @@ class map_case_model extends CI_Model {
                 $result=0;//更新失败
             }          
         }
-        if($query==0||$query==false)
-        {
-            $result = 0;
-        }
+        // if( $query==0 ||$query==false)
+        // {
+        //     $result = 0;
+        // }
         return $result;
     }
     //删除人员
