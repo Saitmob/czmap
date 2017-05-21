@@ -29,13 +29,16 @@ $(function () {
 });
 // 绘制svg地图
 function cz_map() {
+	var bodyW = window.screen.width;
+	var bodyH = document.body.clientHeight;
+	var scale = (0.385*bodyW)/520;
 	var R = Raphael("city_map", 520, 620);
 	// console.log(R.transform());
 	// console.log(Raphael.angle(10,50,100,120));
 	//调用绘制地图方法
 	paintMap(R);
 	// console.log(R.canvas.transform);
-	R.canvas.setAttribute("transform", "scale(0.5)");
+	R.canvas.setAttribute("transform", "scale("+scale+")");
 
 	var textAttr = {
 		"fill": "#000",
