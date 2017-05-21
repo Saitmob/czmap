@@ -48,6 +48,7 @@ $(function () {
 
 	//区域查询
 	$("#person-region-select").change(function () {
+		$("#search-person-text").val("");
 		var range = regionChange($("#person-region-select option:selected").val());
 		var persontype = $("#person-type-select option:selected").val();
 		var name = $("#search-person-text").val();
@@ -56,6 +57,7 @@ $(function () {
 
 	//人员类型查询
 	$("#person-type-select").change(function () {
+		$("#search-person-text").val("");
 		var range = regionChange($("#person-region-select option:selected").val());
 		var persontype = $("#person-type-select option:selected").val();
 		var name = $("#search-person-text").val();
@@ -277,6 +279,7 @@ function savePersonInfo() {
 		data: {
 			'email': email,
 			'gis_id': regionStr,
+			'gis_name': $(".layui-layer-content .icon-map-marker").html(),
 			'name': name,
 			'pId': $(".layui-layer-content .ry-save-btn").data('pId'),
 			'photoId': $('.layui-layer-content .ry-photoId').val(),
@@ -296,13 +299,14 @@ function savePersonInfo() {
 		},
 		success: function (data) {
 			if (data != 2 && data != 0) {
-				layer.alert('插入成功');
+				layer.msg('插入成功');
 				$('#ry-id').val(data),
 					show_list("all", "all", "", 1, 8);
 			} else if (data == 2) {
-				layer.alert('修改成功');
+				layer.msg('修改成功');
+				layer.closeAll();
 			} else {
-				layer.alert('操作失败');
+				layer.msg('操作失败');
 			}
 			// console.log(data);
 		}

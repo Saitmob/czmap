@@ -476,7 +476,7 @@ class map_case_model extends CI_Model {
         return $data;
     }
     //保存个人信息
-    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$duty,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photo,$phototype,$gis_id,$phone,$email,$rybs)
+    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$duty,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photo,$phototype,$gis_id,$gis_name,$phone,$email,$rybs)
     {
         $result=0;//插入
         // if (!empty($photo)) {
@@ -492,12 +492,12 @@ class map_case_model extends CI_Model {
         if(empty($pId))
         {
             // var_dump($phone);die();
-            $sql = "INSERT INTO person (name,sex,csny,nation,education,company,ndsfd,zzmm,rybs,zzet,photo_url,photo_type,phone,duty) VALUES ('{$name}','{$sex}','{$csny}','{$nation}','{$education}','{$company}','{$ndsfd}','{$zzmm}','{$rybs}','{$zzet}','{$photo}','{$phototype}','{$phone}','{$duty}')";
+            $sql = "INSERT INTO person (name,sex,csny,nation,education,company,ndsfd,zzmm,rybs,zzet,photo_url,photo_type,phone,duty,address) VALUES ('{$name}','{$sex}','{$csny}','{$nation}','{$education}','{$company}','{$ndsfd}','{$zzmm}','{$rybs}','{$zzet}','{$photo}','{$phototype}','{$phone}','{$duty}','{$gis_name}')";
             $query = $this->db->query($sql);
             $result = $this->db->insert_id();
         }else{
 
-            $sql = "UPDATE person SET name='{$name}',sex='{$sex}',csny='{$csny}',nation='{$nation}',education='{$education}',company='{$company}',ndsfd='{$ndsfd}',zzmm='{$zzmm}',rybs='{$rybs}',zzet='{$zzet}', photo_url = '{$photo}', photo_type = '{$phototype}', phone = '{$phone}', duty = '{$duty}' WHERE ID = {$pId}";
+            $sql = "UPDATE person SET name='{$name}',sex='{$sex}',csny='{$csny}',nation='{$nation}',education='{$education}',company='{$company}',ndsfd='{$ndsfd}',zzmm='{$zzmm}',rybs='{$rybs}',zzet='{$zzet}', photo_url = '{$photo}', photo_type = '{$phototype}', phone = '{$phone}', duty = '{$duty}', address = '{$gis_name}' WHERE ID = {$pId}";
             //echo $sql;die();
             $query = $this->db->query($sql);
             if ($this->db->affected_rows() > 0)
