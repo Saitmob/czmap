@@ -494,7 +494,7 @@ class map_case_model extends CI_Model {
         return $data;
     }
     //保存个人信息
-    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photo,$phototype,$gis_id)
+    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$duty,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photo,$phototype,$gis_id,$gis_name,$phone,$email,$rybs)
     {
         $result=0;//插入
         // if (!empty($photo)) {

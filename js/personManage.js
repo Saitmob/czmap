@@ -48,7 +48,7 @@ $(function () {
 
 	//区域查询
 	$("#person-region-select").change(function () {
-		$("#search-person-text").val("");
+		$("#search-person-text").val(""); 
 		var range = regionChange($("#person-region-select option:selected").val());
 		var persontype = $("#person-type-select option:selected").val();
 		var name = $("#search-person-text").val();
