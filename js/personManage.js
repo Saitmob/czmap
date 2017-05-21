@@ -1,6 +1,9 @@
+var person_list_data_model;
 $(function () {
-	// showList(1);
-    show_person_list(1)
+	person_list_data_model = $("#person-list-data").html();
+	show_list("all", "all", "", 1, 8);
+	//showList(1);
+	//show_person_list(1)
 	// searchPerson();
 	// laypage({
 	//     cont: 'my_list_page',
@@ -27,25 +30,86 @@ $(function () {
 		addPersonClick();
 	});
 	//选择所属区域
-	$('#editor-select-region').on('click', function () {
+	$('.editor-select-region').on('click', function () {
 		selectRegion();
 	});
 	//保存人员信息
-	$('#ry-save-btn').on('click', function () {
+	$('.ry-save-btn').on('click', function () {
 		savePersonInfo();
 		return false; //防止提交表单
 	});
 	//查询
 	$('#search-person-btn').on('click', function () {
-		var user_name = $('#search-person-text').val();
 		if (user_name == '') {
 			layer.alert('查询名称不能为空');
 		} else {
-			searchPerson(user_name);
+			show_list(range, persontype, name, 1, 8);
 		}
 
 	})
+
+	//区域查询
+	$("#person-region-select").change(function () {
+		var range = regionChange($("#person-region-select option:selected").val());
+		var persontype = $("#person-type-select option:selected").val();
+		var name = $("#search-person-text").val();
+		show_list(range, persontype, name, 1, 8);
+	});
+
+	//人员类型查询
+	$("#person-type-select").change(function () {
+		var range = regionChange($("#person-region-select option:selected").val());
+		var persontype = $("#person-type-select option:selected").val();
+		var name = $("#search-person-text").val();
+		show_list(range, persontype, name, 1, 8);
+	});
 });
+
+function show_list(range, persontype, name, cur_page, per_page_num)//区域，人员类型，人员名称，第几页，一页几行
+{
+	$.ajax({
+		type: 'post',
+		url: weburl + 'index.php/personManage/show_list',
+		data: {
+			'range': range,
+			'persontype': persontype,
+			'name': name,
+			'cur_page': cur_page,
+			'per_page_num': per_page_num
+		},
+		dataType: "json",
+		success: function (data) {
+			$("#person-list-data").html("");
+			if (data.result.length > 0) {
+				$.each(data.result, function (k, v) {
+					$("#person-list-data").append(person_list_data_model);
+					console.log($(".list-tr:last").find(".list-item-name"));
+					$(".list-tr:last").find(".list-item-name").val(k);
+					$(".list-tr:last").find(".list-item-sex").val(v.sex);
+					$(".list-tr:last").find(".list-item-age").val(v.csny);
+					$(".list-tr:last").find(".list-item-duty").val(v.duty);
+					$(".list-tr:last").find(".list-item-region").val(v.address);
+					$(".list-tr:last").find(".list-item-phone").val(v.phone);
+				});
+				var page_num = parseInt(data.page_num);
+				laypage({
+					cont: 'my_list_page',
+					curr: cur_page,
+					pages: Math.ceil(page_num / per_page_num),
+					jump: function (obj, first) {
+						if (!first) {
+							show_list(range, persontype, name, obj.curr, per_page_num)
+							/*showList(obj.curr);*/
+						}
+					}
+				});
+			}
+			else {
+				layer.msg("查不到相关内容");
+			}
+		}
+	});
+}
 
 function deletePerson(id) {
 	layer.confirm('是否确认删除该人员', function () {
@@ -68,19 +132,19 @@ function deletePerson(id) {
 
 function editorPerson(ele) {
 	//隐藏域清空
-	$('#ry-id').val('');
-	$('#ry-photoId').val('');
+	$('.ry-id').val('');
+	$('.ry-photoId').val('');
 	//编辑页赋值
-	$('#editor-name').val('');
-	$('#editor-sex').val('male');
-	$('#editor-age').val('');
-	$('#editor-duty').val('陪审员');
+	$('.editor-name').val('');
+	$('.editor-sex').val('male');
+	$('.editor-age').val('');
+	$('.editor-duty').val('陪审员');
 	// $('#editor-region').val('cz_td');
-	$('#editor-phone').val('');
-	$('#editor-email').val('');
-	$('#editor-intro').val('');
-	$('#editor-region-selected-list').html('');
-	showPersonInfoPanel();
+	$('.editor-phone').val('');
+	$('.editor-email').val('');
+	$('.editor-intro').val('');
+	$('.editor-region-selected-list').html('');
+
 	var pId = $(ele).parent().find('.list-item-pid').val();
 	var photoId = $(ele).parent().find('.list-item-photoId').val();
 	var gisId = $(ele).parent().find('.list-item-gisId').val();
@@ -103,17 +167,16 @@ function editorPerson(ele) {
 		default:
 			break;
 	}
-	//隐藏域赋值
-	$('#ry-id').val(pId);
-	$('#ry-photoId').val(photoId);
-	//编辑页赋值
-	$('#editor-name').val(name);
-	$('#editor-sex').val(sex);
-	$('#editor-age').val(age);
-	$('#editor-duty').val(duty);
-	$('#editor-phone').val(phone);
-	$('#editor-email').val(email);
-	showRegion(gisId, region);
+
+	showPersonInfoPanel(pId);
+	$(".layui-layer-content .editor-name").val(name);
+	$(".layui-layer-content .editor-sex").val(sex);
+	$(".layui-layer-content .editor-age").val(age);
+	$(".layui-layer-content .editor-duty").val(duty);
+	$(".layui-layer-content .editor-region").val(region);
+	$(".layui-layer-content .editor-phone").val(phone);
+	$(".layui-layer-content .editor-email").val(email);
+	//showRegion(gisId, region);
 	//获取照片以及简介
 	$.ajax({
 		type: 'post',
@@ -124,7 +187,12 @@ function editorPerson(ele) {
 		dataType: 'json',
 		success: function (data) {
 			showPhoto(data.photo);
-			$('#editor-intro').val(data.user_intro);
+			// $('.layui-layer-content .editor-photo').html('<img src=\"\"/>');
+			// $('.layui-layer-content .editor-photo').find('img').attr('src',data.photo);
+			$('.layui-layer-content .editor-photo').css('background-image', 'url(' + weburl + data.photo + ')');
+			$('.layui-layer-content .editor-photo').css('background-size', '100% 100%');
+			$('.layui-layer-content .editor-photo').find('img').css('width', '100%');
+			$('.layui-layer-content .editor-photo').find('img').css('height', '100%');
 		}
 	});
 }
@@ -139,17 +207,23 @@ function showPhoto(file_path) {
 
 //保存人员信息
 function savePersonInfo() {
-	var name = $('#editor-name').val(),
-		email = $('#editor-email').val(),
-		sex = $('#editor-sex').val(),
-		age = $('#editor-age').val(),
-		duty = $('#editor-duty').val(),
-		phone = $('#editor-phone').val();
+	var name = $('.layui-layer-content .editor-name').val(),
+		email = $('.layui-layer-content .editor-email').val(),
+		sex = $('.layui-layer-content .editor-sex').val(),
+		age = $('.layui-layer-content .editor-age').val(),
+		duty = $('.layui-layer-content .editor-duty').val(),
+		phone = $('.layui-layer-content .editor-phone').val();
 	var regionArr = [];
 	var regionStr = '';
-	$.each($('#editor-region-selected-list').find('a[id^="editor_region_"]'), function (k, v) {
-		regionArr.push($(v).attr('id').substr(14));
-	});
+	var idstring = $('.layui-layer-content .icon-map-marker').data('id');
+	console.log(idstring);
+	if (idstring.length > 0) {
+		idstring = idstring.substring(0, idstring.length - 1);
+		var regionArr = idstring.split(',');
+	}
+	/*	$.each($('.layui-layer-content .editor-select-region').data, function (k, v) {
+			regionArr.push($(v).attr('id').substr(14));
+		});*/
 	regionStr = regionArr.toString();
 	if (name == '') {
 		layer.alert('请填写姓名');
@@ -167,16 +241,18 @@ function savePersonInfo() {
 		type: 'post',
 		url: weburl + 'index.php/welcome/savePersonInfo',
 		data: {
-			'email': $('#editor-email').val(),
+			'email': email,
 			'gis_id': regionStr,
-			'name': $('#editor-name').val(),
-			'pId': $('#ry-id').val(),
-			'photoId': $('#ry-photoId').val(),
-			'sex': $('#editor-sex').val(),
-			'age': $('#editor-age').val(),
-			'duty': $('#editor-duty').val(),
-			'phone': $('#editor-phone').val(),
-			'intro': $('#editor-intro').val()
+			'name': name,
+			'pId': $(".layui-layer-content .ry-save-btn").data('pId'),
+			'photoId': $('.layui-layer-content .ry-photoId').val(),
+			'photourl': $('.layui-layer-content .editor-photo').data('imageurl'),
+			'phototype': $('.layui-layer-content .editor-photo').data('imagetype'),
+			'sex': sex,
+			'age': age,
+			'duty': duty,
+			'phone': phone,
+			'intro': $('.layui-layer-content .editor-intro').val()
 		},
 		success: function (data) {
 			if (data != 2 && data != 0) {
@@ -193,20 +269,74 @@ function savePersonInfo() {
 	})
 }
 
-function showPersonInfoPanel() {
-	if ($('.editor-list').css('right') == '-500px') {
-		$('.editor-list').animate({
-			'right': '0'
-		}, 300);
-	} else {
-		$('.editor-list').animate({
-			'right': '-500px'
-		}, 300, function () {
-			$('.editor-list').animate({
-				'right': '0'
-			}, 300)
+function showPersonInfoPanel(pId) {
+
+	layer.open({
+		type: 1,
+		skin: 'layui-layer-lan',
+		title: "编辑人员信息",
+		area: ['500px', '500px'], //宽高
+		//content: $("#editor-panel").prop("outerHTMl"), //捕获的元素
+		content: $("#editor-panel").html(), //捕获的元素
+		success: function () {
+			$("body").off('click', '.ry-save-btn');
+			$(".ry-save-btn").click(function () {
+				savePersonInfo();
+				return false; //防止提交表单
+			});
+			$("body").off('click', '.editor-select-region');
+			$(".editor-select-region").click(function () {
+				selectRegion(true, changeRangeText);
+			});
+			$(".layui-layer-content .file-upload-btn").click(function () {
+				MyUpload.request({
+					class: ".layui-layer-content .file-upload-btn",
+					singleFileUploads: true,
+					postfix: 'doc,docx,xlsx,xls,png,jpg,jpeg,gif',
+					myData: { folder: 'project', 's_id': $(".layui-layer-content .ry-save-btn").val() }
+				}, function (data) {
+				}, function (data) {
+					if (data.result != 1) {
+						layer.msg("上传修改图片失败");
+					}
+					else {
+						$('.layui-layer-content .editor-photo').css('background-image', 'url(' + weburl + data.filedir + ')');
+						$('.layui-layer-content .editor-photo').css('background-size', '100% 100%');
+						//$('.layui-layer-content .editor-photo').html('<img src=\"\"/>');
+						//$('.layui-layer-content .editor-photo').find('img').attr('src',data.file);
+						//$('.layui-layer-content .editor-photo').find('img').css('width','100%');
+						//$('.layui-layer-content .editor-photo').find('img').css('height','100%');
+						$('.layui-layer-content .editor-photo').data('imageurl', data.filedir);
+						$('.layui-layer-content .editor-photo').data('imagename', data.filename);
+						$('.layui-layer-content .editor-photo').data('imagetype', data.filetype);
+					}
+				});
+			});
+			$('.layui-layer-content .icon-map-marker').data('id', '');
+			$('.layui-layer-content .icon-map-marker').data('name', '');
+			$('.layui-layer-content .ry-save-btn').data('pId', pId);
+		},
+	});
+}
+
+function changeRangeText(id, name) {
+	var idstring = $('.layui-layer-content .icon-map-marker').data('id');
+	var namestring = $('.layui-layer-content .icon-map-marker').data('name');
+	idstring += id + ',';
+	namestring += name + ',';
+	$('.layui-layer-content .icon-map-marker').data('name', namestring);
+	$('.icon-map-marker').css('font-size', '12px');
+	$('.layui-layer-content .editor-select-region t').html('修改区域');
+	$('.layui-layer-content .icon-map-marker').html(name);
+	$('.layui-layer-content .icon-map-marker').data('id', idstring);
+	$('.layui-layer-content .icon-map-marker').data('name', namestring);
+	$('.layui-layer-content .editor-select-region').unbind();
+	$('.layui-layer-content .editor-select-region').on('mouseenter', function () {
+		layer.tips(namestring, '.layui-layer-content .editor-select-region', {
+			tips: [1, '#3595CC'],
+			time: 2000
 		});
-	}
+	});
 }
 
 function addPersonClick() {
@@ -223,7 +353,7 @@ function addPersonClick() {
 	$('#editor-email').val('');
 	$('#editor-intro').val('');
 	$('#editor-region-selected-list').html('');
-	showPersonInfoPanel();
+	showPersonInfoPanel("");
 
 	$('#editor-photo').html('');
 }
@@ -306,75 +436,8 @@ function showPapeNum(type, val) {
 function searchPerson(user_name) {
 	showList(1, 'USER_NAME', user_name);
 }
-//选择人员所属区域
-function selectRegion() {
-	var zTree;
-	var demoIframe;
 
-	var setting = {
-		view: {
-			dblClickExpand: false,
-			showLine: true,
-			selectedMulti: false
-		},
-		data: {
-			simpleData: {
-				enable: true,
-				idKey: "id",
-				pIdKey: "pId",
-				rootPId: 0
-			}
-		},
-		callback: {
-			beforeClick: function (treeId, treeNode) {
-				var id = treeNode.id,
-					pArr = [];
-				pArr.unshift(treeNode.name);
-				var pNode = treeNode.getParentNode();
-				while (pNode != null) {
-					pArr.unshift(pNode.name);
-					pNode = pNode.getParentNode();
-				}
-				var pArr_str = pArr.join('');
-				// var selectListDom = '<div id="'+id+'" class="selected">'+pArr_str+'</div>';
-				var selectListDom = '<button  class="button bg-mix" id="need-select" onClick="addSelect(' + id + ',\'' + pArr_str + '\');" >' + pArr_str + '</button>';
-				$('.select-list').html(selectListDom);
-			}
-		}
-	};
-	layer.open({
-		type: 1,
-		title: false,
-		skin: 'layui-layer-rim', //加上边框
-		area: ['540px', '440px'], //宽高
-		btn: ['确定'],
-		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div class="panel" style="height:374px;overflow:hidden;"><div class="panel-head">区域选择</div><div class="panel-body" style="height:330px;box-sizing:border-box;overflow:hidden;"><div id="treeDemo" style="width:200px;height:330px;overflow:auto;border-right:1px solid gray;display:inline-block;" class="ztree"></div><div style="width:56%;height:100%;display:inline-block;vertical-align:top;padding:0 10px"><p style="padding-left:10px;border-bottom:gray 1px solid;font-size:12px;color:gray;">单击选择</p><div class="select-list" style="height:64px;"></div><p style="padding-left:10px;border-bottom:gray 1px solid;font-size:12px;color:gray;">已选择</p><div id="region-selected-list" class="list-link" style="height:155px;overflow:auto;"></div></div> </div></div>',
-		yes: function (i) {
-			var idObjArr = $('#region-selected-list').find('a[id^="region_"]');
-			var idArr = [];
-			$.each(idObjArr, function (k, v) {
-				var id = parseInt($(v).attr('id').substr(7));
-				idArr.push(id);
-			});
-			layer.close(i);
-		},
-		end: function () {}
-	});
-	//得到节点信息
-	$.ajax({
-		type: 'post',
-		url: weburl + 'index.php/welcome/regionNode',
-		dataType: 'json',
-		async: false,
-		success: function (data) {
-			zNodes = data;
-			zTree = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
-		},
-		error: function (a, b, c) {}
-	});
 
-}
 //人员信息编辑页展示区域信息
 function showRegion(idStr, nameStr) {
 	var idArr = idStr.split(',');
@@ -383,45 +446,10 @@ function showRegion(idStr, nameStr) {
 		addSelect(v, nameArr[k]);
 	});
 }
-//添加区域事件
-function addSelect(id, name) {
-	if (name == '无' || id == '') {
-		return false;
-	}
-	var idName1 = 'region_';
-	var idName2 = 'editor_region_';
-	var str_1 = '<a href = "#" class="selectedRegion" id="';
-	var str_2 = id + '" onmouseover="showDelBtn(this)" onmouseout="hideDelBtn(this)"> ' + name + '<span class="float-right tag bg-red" style="display:none;" onclick="deleteRegion(this,' + id + ')">删除</span> </a>';
-	var str1 = str_1 + idName1 + str_2;
-	var str2 = str_1 + idName2 + str_2;
-	if ($('#editor_region_' + id).length > 0) {
-		layer.alert('请勿重复添加');
-		return false;
-	}
-	$('#region-selected-list').append(str1);
-	$('#editor-region-selected-list').append(str2);
-}
-//区域删除按钮显示
-function showDelBtn(ele) {
-	$(ele).find('span').css('display', 'inline-block');
-}
-//区域删除按钮隐藏
-function hideDelBtn(ele) {
-	$(ele).find('span').css('display', 'none');
-}
-//删除区域
-function deleteRegion(ele, id) {
-	$(ele).parent().remove();
-	if ($('#region_' + id).length > 0) {
-		$('#region_' + id).remove();
-	}
-	if ($('#editor_region_' + id).length > 0) {
-		$('#editor_region_' + id).remove();
-	}
-}
+
 
 // ---------------新增--------
-function show_person_list(cur_page, per_page_num,show_type, type_val) {
+function show_person_list(cur_page, per_page_num, show_type, type_val) {
 	var show_type = show_type || 'all';
 	var type_val = type_val || 'all';
 	var cur_page = cur_page || 1;
@@ -439,7 +467,7 @@ function show_person_list(cur_page, per_page_num,show_type, type_val) {
 		success: function (data) {
 			var str = '';
 			$.each(data.result, function (k, v) {
-				str += "<tr><td class='list-item-name'>" + v.name + "</td><td class='list-item-sex'>" + ((v.sex==null||v.sex==undefined)?'':v.sex) + "</td><td class='list-item-age'>" + ((v.csny==null||v.csny==undefined)?'':v.csny) + "</td><td class='list-item-duty'>" + ((v.duty==null||v.duty==undefined)?'':v.duty) + "</td><td class='list-item-phone'>" + ((v.address==null||v.address==undefined)?'':v.address) + "</td><td class='list-item-email'>" + v.phone + "</td><td><button class='button bg-sub button-small ry-option-list-btn' onClick='editorPerson(this,"+v.id+")'>查看 / 编辑</button> <button class='button bg-red button-small ry-option-list-btn' onClick='deletePerson(" + v.id + ")'>删除</button><input type='hidden' class='list-item-pid' value='" + v.id + "'></td></tr>";
+				str += "<tr><td class='list-item-name'>" + v.name + "</td><td class='list-item-sex'>" + ((v.sex == null || v.sex == undefined) ? '' : v.sex) + "</td><td class='list-item-age'>" + ((v.csny == null || v.csny == undefined) ? '' : v.csny) + "</td><td class='list-item-duty'>" + ((v.duty == null || v.duty == undefined) ? '' : v.duty) + "</td><td class='list-item-phone'>" + ((v.address == null || v.address == undefined) ? '' : v.address) + "</td><td class='list-item-email'>" + v.phone + "</td><td><button class='button bg-sub button-small ry-option-list-btn' onClick='editorPerson(this," + v.id + ")'>查看 / 编辑</button> <button class='button bg-red button-small ry-option-list-btn' onClick='deletePerson(" + v.id + ")'>删除</button><input type='hidden' class='list-item-pid' value='" + v.id + "'></td></tr>";
 			});
 			$('#person-list-data').html(str);
 			laypage({
@@ -448,7 +476,7 @@ function show_person_list(cur_page, per_page_num,show_type, type_val) {
 				pages: Math.ceil(data.page_num / per_page_num),
 				jump: function (obj, first) {
 					if (!first) {
-						show_person_list(show_type, type_val,obj.curr);
+						show_person_list(show_type, type_val, obj.curr);
 					}
 				}
 			});

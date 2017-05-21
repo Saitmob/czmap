@@ -1,4 +1,4 @@
-var weburl = 'http://127.0.0.1/czmap/';
+var weburl = 'http://147.1.7.1/czmapcl/';
 // var weburl = 'http://qxp.tunnel.2bdata.com/czmapn/';
 // var weburl = 'http://192.168.118.68/czmapn/';
 $(function() {

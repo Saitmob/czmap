@@ -26,4 +26,11 @@ class personManage extends CI_Controller {
         }
         
     }
+
+    public function show_list()
+    {
+        $name = (null !== $this->input->post('name'))?$this->input->post('name'):"";
+        $data = $this->person->show_list($this->input->post('range'),$this->input->post('persontype'),$name,$this->input->post('cur_page'),$this->input->post('per_page_num'));
+        echo json_encode($data);
+    }
 }

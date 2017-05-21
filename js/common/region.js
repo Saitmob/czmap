@@ -103,7 +103,7 @@ function addSelect(id, name, callback) {
         $('#editor-region-selected-list').html(str2);
     }
     //
-    callback(id);
+    callback(id,name);
 
 }
 //区域删除按钮显示
