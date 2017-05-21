@@ -196,7 +196,7 @@
 							<div class="line-div">
 								<span class='ry-option'>职务：</span>
 								<span class='ry-option-data'>
-								<select class="input input-small editor-duty input-auto" >
+								<select class="input input-small editor-rybs input-auto" >
 								<option value="执行员" selected="selected">执行员</option>
 								<option value="网格员">网格员</option>
 								</select>

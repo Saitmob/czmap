@@ -3,7 +3,6 @@ $(function () {
 	person_list_data_model = $("#person-list-data").html();
 	show_list("all", "all", "", 1, 8);
 	$("#excelFile").click(function () {
-		console.log(1111);
 		MyUploadexl.request({
 			id: "#excelFile",
 			singleFileUploads: true,
@@ -174,7 +173,7 @@ function editorPerson(ele) {
 	$(".layui-layer-content .editor-name").val(name);
 	$(".layui-layer-content .editor-sex:selected").val(sex);
 	$(".layui-layer-content .editor-age").val(age);
-	$(".layui-layer-content .editor-duty:selected").val(duty);
+	$(".layui-layer-content .editor-rybs:selected").val(duty);
 	$(".layui-layer-content .editor-region").val(region);
 	$(".layui-layer-content .editor-phone").val(phone);
 	$(".layui-layer-content .editor-email").val(email);
@@ -197,10 +196,13 @@ function editorPerson(ele) {
 			$('.layui-layer-content .editor-photo').css('background-size', '100% 100%');
 			$('.layui-layer-content .editor-photo').find('img').css('width', '100%');
 			$('.layui-layer-content .editor-photo').find('img').css('height', '100%');
+			$('.layui-layer-content .editor-photo').data('imageurl', data.photo);
+			$('.layui-layer-content .editor-photo').data('imagetype', data.photo_type);
 			$('.layui-layer-content .editor-nation').val(data.nation);
 			$('.layui-layer-content .editor-education').val(data.education);
 			$('.layui-layer-content .editor-company').val(data.company);
 			$('.layui-layer-content .editor-zzmm').val(data.zzmm);
+			$('.layui-layer-content .editor-rybs').val(data.rybs);
 			$('.layui-layer-content .editor-duty').val(data.duty);
 			if (data.gis_id != "") {
 				$('.icon-map-marker').css('font-size', '12px');
@@ -210,6 +212,12 @@ function editorPerson(ele) {
 				$('.layui-layer-content .icon-map-marker').data('id', data.gis_id);
 				$('.layui-layer-content .icon-map-marker').data('name', data.gis_name);
 				$('.layui-layer-content .editor-select-region').unbind();
+				$('.editor-select-region').on('click', function () {
+					$('.layui-layer-content .editor-select-region').unbind();
+					$('.layui-layer-content .icon-map-marker').data('id', "");
+					$('.layui-layer-content .icon-map-marker').data('name', "");	
+					selectRegion(true, changeRangeText);
+				});
 				$('.layui-layer-content .editor-select-region').on('mouseenter', function () {
 					layer.tips(data.gis_name, '.layui-layer-content .editor-select-region', {
 						tips: [1, '#3595CC'],
@@ -233,10 +241,12 @@ function showPhoto(file_path) {
 function savePersonInfo() {
 	var name = $('.layui-layer-content .editor-name').val(),
 		email = $('.layui-layer-content .editor-email').val(),
-		sex = $('.layui-layer-content .editor-sex').val(),
+		sex = $('.layui-layer-content .editor-sex option:selected').val(),
 		age = $('.layui-layer-content .editor-age').val(),
 		duty = $('.layui-layer-content .editor-duty').val(),
+		rybs = $('.layui-layer-content .editor-rybs option:selected').val(),
 		phone = $('.layui-layer-content .editor-phone').val();
+		console.log(rybs);
 	var regionArr = [];
 	var regionStr = '';
 	var idstring = $('.layui-layer-content .icon-map-marker').data('id');
@@ -276,13 +286,19 @@ function savePersonInfo() {
 			'age': age,
 			'duty': duty,
 			'phone': phone,
+			'rybs':rybs,
+			'nation':$('.layui-layer-content .editor-nation').val(),
+			'education':$('.layui-layer-content .editor-education').val(),
+			'company':$('.layui-layer-content .editor-company').val(),
+			'zzmm':$('.layui-layer-content .editor-zzmm').val(),
+			'duty':$('.layui-layer-content .editor-duty').val(),
 			'intro': $('.layui-layer-content .editor-intro').val()
 		},
 		success: function (data) {
 			if (data != 2 && data != 0) {
 				layer.alert('插入成功');
 				$('#ry-id').val(data),
-					showList(1);
+					show_list("all", "all", "", 1, 8);
 			} else if (data == 2) {
 				layer.alert('修改成功');
 			} else {
@@ -343,6 +359,7 @@ function showPersonInfoPanel(pId) {
 }
 
 function changeRangeText(id, name) {
+	console.log(1);
 	var idstring = $('.layui-layer-content .icon-map-marker').data('id');
 	var namestring = $('.layui-layer-content .icon-map-marker').data('name');
 	idstring += id + ',';
@@ -354,6 +371,11 @@ function changeRangeText(id, name) {
 	$('.layui-layer-content .icon-map-marker').data('id', idstring);
 	$('.layui-layer-content .icon-map-marker').data('name', namestring);
 	$('.layui-layer-content .editor-select-region').unbind();
+	$('.editor-select-region').on('click', function () {
+		$('.layui-layer-content .icon-map-marker').data('id', '');
+		$('.layui-layer-content .icon-map-marker').data('name', '');
+		selectRegion(true, changeRangeText);
+	});
 	$('.layui-layer-content .editor-select-region').on('mouseenter', function () {
 		layer.tips(namestring, '.layui-layer-content .editor-select-region', {
 			tips: [1, '#3595CC'],

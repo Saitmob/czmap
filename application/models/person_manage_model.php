@@ -82,42 +82,5 @@ class person_manage_model extends CI_Model {
         $result = $query->result_array();
         return $result;
     }*/
-
-    public function get_range_child_id($range)
-    {
-        if (!strpos($range, ",")) {
-            $sql = "SELECT id FROM cz_gis_library_copy WHERE ADDRESS = ?";
-            $query = $this->db->query($sql,array($range));
-            $sql = "SELECT id FROM cz_gis_library_copy WHERE P_ID = ?";
-            $row = $query->row_array();
-            $query = $this->db->query($sql,array($row['id']));
-        }
-        else{
-            $sql = "SELECT id FROM cz_gis_library_copy WHERE P_ID in (?)";
-            $query = $this->db->query($sql,array($range));
-        }
-        $result = $query->result_array;
-        foreach ($result as $key => $value) 
-        {
-            $pid .= $value['id'].",";
-        }
-        if ($key > 0) {
-            $pid = substr($pid, 0, -1);
-            $sql = "SELECT id FROM cz_gis_library_copy WHERE P_ID IN (?)";
-            $query = $this->db->query($sql, array($pid));
-        }
-        else{
-            $pid = substr($pid, 0, -1);
-            $sql = "SELECT id FROM cz_gis_library_copy WHERE P_ID = ?";
-            $query = $this->db->query($sql, array($pid));            
-        }
-        $result = $query->result_array();
-        if (empty($result)) {
-            return $pid;
-        }
-        else{
-            return $this->get_range_child_id($pid);
-        }
-    }
 }
 ?>

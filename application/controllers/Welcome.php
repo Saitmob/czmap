@@ -159,7 +159,7 @@ class Welcome extends CI_Controller {
             $phototype = $this->input->post('phototype');
             $photourl = $this->input->post('photourl');
             $sex = $this->input->post('sex');
-            $csny = $this->input->post('csny');
+            $csny = $this->input->post('age');
             $nation = $this->input->post('nation');
             $education = $this->input->post('education');
             $company = $this->input->post('company');
@@ -167,8 +167,11 @@ class Welcome extends CI_Controller {
             $zzmm = $this->input->post('zzmm');
             $duty = $this->input->post('duty');
             $zzet = $this->input->post('zzet');
+            $phone = $this->input->post('phone');
+            $email = $this->input->post('email');
+            $rybs = $this->input->post('rybs');
             $operator = (isset($_SESSION['user_email']))?$_SESSION['user_email']:"test";
-            $data = $this->mapcase->savePersonInfo($pId,$name,$sex,$csny,$nation,$sex,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photourl,$phototype,$gis_id);
+            $data = $this->mapcase->savePersonInfo($pId,$name,$sex,$csny,$nation,$duty,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photourl,$phototype,$gis_id,$phone,$email,$rybs);
             echo $data;
         }
         else{
