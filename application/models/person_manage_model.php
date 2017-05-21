@@ -47,17 +47,17 @@ class person_manage_model extends CI_Model {
         }
         if ($range == "all") 
         {
-            $sql = "SELECT name, sex, csny, duty, address, phone  FROM person WHERE 1=1 ".$status." ORDER BY id ASC LIMIT ?,?";
+            $sql = "SELECT id, name, sex, csny, duty, address, phone, rybs  FROM person WHERE 1=1 ".$status." ORDER BY id ASC LIMIT ?,?";
             $count_sql = "SELECT count(0) as total FROM person WHERE 1=1 ".$status;
             $query = $this->db->query($sql,array($start, $per_page_num));
             $count_query = $this->db->query($count_sql);
         }
         else
         {
-            $status .= " AND a.xian = '{$range}'";
-            $sql = "SELECT c.name, c.sex, c.csny, c.duty, c.address, c.phone  FROM cz_gis_library AS a LEFT JOIN person_add_lib AS b ON a.ID = b.gis_id LEFT JOIN person AS c ON b.person_id = c.id WHERE 1 = 1 ".$status." ORDER BY c.id ASC LIMIT ?,?";
+            $status .= " AND c.xian = '{$range}'";
+            $sql = "SELECT a.id, a.name, a.sex, a.csny, a.duty, a.address, a.phone , a.rybs  FROM person AS a LEFT JOIN person_add_lib AS b ON a.ID = b.person_id LEFT JOIN cz_gis_library AS c ON b.gis_id = c.id WHERE 1 = 1 ".$status." ORDER BY c.id ASC LIMIT ?,?";
             //echo "SELECT c.name, c.sex, c.csny, c.duty, c.address, c.phone  FROM cz_gis_library_copy AS a LEFT JOIN person_add_lib AS b ON a.ID = b.gis_id LEFT JOIN person AS c ON b.person_id = c.id WHERE 1 = 1 ".$status." ORDER BY c.id ASC LIMIT 0,8";die(); 
-            $count_sql = "SELECT count(0) as total FROM cz_gis_library AS a LEFT JOIN person_add_lib AS b ON a.ID = b.gis_id LEFT JOIN person AS c ON b.person_id = c.id WHERE 1 = 1 ".$status;
+            $count_sql = "SELECT count(0) as total FROM person AS a LEFT JOIN person_add_lib AS b ON a.ID = b.person_id LEFT JOIN cz_gis_library AS c ON b.gis_id = c.id WHERE 1 = 1 ".$status;
             $query = $this->db->query($sql, array($start, $per_page_num));
             $count_query = $this->db->query($count_sql);
         }

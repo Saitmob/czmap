@@ -1,4 +1,4 @@
-var weburl = 'http://147.1.7.1/czmapcl/';
+var weburl = 'http://192.168.100.112/czmap/';
 // var weburl = 'http://qxp.tunnel.2bdata.com/czmapn/';
 // var weburl = 'http://192.168.118.68/czmapn/';
 $(function() {
@@ -18,7 +18,7 @@ function regionChange(region) {
         case '龙州县':
             region = 'cz_lz';
             break;
-        case '江洲区':
+        case '江州区':
             region = 'cz_jz';
             break;
         case '扶绥县':
@@ -40,7 +40,7 @@ function regionChange(region) {
             region = '龙州县';
             break;
         case 'cz_jz':
-            region = '江洲区';
+            region = '江州区';
             break;
         case 'cz_fs':
             region = '扶绥县';

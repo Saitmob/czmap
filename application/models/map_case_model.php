@@ -430,29 +430,43 @@ class map_case_model extends CI_Model {
     //获取个人其他信息
     public function getPersonOtherInfo($pId)
     {
-        $pId = 12;
         $sql = "SELECT photo_url, photo_type FROM person  WHERE ID = '{$pId}'";
         $query=$this->db->query($sql);
         $res = $query->row();
+        $gis_id = "";
+        $gis_name = "";
         if(!empty($res)){
+            $sql = "SELECT a.gis_id, b.xian, b.village, b.cun FROM person_add_lib AS a LEFT JOIN cz_gis_library AS b ON a.gis_id = b.id WHERE person_id = ? AND b.xian IS NOT NULL AND b.village IS NOT NULL AND b.cun IS NOT NULL";
+            $query = $this->db->query($sql, array($pId));
+            $result = $query->result_array();
+            if (!empty($result)) 
+            {
+                foreach ($result as $key => $value) {
+                    $gis_id .= $value['gis_id'].",";
+                    $gis_name .= $value['xian'].$value['village'].$value['cun'].",";
+                }
+            }
             $data = array(
             'photo'=>$res->photo_url,
-            'photo_type'=>$res->photo_type 
+            'photo_type'=>$res->photo_type,
+            'gis_id'=>$gis_id,
+            'gis_name'=>$gis_name
             );
         }
         else{
              $data = array(
             'photo'=>"",
-            'photo_type'=>"" 
+            'photo_type'=>"",
+            'gis_id'=>"",
+            'gis_name'=>""
             );           
         }
         return $data;
     }
     //保存个人信息
-    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$sex,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photo,$phototype)
+    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$sex,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photo,$phototype,$gis_id)
     {
         $pId = (empty($pId))?"":$pId;
-        $pId = 12;
         $name = (empty($name))?"":$name;
         $sex = (empty($sex))?"":$sex;
         $csny = (empty($csny))?"":$csny;
@@ -484,12 +498,53 @@ class map_case_model extends CI_Model {
             $query = $this->db->query($sql);
             $result = $this->db->insert_id();
         }else{
+
             $sql = "UPDATE person SET name='{$name}',sex='{$sex}',csny='{$csny}',nation='{$nation}',education='{$education}',company='{$company}',ndsfd='{$ndsfd}',zzmm='{$zzmm}',duty='{$duty}',zzet='{$zzet}', photo_url = '{$photo}', photo_type = '{$phototype}' WHERE ID = {$pId}";
             //echo $sql;die();
             $query = $this->db->query($sql);
-            if ($this->db->affected_rows() > 0){
-                $result=2;//更新
-            }else {
+            if ($this->db->affected_rows() > 0)
+            {
+                if (!empty($gis_id)) {
+                    if (stripos($gis_id, ",") >= 0) {
+                        $gis_id_arr = explode(",", $gis_id);
+                        $gis_id_arr = explode(",", $gis_id);
+                        foreach ($gis_id_arr as $key => $value) {
+                            $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE gis_id = ? AND person_id = ?";
+                            $query = $this->db->query($sql, array($value, $pId));
+                            $row = $query->row_array();
+                            if ($row['total'] > 0) {
+                            }
+                            else{
+                                $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
+                                $query = $this->db->query($sql,array($value));
+                                $row = $query->row_array();
+                                $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
+                                $query = $this->db->query($sql, array($value,$row['ADDRESS'],$pId));
+                            }
+                        }
+                    }
+                    else{
+                        echo "1111b1";die();
+                        $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE id = ? AND person_id = ?";
+                        $query = $this->db->query($sql, array($pId, $gis_id));
+                        $row = $query->row_array();
+                        if (row['total'] > 0) {
+                        }
+                        else{
+                            $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
+                            $query = $this->db->query($sql,array($gis_id));
+                            $row = $query->row_array();
+                            $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
+                            $query = $this->db->query($sql, array($gis_id,$sql['ADDRESS'],$pId));
+                        }                        
+                    }
+                    $result=2;//更新
+                }
+                else{
+                    $result=0;//更新失败
+                }
+            }else 
+            {
                 $result=0;//更新失败
             }          
         }

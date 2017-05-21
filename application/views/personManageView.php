@@ -70,7 +70,7 @@
 
 				<form action="" style="display:inline-block;">
 					<span class="button bg-sub button-small" style="position: relative;cursor:pointer;"><span>导入人员表</span>
-					<input id="excelFile" type="file" name="file" multiple="" data-url="<?=base_url()?>index.php/personInput/input_person" class="file-upload-btn">
+					<input id="excelFile" type="file" name="file" multiple=""  class="file-upload-btn">
 					</span>
 				</form>
 				<a href="<?=base_url()?>ces.xlsx"><span class="button bg-sub button-small" style="position: relative;cursor:pointer;"><span>模板下载</span>
@@ -184,13 +184,13 @@
 								<span class='ry-option-data'>
 								<span class='ry-option-data'>
 									<select class="input input-small input-auto editor-sex" >
-									<option value="male" selected="selected">男</option>
-									<option value="female">女</option>
+									<option value="男" selected="selected">男</option>
+									<option value="女">女</option>
 									</select>
 								</span>	
 							</div>	
 							<div class="line-div">
-								<span class='ry-option'>年龄：</span>
+								<span class='ry-option'>出生年月：</span>
 								<span class='ry-option-data'><input type="text" class="input input-small input-number editor-age input-auto" ></span>
 							</div>	
 							<div class="line-div">
@@ -212,10 +212,30 @@
 							</div>				
 						</div>
 					</li>
+<!-- 					<li>
+	<span class='ry-option'>地址：</span>
+	<span class='ry-option-data'><textarea type="text"  rows="5" class="input editor-intro" ></textarea>
+</li> -->
 					<li>
-						<span class='ry-option'>地址：</span>
-						<span class='ry-option-data'><textarea type="text"  rows="5" class="input editor-intro" ></textarea>
-</li>
+						<span class='ry-option'>民族：</span>
+						<span class='ry-option-data'><input type="text" class="input input-small editor-nation" ></span>
+					</li>
+					<li>
+						<span class='ry-option'>学历：</span>
+						<span class='ry-option-data'><input type="text" class="input input-small editor-education" ></span>
+					</li>
+					<li>
+						<span class='ry-option'>工作地点：</span>
+						<span class='ry-option-data'><input type="text" class="input input-small editor-company" ></span>
+					</li>
+					<li>
+						<span class='ry-option'>政治面貌：</span>
+						<span class='ry-option-data'><input type="text" class="input input-small editor-zzmm" ></span>
+					</li>
+					<li>
+						<span class='ry-option'>职业：</span>
+						<span class='ry-option-data'><input type="text" class="input input-small editor-duty" ></span>
+					</li>
 </ul>
 <input type="hidden"  class="ry-email" name="user-email" value="gyqinxp@gxfy.com">
 <input type="hidden" class="ry-id" name="pid">
@@ -242,7 +262,7 @@ $(function () {
     //   }
     //   console.log(val);
     // });
-    $('#fileupload').fileupload({
+/*    $('#fileupload').fileupload({
         dataType: 'json',
         acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
         add: function (e, data) {
@@ -275,8 +295,8 @@ $(function () {
                 // });
             }
         }
-    });
-    $('#excelFile').fileupload({
+    });*/
+/*    $('#excelFile').fileupload({
         acceptFileTypes: /(\.|\/)(xls|xlsx)$/i,
         add: function (e, data) {
             var allow_file_arr = ['xls','xlsx'];
@@ -302,7 +322,7 @@ $(function () {
                 layer.alert('导入失败，请检查excel文件内容格式');
             }
         }
-    });
+    });*/
 });
 </script>
 </body>

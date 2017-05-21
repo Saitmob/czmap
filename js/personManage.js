@@ -2,27 +2,23 @@ var person_list_data_model;
 $(function () {
 	person_list_data_model = $("#person-list-data").html();
 	show_list("all", "all", "", 1, 8);
-	//showList(1);
-	//show_person_list(1)
-	// searchPerson();
-	// laypage({
-	//     cont: 'my_list_page',
-	//     curr: 2,
-	//     // pages: Math.ceil(parseInt($(".content").data("total_row")) / perPageNum),
-	//     jump: function(obj, first) {
-	//         if (!first) {
-	//             showList(obj.curr);
-	//         }
-	//     }
-	// });
-	// laypage({
-	//     cont: 'my_list_page', //容器。值支持id名、原生dom对象，jquery对象,
-	//     pages: 100, //总页数
-	//     // skin: 'yahei', //加载内置皮肤，也可以直接赋值16进制颜色值，如:#c00
-	//     curr: 1,
-	//     groups: 7 //连续显示分页数
-	// });
-	// pageNum = showPapeNum();
+	$("#excelFile").click(function () {
+		console.log(1111);
+		MyUploadexl.request({
+			id: "#excelFile",
+			singleFileUploads: true,
+			postfix: 'doc,docx,xlsx,xls,png,jpg,jpeg,gif',
+			myData: { folder: 'project', 's_id': 0 }
+		}, function (data) {
+		}, function (data) {
+			if (data.result != 1) {
+				layer.msg("上传exl失败");
+			}
+			else {
+				layer.msg("上传exl成功");
+			}
+		});
+	});
 	showPersonNum();
 	//添加人员按钮
 	$('#add-person-btn').on('click', function () {
@@ -40,7 +36,10 @@ $(function () {
 	});
 	//查询
 	$('#search-person-btn').on('click', function () {
-		if (user_name == '') {
+		var range = regionChange($("#person-region-select option:selected").val());
+		var persontype = $("#person-type-select option:selected").val();
+		var name = $("#search-person-text").val();
+		if (name == '') {
 			layer.alert('查询名称不能为空');
 		} else {
 			show_list(range, persontype, name, 1, 8);
@@ -83,13 +82,13 @@ function show_list(range, persontype, name, cur_page, per_page_num)//区域，�
 			if (data.result.length > 0) {
 				$.each(data.result, function (k, v) {
 					$("#person-list-data").append(person_list_data_model);
-					console.log($(".list-tr:last").find(".list-item-name"));
-					$(".list-tr:last").find(".list-item-name").val(k);
-					$(".list-tr:last").find(".list-item-sex").val(v.sex);
-					$(".list-tr:last").find(".list-item-age").val(v.csny);
-					$(".list-tr:last").find(".list-item-duty").val(v.duty);
-					$(".list-tr:last").find(".list-item-region").val(v.address);
-					$(".list-tr:last").find(".list-item-phone").val(v.phone);
+					$(".list-tr:last").find(".ry-option-list-btn").data("id",v.id);
+					$(".list-tr:last").find(".list-item-name").html(v.name);
+					$(".list-tr:last").find(".list-item-sex").html(v.sex);
+					$(".list-tr:last").find(".list-item-age").html(v.csny);
+					$(".list-tr:last").find(".list-item-duty").html(v.rybs);
+					$(".list-tr:last").find(".list-item-region").html(v.address);
+					$(".list-tr:last").find(".list-item-phone").html(v.phone);
 				});
 				var page_num = parseInt(data.page_num);
 				laypage({
@@ -98,6 +97,9 @@ function show_list(range, persontype, name, cur_page, per_page_num)//区域，�
 					pages: Math.ceil(page_num / per_page_num),
 					jump: function (obj, first) {
 						if (!first) {
+							var range = regionChange($("#person-region-select option:selected").val());
+							var persontype = $("#person-type-select option:selected").val();
+							var name = $("#search-person-text").val();
 							show_list(range, persontype, name, obj.curr, per_page_num)
 							/*showList(obj.curr);*/
 						}
@@ -136,16 +138,16 @@ function editorPerson(ele) {
 	$('.ry-photoId').val('');
 	//编辑页赋值
 	$('.editor-name').val('');
-	$('.editor-sex').val('male');
+	$('.editor-sex').val('');
 	$('.editor-age').val('');
-	$('.editor-duty').val('陪审员');
+	$('.editor-duty').val('');
 	// $('#editor-region').val('cz_td');
 	$('.editor-phone').val('');
 	$('.editor-email').val('');
 	$('.editor-intro').val('');
 	$('.editor-region-selected-list').html('');
 
-	var pId = $(ele).parent().find('.list-item-pid').val();
+	var pId = $(ele).data("id");
 	var photoId = $(ele).parent().find('.list-item-photoId').val();
 	var gisId = $(ele).parent().find('.list-item-gisId').val();
 	var $p = $(ele).parent().parent();
@@ -170,9 +172,9 @@ function editorPerson(ele) {
 
 	showPersonInfoPanel(pId);
 	$(".layui-layer-content .editor-name").val(name);
-	$(".layui-layer-content .editor-sex").val(sex);
+	$(".layui-layer-content .editor-sex:selected").val(sex);
 	$(".layui-layer-content .editor-age").val(age);
-	$(".layui-layer-content .editor-duty").val(duty);
+	$(".layui-layer-content .editor-duty:selected").val(duty);
 	$(".layui-layer-content .editor-region").val(region);
 	$(".layui-layer-content .editor-phone").val(phone);
 	$(".layui-layer-content .editor-email").val(email);
@@ -193,6 +195,22 @@ function editorPerson(ele) {
 			$('.layui-layer-content .editor-photo').css('background-size', '100% 100%');
 			$('.layui-layer-content .editor-photo').find('img').css('width', '100%');
 			$('.layui-layer-content .editor-photo').find('img').css('height', '100%');
+			if (data.gis_id != "") {
+				$('.icon-map-marker').css('font-size', '12px');
+				$('.layui-layer-content .editor-select-region t').html('修改区域');
+				var name = data.gis_name.split(",")[0];
+				console.log(data.gis_name);
+				$('.layui-layer-content .icon-map-marker').html(name);
+				$('.layui-layer-content .icon-map-marker').data('id', data.gis_id);
+				$('.layui-layer-content .icon-map-marker').data('name', data.gis_name);
+				$('.layui-layer-content .editor-select-region').unbind();
+				$('.layui-layer-content .editor-select-region').on('mouseenter', function () {
+					layer.tips(data.gis_name, '.layui-layer-content .editor-select-region', {
+						tips: [1, '#3595CC'],
+						time: 2000
+					});
+				});
+			}
 		}
 	});
 }
@@ -270,12 +288,11 @@ function savePersonInfo() {
 }
 
 function showPersonInfoPanel(pId) {
-
 	layer.open({
 		type: 1,
 		skin: 'layui-layer-lan',
 		title: "编辑人员信息",
-		area: ['500px', '500px'], //宽高
+		area: ['500px', '600px'], //宽高
 		//content: $("#editor-panel").prop("outerHTMl"), //捕获的元素
 		content: $("#editor-panel").html(), //捕获的元素
 		success: function () {

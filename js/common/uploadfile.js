@@ -57,6 +57,66 @@
     }
 }
 
+
+ var MyUploadexl = {
+    defaults: {
+        id: '#fileupload',
+        class: '.fileupload',
+        dataType: 'json',
+        postfix: '',
+        myData: {},
+        url: weburl + 'index.php/Uploadfile/uploadexl',
+        acceptFileTypes: /(\.|\/)(gif|jpe?g|png|doc|docx|xls|rar|xlsx)$/i,
+        maxFileSize: 99 * 1024 * 1024,
+        minFileSize: 5,
+        maxNumberOfFiles: 50,
+        singleFileUploads: true,
+        messages: {
+            maxFileSize: '文件不能超过99MB',
+            minFileSize: '文件不能小于5byte',
+            acceptFileTypes: '文件类型不允许'
+        }
+    },
+    request: function (options, progressall_callback, done_callback, failCallback) {
+        var settings = $.extend(this.defaults, options);
+        $(settings.id).fileupload({
+            dataType: settings.dataType,
+            url: settings.url,
+            acceptFileTypes: settings.acceptFileTypes,
+            maxFileSize: settings.maxFileSize,
+            minFileSize: settings.minFileSize,
+            maxNumberOfFiles: settings.maxNumberOfFiles,
+            messages: settings.messages,
+            add: function (e, data) {
+                //console.log(data);
+                if (settings.postfix == "") {
+                    data.formData = settings.myData;
+                    data.submit();
+                }
+                else {
+                    if (lastname(data.originalFiles[0]['name'].toLowerCase(), settings.postfix) == 1) {
+                        data.formData = settings.myData;
+                        data.submit();
+                    }
+                    else {
+                        layer.alert("您选择的上传文件格式有误！");
+                    }
+                }
+            },
+            progressall: function (e, data) {
+                if (progressall_callback) {
+                    progressall_callback(data);
+                }
+            },
+            done: function (e, data) {
+                if (done_callback) {
+                    done_callback(data.result);
+                }
+            }
+        });
+    }
+}
+
 function lastname(name, postfix) {
     //获取欲上传的文件路径
     var filepath = name;
