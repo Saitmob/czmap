@@ -172,7 +172,8 @@ class Welcome extends CI_Controller {
             $email = $this->input->post('email');
             $rybs = $this->input->post('rybs');
             $operator = (isset($_SESSION['user_email']))?$_SESSION['user_email']:"test";
-            $data = $this->mapcase->savePersonInfo($pId,$name,$sex,$csny,$nation,$duty,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photourl,$phototype,$gis_id,$gis_name,$phone,$email,$rybs);
+            $data = $this->mapcase->savePersonInfo($pId,$name,$sex,$csny,$nation,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photourl,$phototype,$gis_id);
+
             echo $data;
         }
         else{

@@ -67,20 +67,5 @@ class person_manage_model extends CI_Model {
         return $data;
     }
 
-/*    public function query_range($range)
-    {
-        if ($range == "all") 
-        {
-            $sql = "SELECT name, sex, csny, duty, address, phone  FROM person ";
-            $query = $this->db->query($sql);
-        }
-        else
-        {
-            $sql = "SELECT c.name, c.sex, c.csny, c.duty, c.address, c.phone  FROM cz_gis_library_copy AS a LEFT JOIN person_add_lib AS b ON a.ID = b.gis_id LEFT JOIN person AS c ON b.person_id = c.id WHERE a.ADDRESS = ?";
-            $query = $this->db->query($sql, array($range));
-        }
-        $result = $query->result_array();
-        return $result;
-    }*/
 }
 ?>

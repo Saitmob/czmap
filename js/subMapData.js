@@ -37,7 +37,6 @@ function createMap(i) {
 	// map.addEventListener("click", function(e) {
 	//     alert(e.point.lng + ", " + e.point.lat);
 	// });
-	console.log(region_address);
 	var point = new BMap.Point(region_address.REGION_POINT.x, region_address.REGION_POINT.y); //定义一个中心点坐标
 	map.centerAndZoom(point, 11); //设定地图的中心点和坐标并将地图显示在地图容器中
 	window.map = map; //将map变量存储在全局
@@ -97,14 +96,26 @@ function creatDataInfo() {
 		});
 	}
 	var points = [];
+	var points_str = [];
 	var noPoint = '';
 	console.log(region_arr);
 	if (region_arr.length > 0) { //如果地点大于0
 		$.each(region_arr, function (k, v) {
-			if (v.POINT.x != undefined && v.POINT.y != undefined) {
+			if (v.POINT.x != undefined&&v.POINT.x !=0 && v.POINT.y != undefined&&v.POINT.y != 0) {
+				// xx先判断坐标是否重复，重复则做偏移处理
 				var point = new BMap.Point(v.POINT.x, v.POINT.y);
+				var point_str = v.POINT.x+','+v.POINT.y;
+				console.log(point_str);
+				if($.inArray(point_str,points_str)!=-1){
+					point = new BMap.Point(parseFloat(v.POINT.x)+0.0007, parseFloat(v.POINT.y)+0.0003);
+					console.log(point);
+					var x = parseFloat(v.POINT.x)+0.0007;
+					var y = parseFloat(v.POINT.y)+0.0003;
+					point_str = x+0.0007+','+y;
+				}
 				points.push(point);
-				var content = v.BZ_INFO;
+				points_str.push(point_str);
+				var content = "地址："+v.ADD_NAME+"<br>"+v.BZ_INFO+v.BZ_BOTTOM;
 				var iconUrl = '';
 				var size = new BMap.Size(20, 24);
 				if (v.ADD_TYPE == '原告') {
@@ -156,6 +167,7 @@ function creatDataInfo() {
 		if (noPoint.length > 0) {
 			layer.alert(noPoint + '无法定位到地图中');
 		}
+		console.log(points_str);
 	} else {
 		layer.alert('没有地点可展示');
 	}

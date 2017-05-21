@@ -34,7 +34,7 @@ class RegionMatch extends CI_Model {
     public function nameToPoint($name,$l=2)
     {
         $name = $this->pp($name,$l);
-        $sql = "SELECT POINT_X,POINT_Y FROM cz_gis_library_copy WHERE ADDRESS = '{$name}'";
+        $sql = "SELECT POINT_X,POINT_Y FROM cz_gis_library WHERE ADDRESS = '{$name}'";
         $query = $this->db->query($sql);
         $res=$query->row();
         // var_dump($sql);
@@ -250,8 +250,8 @@ public function getPointById($gisId)
         $sql = "SELECT POINT_X,POINT_Y FROM cz_gis_library_copy WHERE ID={$gisId}";
         $query = $this->db->query($sql);
         $res=$query->row();
-        $x=($res->POINT_X)?$res->POINT_X:'';
-        $y=($res->POINT_Y)?$res->POINT_Y:'';
+        $x=(isset($res->POINT_X))?$res->POINT_X:'';
+        $y=(isset($res->POINT_Y))?$res->POINT_Y:'';
         $data = array(
         'x'=>$x,
         'y'=>$y,

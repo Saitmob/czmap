@@ -172,6 +172,9 @@ class map_case_model extends CI_Model {
         $res = $query->result();
         $aj_num = count($res);//案件数
         $ADDRESS=array();
+        // 所有坐标数组，用于判断是否存在相同坐标，存在则内容显示在同一个坐标上
+        $points = array();
+        $reduce_num = 0;
         foreach ($res as $key => $value) {
             $aj_id = $value->aj_id;
             // 当事人
@@ -182,9 +185,20 @@ class map_case_model extends CI_Model {
                 $i=1;
                 foreach ($dsr as $k => $val) {
                     // $point = $this->get_point();//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
+                    $bz_info='';
                     if((int)$val->gis_id!=0)
                     {
                         $point = $this->regionmatch->getPointById($val->gis_id);
+                        // if(in_array($point,$points))
+                        // {
+                        //     $p_key = array_search($point,$points);
+                        //     $bz_info .= $ADDRESS[$p_key]['BZ_INFO'];
+                        //     $ADDRESS[$p_key-$reduce_num]['BZ_BOTTOM']='';
+                        //     array_splice($points,$p_key,1);
+                        //     $reduce_num++;
+                        //     // array_splice($ADDRESS,$p_key,1);
+                        // }
+                        $points[] = $point;
                     }else{
                         $point = array();
                     }
@@ -221,12 +235,16 @@ class map_case_model extends CI_Model {
                     // $tjy = (empty($person_arr['tjy']))?'无':$person_arr['tjystr'];
                     // $wgy = (empty($person_arr['wgy']))?'无':$person_arr['wgystr'];
                     $ssdw=$val->ssdw;
-                    
+                    $xb = (isset($val->xb))?$val->xb:'性别：无';
+                    $mz = (isset($val->mz))?$val->mz:'民族：无';
+                    $bz_info .= $i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>当事人：'.$val->xm.'('.$val->ssdw.')、'.$xb.'、'.$mz.'、身份证：'.$val->sfzh.'、联系电话：'.$val->lxdh."<br>";
                     $ADDRESS[]=array(
                     'ADD_TYPE'=>$ssdw,
                     'POINT'=>$point,
                     'NAME'=>$val->xm,
-                    'BZ_INFO'=>"地址：".$val->xxdz."<br>".$i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>当事人：'.$val->xm.'('.$val->ssdw.')、'.$val->xb.'、'.$val->mz.'、身份证：'.$val->sfzh.'、联系电话：'.$val->lxdh."<br><div style='position:absolute;bottom:0px;height：80px;width:80%;padding-top:10px;border-top:1px solid;'>法律顾问：".$tjy."；网格员：".$wgy."</div>"
+                    'ADD_NAME'=>$val->xxdz,
+                    'BZ_INFO'=>$bz_info,
+                    'BZ_BOTTOM'=>"<div style='position:absolute;bottom:0px;height：80px;width:80%;padding-top:10px;border-top:1px solid;'>法律顾问：".$tjy."；网格员：".$wgy."</div>"
                     );
                     $i++;
                 }
@@ -476,7 +494,7 @@ class map_case_model extends CI_Model {
         return $data;
     }
     //保存个人信息
-    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$duty,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photo,$phototype,$gis_id,$gis_name,$phone,$email,$rybs)
+    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photo,$phototype,$gis_id)
     {
         $result=0;//插入
         // if (!empty($photo)) {
