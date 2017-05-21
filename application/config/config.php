@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 // $config['base_url'] = 'http://192.168.118.68/czmapn/';
-$config['base_url'] = 'http://127.0.0.1/czmapcl/';
+$config['base_url'] = 'http://147.1.7.45/czmapgit/';
 // $config['base_url'] = 'http://qxp.tunnel.2bdata.com/czmapn/';
 
 /*
