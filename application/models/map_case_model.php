@@ -5,6 +5,7 @@ class map_case_model extends CI_Model {
     public function __construct()
     {
         parent::__construct();
+        session_start();
         $this->load->database();
         $this->ajxq=$this->load->database('ajxq',true);
         $this->load->library('regionmatch');
@@ -429,42 +430,123 @@ class map_case_model extends CI_Model {
     //获取个人其他信息
     public function getPersonOtherInfo($pId)
     {
-        $sql = "SELECT cz_person.USER_INTRO,user_files.FILE_PATH FROM cz_person LEFT JOIN user_files ON cz_person.PHOTO_ID = user_files.ID WHERE cz_person.ID = '{$pId}'";
+        $sql = "SELECT photo_url, photo_type FROM person  WHERE ID = '{$pId}'";
         $query=$this->db->query($sql);
         $res = $query->row();
-        $data = array(
-        'photo'=>$res->FILE_PATH,
-        'user_intro'=>$res->USER_INTRO
-        );
+        $gis_id = "";
+        $gis_name = "";
+        if(!empty($res)){
+            $sql = "SELECT a.gis_id, b.xian, b.village, b.cun FROM person_add_lib AS a LEFT JOIN cz_gis_library AS b ON a.gis_id = b.id WHERE person_id = ? AND b.xian IS NOT NULL AND b.village IS NOT NULL AND b.cun IS NOT NULL";
+            $query = $this->db->query($sql, array($pId));
+            $result = $query->result_array();
+            if (!empty($result)) 
+            {
+                foreach ($result as $key => $value) {
+                    $gis_id .= $value['gis_id'].",";
+                    $gis_name .= $value['xian'].$value['village'].$value['cun'].",";
+                }
+            }
+            $data = array(
+            'photo'=>$res->photo_url,
+            'photo_type'=>$res->photo_type,
+            'gis_id'=>$gis_id,
+            'gis_name'=>$gis_name
+            );
+        }
+        else{
+             $data = array(
+            'photo'=>"",
+            'photo_type'=>"",
+            'gis_id'=>"",
+            'gis_name'=>""
+            );           
+        }
         return $data;
     }
     //保存个人信息
-    public function savePersonInfo($pId,$email='',$r_id,$name,$photoId=0,$sex,$age,$duty,$phone=0,$intro='',$operator='')
+    public function savePersonInfo($pId,$name,$sex,$csny,$nation,$sex,$education,$company,$ndsfd,$zzmm,$duty,$zzet,$photo,$phototype,$gis_id)
     {
-        if($phone=='')
-        {
-            $phone=0;
-        }
-        if($photoId=='')
-        {
-            $photoId=0;
-        }
-        if($age=='')
-        {
-            $age=0;
-        }
+        $pId = (empty($pId))?"":$pId;
+        $name = (empty($name))?"":$name;
+        $sex = (empty($sex))?"":$sex;
+        $csny = (empty($csny))?"":$csny;
+        $nation = (empty($nation))?"":$nation;
+        $sex = (empty($sex))?"":$sex;
+        $education = (empty($education))?"":$education;
+        $company = (empty($company))?"":$company;
+        $ndsfd = (empty($ndsfd))?"":$ndsfd;
+        $zzmm = (empty($zzmm))?"":$zzmm;
+        $duty = (empty($duty))?"":$duty;
+        $zzet = (empty($zzet))?"":$zzet;
+        $photo = (empty($photo))?"":$photo;
+        $phototype = (empty($phototype))?"":$phototype;
         $result=0;//插入
-        // var_dump($pId);die();
+        // if (!empty($photo)) {
+        //     //echo $photo;
+        //     $picturedata = substr($photo, strpos($photo,",")+1, strlen($photo));
+        //     //echo $picturedata;
+        //     $picturedata = base64_decode($picturedata);
+        //     $picturedata = addslashes($picturedata);
+        // }
+        // else{
+        //     $picturedata = "";
+        // }
         if(empty($pId))
         {
             // var_dump($phone);die();
-            $sql = "INSERT INTO cz_person (USER_EMAIL,GIS_ID,USER_NAME,PHOTO_ID,USER_SEX,USER_AGE,USER_DUTY,USER_PHONE,USER_INTRO,OPERATOR) VALUES ('{$email}','{$r_id}','{$name}',{$photoId},'{$sex}',{$age},'{$duty}',{$phone},'{$intro}','{$operator}')";
+            $sql = "INSERT INTO person (name,sex,csny,nation,sex,education,company,ndsfd,zzmm,duty,zzet,photo_url,photo_type) VALUES ('{$name}','{$sex}','{$csny}',{$nation},'{$education}',{$company},'{$ndsfd}',{$zzmm},'{$duty}','{$zzet}','{$phone}','{$phototype}')";
             $query = $this->db->query($sql);
             $result = $this->db->insert_id();
         }else{
-            $sql = "UPDATE cz_person SET USER_EMAIL='{$email}',GIS_ID='{$r_id}',USER_NAME='{$name}',PHOTO_ID={$photoId},USER_SEX='{$sex}',USER_AGE={$age},USER_DUTY='{$duty}',USER_PHONE={$phone},USER_INTRO='{$intro}',OPERATOR='{$operator}' WHERE ID = {$pId}";
+
+            $sql = "UPDATE person SET name='{$name}',sex='{$sex}',csny='{$csny}',nation='{$nation}',education='{$education}',company='{$company}',ndsfd='{$ndsfd}',zzmm='{$zzmm}',duty='{$duty}',zzet='{$zzet}', photo_url = '{$photo}', photo_type = '{$phototype}' WHERE ID = {$pId}";
+            //echo $sql;die();
             $query = $this->db->query($sql);
-            $result=2;//更新
+            if ($this->db->affected_rows() > 0)
+            {
+                if (!empty($gis_id)) {
+                    if (stripos($gis_id, ",") >= 0) {
+                        $gis_id_arr = explode(",", $gis_id);
+                        $gis_id_arr = explode(",", $gis_id);
+                        foreach ($gis_id_arr as $key => $value) {
+                            $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE gis_id = ? AND person_id = ?";
+                            $query = $this->db->query($sql, array($value, $pId));
+                            $row = $query->row_array();
+                            if ($row['total'] > 0) {
+                            }
+                            else{
+                                $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
+                                $query = $this->db->query($sql,array($value));
+                                $row = $query->row_array();
+                                $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
+                                $query = $this->db->query($sql, array($value,$row['ADDRESS'],$pId));
+                            }
+                        }
+                    }
+                    else{
+                        echo "1111b1";die();
+                        $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE id = ? AND person_id = ?";
+                        $query = $this->db->query($sql, array($pId, $gis_id));
+                        $row = $query->row_array();
+                        if (row['total'] > 0) {
+                        }
+                        else{
+                            $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
+                            $query = $this->db->query($sql,array($gis_id));
+                            $row = $query->row_array();
+                            $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
+                            $query = $this->db->query($sql, array($gis_id,$sql['ADDRESS'],$pId));
+                        }                        
+                    }
+                    $result=2;//更新
+                }
+                else{
+                    $result=0;//更新失败
+                }
+            }else 
+            {
+                $result=0;//更新失败
+            }          
         }
         if($query==0||$query==false)
         {
@@ -475,7 +557,7 @@ class map_case_model extends CI_Model {
     //删除人员
     public function deletePerson($id)
     {
-        $sql = "DELETE FROM cz_person WHERE ID={$id}";
+        $sql = "DELETE FROM person WHERE ID={$id}";
         $query = $this->db->query($sql);
         return $query;
     }

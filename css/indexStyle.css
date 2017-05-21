@@ -398,7 +398,7 @@ b {
 }
 
 .person-list {
-    width: 74%;
+    width: 100%;
     display: inline-block;
     vertical-align: top;
 }
@@ -440,3 +440,27 @@ b {
 
 
 /*以上为旧样式*/
+.edit_right{
+    float: right;
+}
+
+.edit_left{
+    float: left;
+}
+
+.line-div{
+    display: block;
+    margin: 10px;
+}
+
+.layui-layer-content .editor-panel-ul li:first-child{
+    min-height: 240px;
+}
+
+.icon-map-marker{
+    font-size: 16px;
+    width: 20px;
+    margin-right: 10px;
+    border-right: 1px dashed #fff;
+    padding-right: 10px;
+}
