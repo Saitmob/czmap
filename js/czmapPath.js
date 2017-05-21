@@ -1,4 +1,4 @@
-﻿
+
 var china = [];
 
 function paintMap(R) {
