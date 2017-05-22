@@ -1,5 +1,6 @@
 $(function () {
-	  // 获取首页头部各个数据
+
+	// 获取首页头部各个数据
 	get_index_all_num();
 	//获取地图相关案件数据
 	// getregion_tc();
@@ -174,7 +175,7 @@ function cz_map() {
 // 	});
 // }
 // 案件展示地图
-function show_map(aj_type,aj_id,aj_bs) {
+function show_map(aj_type, aj_id, aj_bs) {
 	$('#map1_is_show').val('0');
 	$('#map2_is_show').val('1');
 	var left = $('#aj_or_map_panel').outerWidth();
@@ -255,7 +256,7 @@ function show_map(aj_type,aj_id,aj_bs) {
 		url: weburl + 'index.php/case_data/get_case_base_data',
 		data: {
 			aj_type: aj_type,
-			aj_id:aj_id,
+			aj_id: aj_id,
 			ajbs: aj_bs
 		},
 		dataType: 'json',
@@ -314,8 +315,18 @@ function show_map_box() {
 	// console.log(r_id);
 	var fjm = $('#current_fjm').val();
 	$('#map-box-court-name').html(regionChange(r_id));
+	var index = layer.load(1, {
+		shade: [0.5, '#000'] //0.1透明度的白色背景
+	});
+	console.log('show_map'+index);
 	getregion_data(fjm); //获取该区域案件信息
-	initMap(fjm, 1); //初始化第一个地图
+	$.when(getregion_data(fjm)).done(function (data) {
+		console.log(data);
+		region_address = data;
+		layer.close(index);
+		initMap(fjm, 1); //初始化第一个地图
+	});
+	
 }
 
 // 展示案件列表
@@ -340,7 +351,7 @@ function show_case_list(page, fjm, case_type) {
 			var i = 1;
 			$.each(data, function (k, v) {
 				var ajType = getAjType(v.ah)
-				str += '<tr><td>' + i + '</td><td>' + v.ah + '</td><td>' + ((v.ajzt == undefined || v.ajzt == '') ? '未结' : v.ajzt) + '</td><td>' + v.larq + '</td><td><button class="button button--rayen button--border-medium button--text-thin button--size-s button--inverted" data-text="地图" onclick="getRdataById(\'' + fjm + '\',\'' + ajType + '\',\'' + v.aj_id + '\');initMap(\'' + fjm + '\',2);show_map(\'' + ajType + '\',\'' +v.aj_id+"','"+ v.ajbs + '\');"><span>地图</span></button></td></tr>';
+				str += '<tr><td>' + i + '</td><td>' + v.ah + '</td><td>' + ((v.ajzt == undefined || v.ajzt == '') ? '未结' : v.ajzt) + '</td><td>' + v.larq + '</td><td><button class="button button--rayen button--border-medium button--text-thin button--size-s button--inverted" data-text="地图" onclick="getRdataById(\'' + fjm + '\',\'' + ajType + '\',\'' + v.aj_id + '\');initMap(\'' + fjm + '\',2);show_map(\'' + ajType + '\',\'' + v.aj_id + "','" + v.ajbs + '\');"><span>地图</span></button></td></tr>';
 				i++;
 			});
 			$('#index-case-list').html(str);
@@ -538,8 +549,8 @@ function get_index_all_num() {
 		type: 'post',
 		url: weburl + 'index.php/welcome/getBaseData',
 		dataType: 'json',
-		data:{
-			type:'all'
+		data: {
+			type: 'all'
 		},
 		success: function (data) {
 			$('#index_all_num_aj').html(data.AJ_NUM);

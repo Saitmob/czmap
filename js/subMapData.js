@@ -1,6 +1,6 @@
 function initMap(fjm, i) {
 	if (i == 1) { //“地图”选项卡下的地图
-		getregion_data(fjm); //获取该区域案件信息
+		// getregion_data(fjm); //获取该区域案件信息
 		map_box_aj_num();
 		set_map_box_dsrnum();
 	}
@@ -105,10 +105,8 @@ function creatDataInfo() {
 				// xx先判断坐标是否重复，重复则做偏移处理
 				var point = new BMap.Point(v.POINT.x, v.POINT.y);
 				var point_str = v.POINT.x+','+v.POINT.y;
-				console.log(point_str);
 				if($.inArray(point_str,points_str)!=-1){
 					point = new BMap.Point(parseFloat(v.POINT.x)+0.0007, parseFloat(v.POINT.y)+0.0003);
-					console.log(point);
 					var x = parseFloat(v.POINT.x)+0.0007;
 					var y = parseFloat(v.POINT.y)+0.0003;
 					point_str = x+0.0007+','+y;

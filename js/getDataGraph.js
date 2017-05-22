@@ -1,3 +1,6 @@
+$(function () {
+	
+})
 //获取地图区域案件数量
 var regionJsonObj = {};
 
@@ -42,6 +45,11 @@ var region_address = {}; //该地区所有未结案件详细信息，包含地�
 //     });
 // }
 function getregion_data(fjm) {
+	// var index = layer.load(0, {
+	// 	shade: false
+	// }); //0代表加载的风格，支持0-2
+	var deferred = $.Deferred();
+	// loading层
 	$.ajax({
 		type: 'post',
 		url: weburl + 'index.php/welcome/getOneRData',
@@ -49,26 +57,33 @@ function getregion_data(fjm) {
 			'fjm': fjm
 		},
 		dataType: 'json',
-		async: false, //设置为同步操作就可以给全局变量赋值成功
+		// async: false, //设置为同步操作就可以给全局变量赋值成功
 		success: function (data) {
-			// region_data = data.region_data;
-			// region_point = data.point;
-			region_address = data;
+			deferred.resolve(data);
+			// var time = new Date().getTime();
+			// console.log(time);
+			// // region_data = data.region_data;
+			// // region_point = data.point;
+			// console.log(i);
+			// region_address = data;
 			// region_repeat_data = data.repeat_region_data;
 		},
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
 			console.log(XMLHttpRequest + ';' + errorThrown);
 		}
 	});
+	return deferred.promise();
+	// setTimeout(layer.close(i),2000);
+	// var t=setTimeout("layer.closeAll()",2000);
 }
 // getregion_data('K00');
 
-function getRdataById(fjm,aj_type, aj_id) {
+function getRdataById(fjm, aj_type, aj_id) {
 	$.ajax({
 		type: 'post',
 		url: weburl + 'index.php/welcome/getRdataById',
 		data: {
-			'fjm':fjm,
+			'fjm': fjm,
 			'aj_type': aj_type,
 			'aj_id': aj_id
 		},
@@ -121,16 +136,15 @@ function get_sp_zx_num() {
 		success: function (data) {
 			sp_zx_obj = data;
 			//区域案件数对象
-            regionJsonObj.cz_jz=0;
+			regionJsonObj.cz_jz = 0;
 			$.each(data, function (k, v) {
-				if(k!='K60')
-                {
-                    regionJsonObj[fjmToRid(k)] = v.sp; 
-                    regionJsonObj[fjmToRid(k)] += v.zx; 
-                }else{
-                    regionJsonObj.cz_jz += v.sp;
-                    regionJsonObj.cz_jz += v.zx;
-                }
+				if (k != 'K60') {
+					regionJsonObj[fjmToRid(k)] = v.sp;
+					regionJsonObj[fjmToRid(k)] += v.zx;
+				} else {
+					regionJsonObj.cz_jz += v.sp;
+					regionJsonObj.cz_jz += v.zx;
+				}
 			});
 
 			// console.log(regionJsonObj);
