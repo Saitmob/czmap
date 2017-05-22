@@ -41,8 +41,16 @@ class Welcome extends CI_Controller {
     public function index()
     {
         // $data = $this->mapcase->getCaseNum();
-        $data = $this->mapcase->getBaseData();
-        $this->load->view('index',$data);
+        $this->load->view('index');
+    }
+    public function getBaseData()
+    {
+        $type = $this->input->post('type');
+        if(!empty($type))
+        {
+            $data = $this->mapcase->getBaseData($type);
+            echo json_encode($data);
+        }
     }
     // public function baiduMap($r_id)
     // {

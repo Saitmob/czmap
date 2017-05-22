@@ -10,33 +10,34 @@ class case_data_model extends CI_Model {
         $this->load->library('regionmatch');
     }
     
-    public function get_case_base_data($aj_type,$aj_id)
+    public function get_case_base_data($aj_type,$aj_id,$ajbs)
     {
         $add_num=0;
         $add_dsr_num = 0;
         $add_cc_num = 0;
         $hytcy_name = array();
         $data = array();
-        $sql = "SELECT * FROM {$aj_type}_ajxx WHERE aj_id = {$aj_id}";
+        $sql = "SELECT * FROM {$aj_type}_ajxx WHERE aj_id = '{$aj_id}'";
         $query = $this->ajxx->query($sql);
         $res1 = $query->row();
         // 当事人
-        $sql = "SELECT * FROM {$aj_type}_dsr WHERE aj_id = {$aj_id}";
+        $sql = "SELECT * FROM {$aj_type}_dsr WHERE aj_id = '{$aj_id}'";
         $query = $this->ajxx->query($sql);
         $res2 = $query->result();
         $add_dsr_num=count($res2);
         // 财产
-        $sql = "SELECT * FROM {$aj_type}_ccszd WHERE aj_id = {$aj_id}";
+        $sql = "SELECT * FROM {$aj_type}_ccszd WHERE aj_id = '{$aj_id}'";
         $query = $this->ajxx->query($sql);
         $res3 = $query->result();
         $add_cc_num=count($res3);
         $add_num = $add_dsr_num+$add_cc_num;
         // 合议庭成员
-        $sql = "SELECT xm,jsmc FROM {$aj_type}_hytcy WHERE aj_id = {$aj_id}";
+        $sql = "SELECT xm,jsmc FROM {$aj_type}_hytcy WHERE ajbs = '{$ajbs}'";
         $query = $this->ajxx->query($sql);
         $res4 = $query->result();
         foreach ($res4 as $key => $value) {
-            $hytcy_name[] = $value->xm."（".$value->jsmc."）";
+            $jsmc = (isset($value->jsmc))?("（".$value->jsmc."）"):'';
+            $hytcy_name[] = $value->xm;
         }
         $hytcy_name = implode('、',$hytcy_name);
         $bdje = substr($res1->bdje,0,-4);

@@ -25,9 +25,9 @@ $(function () {
 		addPersonClick();
 	});
 	//选择所属区域
-	$('.editor-select-region').on('click', function () {
-		selectRegion();
-	});
+	// $('.editor-select-region').on('click', function () {
+	// 	selectRegion();
+	// });
 	//保存人员信息
 	$('.ry-save-btn').on('click', function () {
 		savePersonInfo();
@@ -39,7 +39,7 @@ $(function () {
 		var persontype = $("#person-type-select option:selected").val();
 		var name = $("#search-person-text").val();
 		if (name == '') {
-			layer.alert('查询名称不能为空');
+			show_list("all", "all", "", 1, 8);
 		} else {
 			show_list(range, persontype, name, 1, 8);
 		}
@@ -90,6 +90,7 @@ function show_list(range, persontype, name, cur_page, per_page_num)//区域，�
 					$(".list-tr:last").find(".list-item-duty").html(v.rybs);
 					$(".list-tr:last").find(".list-item-region").html(v.address);
 					$(".list-tr:last").find(".list-item-phone").html(v.phone);
+					$(".list-tr:last").find(".bg-red").attr("onClick","deletePerson("+v.id+")");
 				});
 				var page_num = parseInt(data.page_num);
 				laypage({
@@ -114,6 +115,12 @@ function show_list(range, persontype, name, cur_page, per_page_num)//区域，�
 	});
 }
 
+function chooseregion(){
+	$('.layui-layer-content .icon-map-marker').data('id', '');
+	$('.layui-layer-content .icon-map-marker').data('name', '');
+	selectRegion(true, changeRangeText);
+}
+
 function deletePerson(id) {
 	layer.confirm('是否确认删除该人员', function () {
 		$.ajax({
@@ -125,6 +132,7 @@ function deletePerson(id) {
 			success: function (data) {
 				if (data == 1) {
 					layer.alert('删除成功');
+					show_list("all", "all", "", 1, 8);
 				} else {
 					layer.alert('删除失败');
 				}
@@ -159,6 +167,7 @@ function editorPerson(ele) {
 		region = $p.find('.list-item-region').text(),
 		phone = $p.find('.list-item-phone').text(),
 		email = $p.find('.list-item-email').text();
+		console.log(sex);
 	// region = regionChange(region);
 	switch (sex) {
 		case '男':
@@ -173,9 +182,9 @@ function editorPerson(ele) {
 
 	showPersonInfoPanel(pId);
 	$(".layui-layer-content .editor-name").val(name);
-	$(".layui-layer-content .editor-sex:selected").val(sex);
+	$(".layui-layer-content .editor-sex").val(sex);
 	$(".layui-layer-content .editor-age").val(age);
-	$(".layui-layer-content .editor-rybs:selected").val(duty);
+	$(".layui-layer-content .editor-rybs").val(duty);
 	$(".layui-layer-content .editor-region").val(region);
 	$(".layui-layer-content .editor-phone").val(phone);
 	$(".layui-layer-content .editor-email").val(email);
@@ -214,12 +223,12 @@ function editorPerson(ele) {
 				$('.layui-layer-content .icon-map-marker').data('id', data.gis_id);
 				$('.layui-layer-content .icon-map-marker').data('name', data.gis_name);
 				$('.layui-layer-content .editor-select-region').unbind();
-				$('.editor-select-region').on('click', function () {
-					$('.layui-layer-content .editor-select-region').unbind();
-					$('.layui-layer-content .icon-map-marker').data('id', "");
-					$('.layui-layer-content .icon-map-marker').data('name', "");	
-					selectRegion(true, changeRangeText);
-				});
+				// $('.editor-select-region').on('click', function () {
+				// 	$('.layui-layer-content .editor-select-region').unbind();
+				// 	$('.layui-layer-content .icon-map-marker').data('id', "");
+				// 	$('.layui-layer-content .icon-map-marker').data('name', "");	
+				// 	selectRegion(true, changeRangeText);
+				// });
 				$('.layui-layer-content .editor-select-region').on('mouseenter', function () {
 					layer.tips(data.gis_name, '.layui-layer-content .editor-select-region', {
 						tips: [1, '#3595CC'],
@@ -243,10 +252,10 @@ function showPhoto(file_path) {
 function savePersonInfo() {
 	var name = $('.layui-layer-content .editor-name').val(),
 		email = $('.layui-layer-content .editor-email').val(),
-		sex = $('.layui-layer-content .editor-sex option:selected').val(),
+		sex = $('.layui-layer-content .editor-sex').val(),
 		age = $('.layui-layer-content .editor-age').val(),
 		duty = $('.layui-layer-content .editor-duty').val(),
-		rybs = $('.layui-layer-content .editor-rybs option:selected').val(),
+		rybs = $('.layui-layer-content .editor-rybs').val(),
 		phone = $('.layui-layer-content .editor-phone').val();
 		console.log(rybs);
 	var regionArr = [];
@@ -302,8 +311,10 @@ function savePersonInfo() {
 				layer.msg('插入成功');
 				$('#ry-id').val(data),
 					show_list("all", "all", "", 1, 8);
+					layer.closeAll();
 			} else if (data == 2) {
 				layer.msg('修改成功');
+				show_list("all", "all", "", 1, 8);
 				layer.closeAll();
 			} else {
 				layer.msg('操作失败');
@@ -318,7 +329,7 @@ function showPersonInfoPanel(pId) {
 		type: 1,
 		skin: 'layui-layer-lan',
 		title: "编辑人员信息",
-		area: ['500px', '600px'], //宽高
+		area: ['600px', '600px'], //宽高
 		//content: $("#editor-panel").prop("outerHTMl"), //捕获的元素
 		content: $("#editor-panel").html(), //捕获的元素
 		success: function () {
@@ -327,10 +338,10 @@ function showPersonInfoPanel(pId) {
 				savePersonInfo();
 				return false; //防止提交表单
 			});
-			$("body").off('click', '.editor-select-region');
-			$(".editor-select-region").click(function () {
-				selectRegion(true, changeRangeText);
-			});
+			//$("body").off('click', '.editor-select-region');
+			// $(".editor-select-region").click(function () {
+			// 	selectRegion(true, changeRangeText);
+			// });
 			$(".layui-layer-content .file-upload-btn").click(function () {
 				MyUpload.request({
 					class: ".layui-layer-content .file-upload-btn",
@@ -375,11 +386,11 @@ function changeRangeText(id, name) {
 	$('.layui-layer-content .icon-map-marker').data('id', idstring);
 	$('.layui-layer-content .icon-map-marker').data('name', namestring);
 	$('.layui-layer-content .editor-select-region').unbind();
-	$('.editor-select-region').on('click', function () {
-		$('.layui-layer-content .icon-map-marker').data('id', '');
-		$('.layui-layer-content .icon-map-marker').data('name', '');
-		selectRegion(true, changeRangeText);
-	});
+	// $('.editor-select-region').on('click', function () {
+	// 	$('.layui-layer-content .icon-map-marker').data('id', '');
+	// 	$('.layui-layer-content .icon-map-marker').data('name', '');
+	// 	//selectRegion(true, changeRangeText);
+	// });
 	$('.layui-layer-content .editor-select-region').on('mouseenter', function () {
 		layer.tips(namestring, '.layui-layer-content .editor-select-region', {
 			tips: [1, '#3595CC'],

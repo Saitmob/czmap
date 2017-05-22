@@ -51,8 +51,8 @@ function setMapEvent() {
 	map.enableKeyboard(); //启用键盘上下左右键移动地图
 }
 var opts = {
-	width: 600, // 信息窗口宽度
-	height: 240, // 信息窗口高度
+	width: 580, // 信息窗口宽度
+	height: 160, // 信息窗口高度
 	title: "<font color='red'>案件信息</font>", // 信息窗口标题
 	enableMessage: true, //设置允许信息窗发送短息
 	message: "亲耐滴，晚上一起吃个饭吧？戳下面的链接看下地址喔~"
@@ -151,7 +151,7 @@ function creatDataInfo() {
 					offset: new BMap.Size(20, -15)
 				}); //offset设置偏移量
 				marker.setLabel(label);
-			} else {
+			} else if(v.ADD_NAME!=null) {
 				noPoint += v.ADD_NAME + '、';
 
 			}

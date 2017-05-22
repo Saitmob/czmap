@@ -174,7 +174,7 @@ public function getTWByGis($gis_id)
 {
     if(!empty($gis_id)&&$gis_id!=0)
     {
-        $sql = "SELECT person_id from person_add_lib where gis_id=".$gis_id;
+        $sql = "SELECT person_id from person_add_lib where gis_id=".$gis_id." GROUP BY person_id";
         $query = $this->db->query($sql);
         $person_arr = $query->result();
         $tjyArr=array();
@@ -190,12 +190,12 @@ public function getTWByGis($gis_id)
             {
                 if($res->rybs=='法律顾问')
                 {
-                    $tjyArr['name'][]=$res->name;
-                    $tjyArr['id'][]=$res->id;
+                    $tjyArr['name'][$res->id]=$res->name;
+                    $tjyArr['id'][$res->id]=$res->id;
                 }elseif($res->rybs=='网格员')
                 {
-                    $wgyArr['name'][]=$res->name;
-                    $wgyArr['id'][]=$res->id;
+                    $wgyArr['name'][$res->id]=$res->name;
+                    $wgyArr['id'][$res->id]=$res->id;
                 }
             }
             

@@ -56,7 +56,12 @@ function selectRegion(multiple, callbackFun) {
             layer.close(i);
         },
         end: function() {
-
+            // $('.editor-select-region').on('click', function () {
+            //     $('.layui-layer-content .editor-select-region').unbind();
+            //     $('.layui-layer-content .icon-map-marker').data('id', "");
+            //     $('.layui-layer-content .icon-map-marker').data('name', "");    
+            //     selectRegion(true, changeRangeText);
+            // });
         }
     });
     //得到节点信息

@@ -55,11 +55,11 @@
     <div class="cz_or_unthis" data-toolbar="transport-options" data-toolbar-animation="standard">
       <h3 class="active-aj-num">崇左地区法院数：<span class="aj-num">8</span> </h3>
       <h3>法官人数：<span class="aj-num" >201</span> </h3>
-      <h3>正在审理案件：<span class="aj-num"><?=$AJ_NUM?></span> </h3>
-      <h3>地点数：<span class="aj-num"><?=$AJ_P_NUM?></span> </h3>
+      <h3>正在审理案件：<span class="aj-num" id="index_all_num_aj"></span> </h3>
+      <h3>地点数：<span class="aj-num" id="index_all_num_add"></span> </h3>
 
       <div style="position:absolute;width: 380px;height: 40px;background-color: rgba(0,0,0,0.4);line-height:40px;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;left: 50%;margin-left: -410px;"><span style="font-size:13px;margin-right:10px;"></span> 区/县：<span class="yj-num">7</span>&nbsp;&nbsp;乡/镇：<span class="yj-num">79</span>&nbsp;&nbsp;村/社区：<span class="yj-num">829</span> </div>
-      <div style="position:absolute;width: 380px;height: 40px;background-color: rgba(0,0,0,0.4);line-height:40px;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;left: 50%;margin-left: 30px;"><span style="font-size:13px;margin-right:10px;"></span> 陪审员：<span class="yj-num">642</span>&nbsp;&nbsp;网格员：<span class="yj-num">1034</span>&nbsp;&nbsp;调解员：<span class="yj-num">780</span> </div>
+      <div style="position:absolute;width: 380px;height: 40px;background-color: rgba(0,0,0,0.4);line-height:40px;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;left: 50%;margin-left: 30px;"><span style="font-size:13px;margin-right:10px;"></span> 陪审员：<span class="yj-num">642</span>&nbsp;&nbsp;网格员：<span class="yj-num" id="index_all_num_wgy"></span>&nbsp;&nbsp;法律顾问：<span class="yj-num" id="index_all_num_flgw"></span> </div>
     </div>
     <!--左右展示-->
     <div style="margin-top:80px;">

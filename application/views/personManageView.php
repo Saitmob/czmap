@@ -168,7 +168,7 @@
 							</span>
 							</span>
 							<span class='ry-option-data' style="text-align: center;">
-								<button class="button bg-sub button-small ry-option-list-btn editor-select-region" style="display: block;margin: 20px auto;" ><span class="icon-map-marker"></span><t>选择区域</t></button>
+								<button class="button bg-sub button-small ry-option-list-btn editor-select-region" onclick='chooseregion()' style="display: block;margin: 20px auto;" ><span class="icon-map-marker"></span><t>选择区域</t></button>
 							</span>
 						</div>
 						<div class="edit_left">
@@ -183,6 +183,7 @@
 									<select class="input input-small input-auto editor-sex" >
 									<option value="男" selected="selected">男</option>
 									<option value="女">女</option>
+									<option value="">未知</option>
 									</select>
 								</span>	
 							</div>	
@@ -196,6 +197,7 @@
 								<select class="input input-small editor-rybs input-auto" >
 								<option value="执行员" selected="selected">执行员</option>
 								<option value="网格员">网格员</option>
+								<option value="法律顾问">法律顾问</option>
 								</select>
 								</span>
 							</div>

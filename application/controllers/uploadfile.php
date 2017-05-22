@@ -55,7 +55,7 @@ class Uploadfile extends CI_Controller {
         fclose($handle); 
         $content = base64_encode($content);
         // var_dump($_FILES);die();
-        $soap = new SoapClient("http://192.168.100.146:8080/services/dyhjmd/RyxxService?wsdl");
+        $soap = new SoapClient("http://147.1.4.90:8080/services/dyhjmd/RyxxService?wsdl");
         // echo $content;die();
         $json_str = '{"excelFile":"'.$content.'","fileSuffix":"'.$fileType.'"}';
         // $json_str = mb_convert_encoding($json_str,'GB2312','UTF-8');

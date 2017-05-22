@@ -164,6 +164,9 @@
 	background: none;
 	color:#fff;
 }
+#aj_list_page .laypageskin_molv span{
+	color:#fff;
+}
 /*aj-box  首页案件列表面板的下拉菜单*/
 .aj-box-court-name-select{
 	display:none;

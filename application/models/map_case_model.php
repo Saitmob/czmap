@@ -237,7 +237,8 @@ class map_case_model extends CI_Model {
                     $ssdw=(isset($val->ssdw))?$val->ssdw:'诉讼地位：无';
                     $xb = (isset($val->xb))?$val->xb:'性别：无';
                     $mz = (isset($val->mz))?$val->mz:'民族：无';
-                    $bz_info .= $i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>当事人：'.$val->xm.'('.$val->ssdw.')、'.$xb.'、'.$mz.'、身份证：'.$val->sfzh.'、联系电话：'.$val->lxdh."<br>";
+                    $lxdh = (isset($val->lxdh))?$val->lxdh:'无';
+                    $bz_info .= $i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>当事人：'.$val->xm.'('.$ssdw.')、'.$xb.'、'.$mz.'、身份证：'.$val->sfzh.'、联系电话：'.$lxdh."<br>";
                     $ADDRESS[]=array(
                     'ADD_TYPE'=>$ssdw,
                     'POINT'=>$point,
@@ -262,7 +263,9 @@ class map_case_model extends CI_Model {
                     'ADD_TYPE'=>'财产',//财产
                     'POINT'=>$point,
                     'NAME'=>$val->ccdz,
-                    'BZ_INFO'=>"地址：".$val->ccdz."<br>".$i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>财产类型：'.$val->cclx
+                    'ADD_NAME'=>$val->ccdz,
+                    'BZ_BOTTOM'=>'',
+                    'BZ_INFO'=>$i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>财产类型：'.$val->cclx
                     );
                     $i++;
                 }
@@ -513,6 +516,47 @@ class map_case_model extends CI_Model {
             $sql = "INSERT INTO person (name,sex,csny,nation,education,company,ndsfd,zzmm,rybs,zzet,photo_url,photo_type,phone,duty,address) VALUES ('{$name}','{$sex}','{$csny}','{$nation}','{$education}','{$company}','{$ndsfd}','{$zzmm}','{$rybs}','{$zzet}','{$photo}','{$phototype}','{$phone}','{$duty}','{$gis_name}')";
             $query = $this->db->query($sql);
             $result = $this->db->insert_id();
+            if($result != 0){
+                if (!empty($gis_id)) {
+                    if (stripos($gis_id, ",") !="") {
+                        $gis_id_arr = explode(",", $gis_id);
+                        $gis_id_arr = explode(",", $gis_id);
+                        foreach ($gis_id_arr as $key => $value) {
+                            $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE gis_id = ? AND person_id = ?";
+                            $query = $this->db->query($sql, array($value, $pId));
+                            $row = $query->row_array();
+                            if ($row['total'] > 0) {
+                            }
+                            else{
+                                $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
+                                $query = $this->db->query($sql,array($value));
+                                $row = $query->row_array();
+                                $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
+                                $query = $this->db->query($sql, array($value,$row['ADDRESS'],$pId));
+                            }
+                        }
+                    }
+                    else{
+                        
+                        $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE id = ? AND person_id = ?";
+                        $query = $this->db->query($sql, array($pId, $gis_id));
+                        $row = $query->row_array();
+                        if ($row['total'] > 0) {
+                        }
+                        else{
+                            $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
+                            $query = $this->db->query($sql,array($gis_id));
+                            $row = $query->row_array();
+                            $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
+                            $query = $this->db->query($sql, array($gis_id,$row['ADDRESS'],$pId));
+                        }
+                    }
+                    $result=2;//更新
+                }
+                else{
+                    $result=0;//更新失败
+                }
+            }
         }else{
             
             $sql = "UPDATE person SET name='{$name}',sex='{$sex}',csny='{$csny}',nation='{$nation}',education='{$education}',company='{$company}',ndsfd='{$ndsfd}',zzmm='{$zzmm}',rybs='{$rybs}',zzet='{$zzet}', photo_url = '{$photo}', photo_type = '{$phototype}', phone = '{$phone}', duty = '{$duty}', address = '{$gis_name}' WHERE ID = {$pId}";
@@ -521,7 +565,7 @@ class map_case_model extends CI_Model {
             if ($this->db->affected_rows() > 0)
             {
                 if (!empty($gis_id)) {
-                    if (stripos($gis_id, ",") >= 0) {
+                    if (stripos($gis_id, ",") != "") {
                         $gis_id_arr = explode(",", $gis_id);
                         $gis_id_arr = explode(",", $gis_id);
                         foreach ($gis_id_arr as $key => $value) {
@@ -543,14 +587,14 @@ class map_case_model extends CI_Model {
                         $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE id = ? AND person_id = ?";
                         $query = $this->db->query($sql, array($pId, $gis_id));
                         $row = $query->row_array();
-                        if (row['total'] > 0) {
+                        if ($row['total'] > 0) {
                         }
                         else{
                             $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
                             $query = $this->db->query($sql,array($gis_id));
                             $row = $query->row_array();
                             $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
-                            $query = $this->db->query($sql, array($gis_id,$sql['ADDRESS'],$pId));
+                            $query = $this->db->query($sql, array($gis_id,$row['ADDRESS'],$pId));
                         }
                     }
                     $result=2;//更新
@@ -726,15 +770,15 @@ class map_case_model extends CI_Model {
                 case '网格员':
                     $name='wgy';
                     break;
-            }
-                if(!isset($data[$name]))
-                {
-                    $data[$name]=0;
-                }
-                $data[$name]+=1;
-            }
-            return $data;
         }
+        if(!isset($data[$name]))
+        {
+            $data[$name]=0;
+        }
+        $data[$name]+=1;
+    }
+    return $data;
+}
 //显示案件列表
 public function showCaseList($page,$perPageNum,$searchType,$typeVal)
 {
@@ -830,11 +874,22 @@ public function getBaseData($type='all')
         $arr = $this->getAjNumAndPNum('zx');
         $aj_num+=$arr['AJ_NUM'];
         $aj_p_num+=$arr['AJ_P_NUM'];
-        
+        // 网格员
+        $sql = "SELECT id from person where rybs='网格员'";
+        $query = $this->db->query($sql);
+        $res = $query->result();
+        $wgy_num = count($res);
+        // 法律顾问
+        $sql = "SELECT id from person where rybs='法律顾问'";
+        $query = $this->db->query($sql);
+        $res = $query->result();
+        $flgw_num = count($res);
     }
     $data= array(
     'AJ_NUM'=>$aj_num,
-    'AJ_P_NUM'=>$aj_p_num
+    'AJ_P_NUM'=>$aj_p_num,
+    'WGY_NUM'=>$wgy_num,
+    'FLGW_NUM'=>$flgw_num,
     );
     return $data;
 }
@@ -845,19 +900,16 @@ public function getAjNumAndPNum($type)//获取案件数和地点数
     $aj_res = $query->result();
     $aj_num = count($aj_res);
     $aj_p_num = 0;
-    foreach ($aj_res as $key => $value) {
-        $aj_id = $value->aj_id;
-        //dsr
-        $sql = "SELECT dsr_id from {$type}_dsr WHERE aj_id = $aj_id";
-        $query = $this->ajxq->query($sql);
-        $aj_dsr = $query->result();
-        $aj_p_num += count($aj_dsr);
-        //cc
-        $sql = "SELECT ccszd_id from {$type}_ccszd WHERE aj_id = $aj_id";
-        $query = $this->ajxq->query($sql);
-        $aj_cc = $query->result();
-        $aj_p_num +=count($aj_cc);
-    }
+    //dsr
+    $sql = "SELECT dsr_id from {$type}_dsr";
+    $query = $this->ajxq->query($sql);
+    $aj_dsr = $query->result();
+    $aj_p_num += count($aj_dsr);
+    //cc
+    $sql = "SELECT ccszd_id from {$type}_ccszd";
+    $query = $this->ajxq->query($sql);
+    $aj_cc = $query->result();
+    $aj_p_num +=count($aj_cc);
     return array(
     'AJ_NUM'=>$aj_num,
     'AJ_P_NUM'=>$aj_p_num
