@@ -13,6 +13,7 @@
 	<!--<script src="<?=base_url()?>js/pintuer/pintuer.js"></script>-->
 	<script src="<?=base_url()?>js/layer/layer.js"></script>
 	<script src="<?=base_url()?>js/laypage/laypage.js"></script>
+	<script src="<?=base_url()?>js/laydate/laydate.js"></script>
 	<!--<script src="<?=base_url()?>js/getDataGraph.js"></script>-->
 	<script src="<?=base_url()?>js/ztree/jquery.ztree.core.min.js"></script>
 	<script src="<?=base_url()?>js/jQuery-File-Upload/vendor/jquery.ui.widget.js"></script>
@@ -36,7 +37,7 @@
 
 </style>
 
-<body>
+<body id="text">
 	<div class="header">
 		<span class="title"></span>
 		<!--用户登录-->
@@ -217,11 +218,23 @@
 </li> -->
 					<li>
 						<span class='ry-option'>民族：</span>
-						<span class='ry-option-data'><input type="text" class="input input-small editor-nation" ></span>
+						<select class="input input-small editor-nation" >
+						<option value="读取中...">读取中...</option>
+						</select>
 					</li>
 					<li>
 						<span class='ry-option'>学历：</span>
-						<span class='ry-option-data'><input type="text" class="input input-small editor-education" ></span>
+						<select class="input input-small editor-education" >
+						<option value="博士" selected="selected">博士</option>
+						<option value="硕士">硕士</option>
+						<option value="本科">本科</option>
+						<option value="大专">大专</option>
+						<option value="中专">中专</option>
+						<option value="高中">高中</option>
+						<option value="初中">初中</option>
+						<option value="小学">小学</option>
+						<option value="未知">未知</option>
+						</select>
 					</li>
 					<li>
 						<span class='ry-option'>工作地点：</span>
@@ -229,7 +242,15 @@
 					</li>
 					<li>
 						<span class='ry-option'>政治面貌：</span>
-						<span class='ry-option-data'><input type="text" class="input input-small editor-zzmm" ></span>
+						<select class="input input-small editor-zzmm" >
+						<option value="中共党员" selected="selected">中共党员</option>
+						<option value="中共预备党员">中共预备党员</option>
+						<option value="共青团员">共青团员</option>
+						<option value="民革党员">民革党员</option>
+						<option value="民盟盟员">民盟盟员</option>
+						<option value="群众">群众</option>
+						<option value="">未知</option>
+						</select>
 					</li>
 					<li>
 						<span class='ry-option'>职业：</span>

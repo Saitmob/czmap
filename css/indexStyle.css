@@ -442,6 +442,7 @@ b {
 /*以上为旧样式*/
 .edit_right{
     float: right;
+    margin-right: 60px;
 }
 
 .edit_left{

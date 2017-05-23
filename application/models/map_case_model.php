@@ -131,8 +131,8 @@ class map_case_model extends CI_Model {
         $data = array(
         'ZX'=>$zx_arr,
         'SP'=>$sp_arr,
-        'REGION_POINT'=>$this->regionmatch->getRegionByFjm($fjm)
-        // 'REGION_POINT'=>''
+        'REGION_POINT'=>$this->regionmatch->getRegionByFjm($fjm),
+        'REGION_TYPE'=>'ONE_REGION'
         );
         return $data;
         
@@ -142,16 +142,31 @@ class map_case_model extends CI_Model {
         $data = array();
         if($aj_type=='sp')
         {
+            $sp = $this->getAddress('sp',$showType,$id);
+            // $num_arr = array();
+            // foreach ($sp['ADDRESS'] as $key => $value) {
+            //     foreach ($value as $key => $val) {
+            //         if(!isset($num_arr[$val['ADD_TYPE']]))
+            //         {
+            //             $num_arr[$val['ADD_TYPE']]=0;
+            //         }
+            //         $num_arr[$val['ADD_TYPE']] += 1;
+            //     }
+                
+            // }
             $data = array(
             'SP'=>$this->getAddress('sp',$showType,$id),
             'ZX'=>array(),
-            'REGION_POINT'=>$this->regionmatch->getRegionByFjm($fjm)
+            'REGION_POINT'=>$this->regionmatch->getRegionByFjm($fjm),
+            'REGION_TYPE'=>'ONE_AJ'
+            // 'PERSON_TYPE_NUM'=>$num_arr
             );
         }elseif($aj_type=='zx'){
             $data = array(
             'SP'=>array(),
             'ZX'=>$this->getAddress('zx',$showType,$id),
-            'REGION_POINT'=>$this->regionmatch->getRegionByFjm($fjm)
+            'REGION_POINT'=>$this->regionmatch->getRegionByFjm($fjm),
+            'REGION_TYPE'=>'ONE_AJ'
             );
         }
         return $data;
@@ -239,7 +254,7 @@ class map_case_model extends CI_Model {
                     $mz = (isset($val->mz))?$val->mz:'民族：无';
                     $lxdh = (isset($val->lxdh))?$val->lxdh:'无';
                     $bz_info .= $i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>当事人：'.$val->xm.'('.$ssdw.')、'.$xb.'、'.$mz.'、身份证：'.$val->sfzh.'、联系电话：'.$lxdh."<br>";
-                    $ADDRESS[]=array(
+                    $ADDRESS[$ssdw][]=array(
                     'ADD_TYPE'=>$ssdw,
                     'POINT'=>$point,
                     'NAME'=>$val->xm,
@@ -259,7 +274,7 @@ class map_case_model extends CI_Model {
                 foreach ($ccszd as $k => $val) {
                     // $point = array('x'=>1,'y'=>1,'gisId'=>1);//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
                     $point = $this->regionmatch->getPointById($val->gis_id);
-                    $ADDRESS[]=array(
+                    $ADDRESS['财产'][]=array(
                     'ADD_TYPE'=>'财产',//财产
                     'POINT'=>$point,
                     'NAME'=>$val->ccdz,
@@ -448,39 +463,63 @@ class map_case_model extends CI_Model {
             return '删除失败，没有该案号';
         }
     }
-    //获取个人其他信息
+    ///获取个人其他信息
     public function getPersonOtherInfo($pId)
     {
-        $sql = "SELECT photo_url, photo_type, nation, education, company, zzmm, duty, rybs  FROM person  WHERE ID = '{$pId}'";
-        $query=$this->db->query($sql);
-        $res = $query->row();
-        $gis_id = "";
-        $gis_name = "";
-        if(!empty($res)){
-            $sql = "SELECT a.gis_id, b.xian, b.village, b.cun FROM person_add_lib AS a LEFT JOIN cz_gis_library AS b ON a.gis_id = b.id WHERE person_id = ? AND b.xian IS NOT NULL AND b.village IS NOT NULL AND b.cun IS NOT NULL";
-            $query = $this->db->query($sql, array($pId));
-            $result = $query->result_array();
-            if (!empty($result))
-            {
-                foreach ($result as $key => $value) {
-                    $gis_id .= $value['gis_id'].",";
-                    $gis_name .= $value['xian'].$value['village'].$value['cun'].",";
+        if(!empty($pId)){
+            $sql = "SELECT photo_url, photo_type, nation, education, company, zzmm, duty, rybs  FROM person  WHERE ID = '{$pId}'";
+            $query=$this->db->query($sql);
+            $res = $query->row();
+            $gis_id = "";
+            $gis_name = "";
+            $sql = "SELECT nation_name FROM person_nation";
+            $query = $this->db->query($sql);
+            $nationoption = $query->result_array();
+            if(!empty($res)){
+                $sql = "SELECT a.gis_id, b.xian, b.village, b.cun FROM person_add_lib AS a LEFT JOIN cz_gis_library AS b ON a.gis_id = b.id WHERE person_id = ? AND b.xian IS NOT NULL ";
+                $query = $this->db->query($sql, array($pId));
+                $result = $query->result_array();
+                if (!empty($result))
+                {
+                    foreach ($result as $key => $value) {
+                        $gis_id .= $value['gis_id'].",";
+                        $gis_name .= $value['xian'].$value['village'].$value['cun'].",";
+                    }
                 }
+                $data = array(
+                'photo'=>$res->photo_url,
+                'photo_type'=>$res->photo_type,
+                'gis_id'=>$gis_id,
+                'gis_name'=>$gis_name,
+                'nation'=>$res->nation,
+                'education'=>$res->education,
+                'company'=>$res->company,
+                'zzmm'=>$res->zzmm,
+                'duty'=>$res->duty,
+                'rybs'=>$res->rybs,
+                'nationoption'=>$nationoption
+                );
             }
-            $data = array(
-            'photo'=>$res->photo_url,
-            'photo_type'=>$res->photo_type,
-            'gis_id'=>$gis_id,
-            'gis_name'=>$gis_name,
-            'nation'=>$res->nation,
-            'education'=>$res->education,
-            'company'=>$res->company,
-            'zzmm'=>$res->zzmm,
-            'duty'=>$res->duty,
-            'rybs'=>$res->rybs
-            );
+            else{
+                $data = array(
+                'photo'=>"",
+                'photo_type'=>"",
+                'gis_id'=>"",
+                'gis_name'=>"",
+                'nation'=>"",
+                'education'=>"",
+                'company'=>"",
+                'zzmm'=>"",
+                'duty'=>"",
+                'rybs'=>"",
+                'nationoption'=>$nationoption
+                );
+            }
         }
         else{
+            $sql = "SELECT nation_name FROM person_nation";
+            $query = $this->db->query($sql);
+            $nationoption = $query->result_array();     
             $data = array(
             'photo'=>"",
             'photo_type'=>"",
@@ -491,8 +530,9 @@ class map_case_model extends CI_Model {
             'company'=>"",
             'zzmm'=>"",
             'duty'=>"",
-            'rybs'=>""
-            );
+            'rybs'=>"",
+            'nationoption'=>$nationoption
+            );       
         }
         return $data;
     }
@@ -500,118 +540,59 @@ class map_case_model extends CI_Model {
     public function savePersonInfo($pId,$name,$sex,$csny,$nation,$duty,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photo,$phototype,$gis_id,$gis_name,$phone,$email)
     {
         $result=0;//插入
-        // if (!empty($photo)) {
-        //     //echo $photo;
-        //     $picturedata = substr($photo, strpos($photo,",")+1, strlen($photo));
-        //     //echo $picturedata;
-        //     $picturedata = base64_decode($picturedata);
-        //     $picturedata = addslashes($picturedata);
-        // }
-        // else{
-        //     $picturedata = "";
-        // }
+        $this->db->trans_begin();
         if(empty($pId))
         {
-            // var_dump($phone);die();
-            $sql = "INSERT INTO person (name,sex,csny,nation,education,company,ndsfd,zzmm,rybs,zzet,photo_url,photo_type,phone,duty,address) VALUES ('{$name}','{$sex}','{$csny}','{$nation}','{$education}','{$company}','{$ndsfd}','{$zzmm}','{$rybs}','{$zzet}','{$photo}','{$phototype}','{$phone}','{$duty}','{$gis_name}')";
-            $query = $this->db->query($sql);
+            $sql = "INSERT INTO person (name,sex,csny,nation,education,company,ndsfd,zzmm,rybs,zzet,photo_url,photo_type,phone,duty,address) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            $query = $this->db->query($sql, array($name,$sex,$csny,$nation,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photo,$phototype,$phone,$duty,$gis_name));
             $result = $this->db->insert_id();
-            if($result != 0){
-                if (!empty($gis_id)) {
-                    if (stripos($gis_id, ",") !="") {
-                        $gis_id_arr = explode(",", $gis_id);
-                        $gis_id_arr = explode(",", $gis_id);
-                        foreach ($gis_id_arr as $key => $value) {
-                            $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE gis_id = ? AND person_id = ?";
-                            $query = $this->db->query($sql, array($value, $pId));
-                            $row = $query->row_array();
-                            if ($row['total'] > 0) {
-                            }
-                            else{
-                                $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
-                                $query = $this->db->query($sql,array($value));
-                                $row = $query->row_array();
-                                $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
-                                $query = $this->db->query($sql, array($value,$row['ADDRESS'],$pId));
-                            }
-                        }
+            $this->insertlib($gis_id, $result);
+        }
+        else
+        {
+            $sql = "UPDATE person SET name=?,sex=?,csny=?,nation=?,education=?,company=?,ndsfd=?,zzmm=?,rybs=?,zzet=?, photo_url = ?, photo_type = ?, phone = ?, duty = ?, address = ? WHERE ID = ?";
+            $query = $this->db->query($sql,array($name, $sex, $csny, $nation, $education, $company, $ndsfd, $zzmm, $rybs, $zzet, $photo, $phototype, $phone, $duty, $gis_name, $pId));
+            if(!empty($gis_id)){
+                if (stripos($gis_id, ",") != "")
+                {
+                    $gis_id_arr = explode(",", $gis_id);
+                    $gis_id_arr = explode(",", $gis_id);
+                    foreach ($gis_id_arr as $key => $value)
+                    {
+                        $this->insertlib($value, $pId);
                     }
-                    else{
-                        
-                        $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE id = ? AND person_id = ?";
-                        $query = $this->db->query($sql, array($pId, $gis_id));
-                        $row = $query->row_array();
-                        if ($row['total'] > 0) {
-                        }
-                        else{
-                            $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
-                            $query = $this->db->query($sql,array($gis_id));
-                            $row = $query->row_array();
-                            $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
-                            $query = $this->db->query($sql, array($gis_id,$row['ADDRESS'],$pId));
-                        }
-                    }
-                    $result=2;//更新
                 }
-                else{
-                    $result=0;//更新失败
+                else
+                {
+                    $this->insertlib($gis_id, $pId);
                 }
-            }
-        }else{
-            
-            $sql = "UPDATE person SET name='{$name}',sex='{$sex}',csny='{$csny}',nation='{$nation}',education='{$education}',company='{$company}',ndsfd='{$ndsfd}',zzmm='{$zzmm}',rybs='{$rybs}',zzet='{$zzet}', photo_url = '{$photo}', photo_type = '{$phototype}', phone = '{$phone}', duty = '{$duty}', address = '{$gis_name}' WHERE ID = {$pId}";
-            //echo $sql;die();
-            $query = $this->db->query($sql);
-            if ($this->db->affected_rows() > 0)
-            {
-                if (!empty($gis_id)) {
-                    if (stripos($gis_id, ",") != "") {
-                        $gis_id_arr = explode(",", $gis_id);
-                        $gis_id_arr = explode(",", $gis_id);
-                        foreach ($gis_id_arr as $key => $value) {
-                            $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE gis_id = ? AND person_id = ?";
-                            $query = $this->db->query($sql, array($value, $pId));
-                            $row = $query->row_array();
-                            if ($row['total'] > 0) {
-                            }
-                            else{
-                                $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
-                                $query = $this->db->query($sql,array($value));
-                                $row = $query->row_array();
-                                $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
-                                $query = $this->db->query($sql, array($value,$row['ADDRESS'],$pId));
-                            }
-                        }
-                    }
-                    else{
-                        $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE id = ? AND person_id = ?";
-                        $query = $this->db->query($sql, array($pId, $gis_id));
-                        $row = $query->row_array();
-                        if ($row['total'] > 0) {
-                        }
-                        else{
-                            $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
-                            $query = $this->db->query($sql,array($gis_id));
-                            $row = $query->row_array();
-                            $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
-                            $query = $this->db->query($sql, array($gis_id,$row['ADDRESS'],$pId));
-                        }
-                    }
-                    $result=2;//更新
-                }
-                else{
-                    $result=0;//更新失败
-                }
-            }else
-            {
-                $result=0;//更新失败
             }
         }
-        // if( $query==0 ||$query==false)
-        // {
-        //     $result = 0;
-        // }
+        if ($this->db->trans_status() === FALSE && $result = 0)
+        {
+            $this->db->trans_rollback();
+        }
+        else
+        {
+            $this->db->trans_commit();
+            $result = 1;
+        }
         return $result;
+    }
+
+    public function insertlib($gis_id, $pId)
+    {
+        $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE gis_id = ? AND person_id = ?";
+        $query = $this->db->query($sql, array($gis_id, $pId));
+        $row = $query->row_array();
+        if ($row['total'] == 0) {
+            $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
+            $query = $this->db->query($sql,array($gis_id));
+            $row = $query->row_array();
+            $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
+            //echo "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES({$gis_id},'{$row['ADDRESS']}',{$pId})";die();
+            $query = $this->db->query($sql, array($gis_id,$row['ADDRESS'],$pId));
+        }
     }
     //删除人员
     public function deletePerson($id)
@@ -933,17 +914,17 @@ private function getAjNum($fjm,$type)
     $aj_num = count($aj_res);
     return $aj_num;
 }
-public function getPersonInfo($id)
-{
-    $sql = "SELECT * from person where id='{$id}'";
-    $query = $this->db->query($sql);
-    $res = $query->row();
-    $img = $res->photo;
-    // $res->photo_name = time();
-    // $a = file_put_contents('./'.$res->photo_name.'.jpg', $img);
-    $res->photo = '';
-    return $res;
-}
+// public function getPersonInfo($id)
+// {
+//     $sql = "SELECT * from person where id='{$id}'";
+//     $query = $this->db->query($sql);
+//     $res = $query->row();
+//     $img = $res->photo;
+//     // $res->photo_name = time();
+//     // $a = file_put_contents('./'.$res->photo_name.'.jpg', $img);
+//     $res->photo = '';
+//     return $res;
+// }
 
 }
 ?>

@@ -188,8 +188,13 @@ function editorPerson(ele) {
 	$(".layui-layer-content .editor-region").val(region);
 	$(".layui-layer-content .editor-phone").val(phone);
 	$(".layui-layer-content .editor-email").val(email);
+
 	//showRegion(gisId, region);
 	//获取照片以及简介
+	getPersonOtherInfo(pId);
+}
+
+function getPersonOtherInfo(pId){
 	$.ajax({
 		type: 'post',
 		url: weburl + 'index.php/welcome/getPersonOtherInfo',
@@ -198,6 +203,19 @@ function editorPerson(ele) {
 		},
 		dataType: 'json',
 		success: function (data) {
+			var nation = "";
+			$.each(data.nationoption,function(k,v){
+				if(v.nation_name == "汉族" && data.nation == ""){
+					nation += "<option value='"+v.nation_name+"' selected='selected'>"+v.nation_name+"</option>";
+				}
+				else if(v.nation_name != "汉族" && v.nation_name == data.nation){
+					nation += "<option value='"+v.nation_name+"' selected='selected'>"+v.nation_name+"</option>";
+				}
+				else{
+					nation += "<option value='"+v.nation_name+"'>"+v.nation_name+"</option>";
+				}
+			});
+			$(".layui-layer-content .editor-nation").html(nation);
 			showPhoto(data.photo);
 			// $('.layui-layer-content .editor-photo').html('<img src=\"\"/>');
 			// $('.layui-layer-content .editor-photo').find('img').attr('src',data.photo);
@@ -209,10 +227,11 @@ function editorPerson(ele) {
 			$('.layui-layer-content .editor-photo').find('img').css('height', '100%');
 			$('.layui-layer-content .editor-photo').data('imageurl', data.photo);
 			$('.layui-layer-content .editor-photo').data('imagetype', data.photo_type);
-			$('.layui-layer-content .editor-nation').val(data.nation);
+			//$('.layui-layer-content .editor-nation').val(data.nation);
 			$('.layui-layer-content .editor-education').val(data.education);
 			$('.layui-layer-content .editor-company').val(data.company);
-			$('.layui-layer-content .editor-zzmm').val(data.zzmm);
+			var zzmm = (data.zzmm == "")?"未知":data.zzmm;
+			$('.layui-layer-content .editor-zzmm').val(zzmm);
 			$('.layui-layer-content .editor-rybs').val(data.rybs);
 			$('.layui-layer-content .editor-duty').val(data.duty);
 			if (data.gis_id != "") {
@@ -257,31 +276,22 @@ function savePersonInfo() {
 		duty = $('.layui-layer-content .editor-duty').val(),
 		rybs = $('.layui-layer-content .editor-rybs').val(),
 		phone = $('.layui-layer-content .editor-phone').val();
-		console.log(rybs);
 	var regionArr = [];
 	var regionStr = '';
 	var idstring = $('.layui-layer-content .icon-map-marker').data('id');
-	console.log(idstring);
 	if (idstring.length > 0) {
 		idstring = idstring.substring(0, idstring.length - 1);
 		var regionArr = idstring.split(',');
 	}
-	/*	$.each($('.layui-layer-content .editor-select-region').data, function (k, v) {
-			regionArr.push($(v).attr('id').substr(14));
-		});*/
 	regionStr = regionArr.toString();
 	if (name == '') {
 		layer.alert('请填写姓名');
 		return false;
 	}
-	// if (email == '') {
-	//     layer.alert('请填写邮箱');
-	//     return false;
+	// if (regionStr == '') {
+	// 	layer.alert('请填写所属区域');
+	// 	return false;
 	// }
-	if (regionStr == '') {
-		layer.alert('请填写所属区域');
-		return false;
-	}
 	$.ajax({
 		type: 'post',
 		url: weburl + 'index.php/welcome/savePersonInfo',
@@ -308,14 +318,16 @@ function savePersonInfo() {
 		},
 		success: function (data) {
 			if (data != 2 && data != 0) {
-				layer.msg('插入成功');
-				$('#ry-id').val(data),
+				layer.msg('插入成功',{time:1500,shift:-1},function(){
+					$('#ry-id').val(data),
 					show_list("all", "all", "", 1, 8);
 					layer.closeAll();
+				});
 			} else if (data == 2) {
-				layer.msg('修改成功');
-				show_list("all", "all", "", 1, 8);
-				layer.closeAll();
+				layer.msg('修改成功',{time:1500,shift:-1},function(){
+					show_list("all", "all", "", 1, 8);
+					layer.closeAll();
+				});
 			} else {
 				layer.msg('操作失败');
 			}
@@ -338,6 +350,18 @@ function showPersonInfoPanel(pId) {
 				savePersonInfo();
 				return false; //防止提交表单
 			});
+			$("body").off('click', '#layui-layer1 .editor-age');
+			setTimeout(function() {
+			laydate({
+				elem: '#text .editor-age',
+				format: 'YYYY-MM-DD', // 分隔符可以任意定义，该例子表示只显示年月
+				min: laydate.now(), 
+				festival: true,
+				istoday: true,
+				start: laydate.now(0, "YYYY-MM-DD"),
+				isdate: true       
+			});				
+			}, 500);
 			//$("body").off('click', '.editor-select-region');
 			// $(".editor-select-region").click(function () {
 			// 	selectRegion(true, changeRangeText);
@@ -414,7 +438,7 @@ function addPersonClick() {
 	$('#editor-intro').val('');
 	$('#editor-region-selected-list').html('');
 	showPersonInfoPanel("");
-
+	getPersonOtherInfo("");
 	$('#editor-photo').html('');
 }
 //显示人员列表

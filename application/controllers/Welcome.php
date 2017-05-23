@@ -148,11 +148,8 @@ class Welcome extends CI_Controller {
     public function getPersonOtherInfo()
     {
         $pId = $this->input->post('pId');
-        if(!empty($pId))
-        {
-            $data = $this->mapcase->getPersonOtherInfo($pId);
-            echo json_encode($data);
-        }
+        $data = $this->mapcase->getPersonOtherInfo($pId);
+        echo json_encode($data);
     }
     //保存人员信息
     public function savePersonInfo()
@@ -161,10 +158,11 @@ class Welcome extends CI_Controller {
         $name = $this->input->post('name');
         if(!empty($name))
         {
+            $photoId = $this->input->post('photoId');
             $pId = $this->input->post('pId');
             $gis_id = $this->input->post('gis_id');
             $gis_name = $this->input->post('gis_name');
-            $photoId = empty($this->input->post('photoId'))?0:$this->input->post('photoId');
+            $photoId = empty($photoId)?0:$photoId;
             $phototype = $this->input->post('phototype');
             $photourl = $this->input->post('photourl');
             $sex = $this->input->post('sex');
@@ -329,14 +327,14 @@ class Welcome extends CI_Controller {
         $data = $this->mapcase->getSpZxNum();
         echo json_encode($data);
     }
-    public function getPersonInfo()
-    {
-        $id = $this->input->post('id');
-        if(!empty($id))
-        {
-            $data = $this->mapcase->getPersonInfo($id);
-            // var_dump($data);
-            echo json_encode($data);
-        }
-    }
+    // public function getPersonInfo()
+    // {
+    //     $id = $this->input->post('id');
+    //     if(!empty($id))
+    //     {
+    //         $data = $this->mapcase->getPersonInfo($id);
+    //         // var_dump($data);
+    //         echo json_encode($data);
+    //     }
+    // }
 }

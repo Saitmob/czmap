@@ -1,5 +1,5 @@
 $(function () {
-	
+
 })
 //获取地图区域案件数量
 var regionJsonObj = {};
@@ -45,34 +45,23 @@ var region_address = {}; //该地区所有未结案件详细信息，包含地�
 //     });
 // }
 function getregion_data(fjm) {
-	// var index = layer.load(0, {
-	// 	shade: false
-	// }); //0代表加载的风格，支持0-2
-	var deferred = $.Deferred();
-	// loading层
-	$.ajax({
-		type: 'post',
-		url: weburl + 'index.php/welcome/getOneRData',
-		data: {
-			'fjm': fjm
-		},
-		dataType: 'json',
-		// async: false, //设置为同步操作就可以给全局变量赋值成功
-		success: function (data) {
-			deferred.resolve(data);
-			// var time = new Date().getTime();
-			// console.log(time);
-			// // region_data = data.region_data;
-			// // region_point = data.point;
-			// console.log(i);
-			// region_address = data;
-			// region_repeat_data = data.repeat_region_data;
-		},
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			console.log(XMLHttpRequest + ';' + errorThrown);
-		}
-	});
-	return deferred.promise();
+		var deferred = $.Deferred();
+		$.ajax({
+			type: 'post',
+			url: weburl + 'index.php/welcome/getOneRData',
+			data: {
+				'fjm': fjm
+			},
+			dataType: 'json',
+			// async: false, //设置为同步操作就可以给全局变量赋值成功
+			success: function (data) {
+				deferred.resolve(data);
+			},
+			error: function (XMLHttpRequest, textStatus, errorThrown) {
+				console.log(XMLHttpRequest + ';' + errorThrown);
+			}
+		});
+		return deferred.promise();
 	// setTimeout(layer.close(i),2000);
 	// var t=setTimeout("layer.closeAll()",2000);
 }

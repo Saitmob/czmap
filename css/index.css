@@ -142,15 +142,25 @@
     color:#fff;
     padding: 4px 10px; 
 }
+#aj-mapbox-bottom>span{
+	display: inline-block;
+	width:48%;
+	min-height:27px;
+}
+/*.map-bottom  i{
+	padding:0 6px;
+}*/
 .map-bottom>ul>li{
 	min-height:27px;
 }
 /*地图底部列表*/
-.add-name li{
+.add-name{
+	padding:0 6px;
 	cursor: pointer;
+	font-style:normal;
 	transition: all 0.4s;
 }
-.add-name li:hover{
+.add-name:hover{
 	text-shadow: 0 0 8px #9bf1ff;
 }
 

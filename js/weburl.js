@@ -135,6 +135,31 @@ function fjmToName(fjm){
     }
     return fjm;
 }
+var ryType = {
+    '':'yg',
+	'原告': 'yg',
+	'被告': 'bg',
+	'被告人': 'bgr',
+	'财产': 'cc',
+	'上诉人': 'ssr',
+	'被上诉人': 'bssr',
+	'第三人': 'dsr',
+	'申请执行人': 'sqzxr',
+	'申请人': 'sqr',
+	'被执行人': 'bzxr',
+	'被执行第三人': 'bzxdsr',
+	'yg': '原告',
+	'bg': '被告',
+	'bgr': '被告人',
+	'cc': '财产',
+	'ssr': '上诉人',
+	'bssr': '被上诉人',
+	'dsr': '第三人',
+	'sqzxr': '申请执行人',
+	'sqr': '申请人',
+	'bzxr': '被执行人',
+	'bzxdsr': '被执行第三人'
+};
 $(function() {
     getUserInfo();
     $('.header-nav').hover(function() {

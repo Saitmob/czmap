@@ -155,79 +155,12 @@
                 <button class="button button--tamaya button--border-thick" data-text="返回" onclick="show_ajList()" class="button button-small bg-sub" style="position:absolute;left:18px;top:38px;"><span>返回</span></button>
                 <!--图标说明-->
                 <div style="zoom: 0.6;position:absolute;top:0;background: burlywood;;width: 100%;">
-                  <ul class="inline-list map-bottom-list">
-                    <li>
-                      <img src="images/yg_bz_b.png" alt="">原告 <span class="badge bg-sub" id="aj-box-yg-num">0</span>
-                    </li>
-                    <li>
-                      <img src="images/bg_bz_b.png" alt="">被告 <span class="badge bg-sub" id="aj-box-bg-num">0</span>
-                    </li>
-                    <li>
-                      <img src="images/cc_bz_n.png" alt="">财产 <span class="badge bg-sub" id="aj-box-cc-num">0</span>
-                    </li>
-                    <li>
-                      <img src="images/ssr_bz_b.png" alt="">诉讼人 <span class="badge bg-sub" id="aj-box-ssr-num">0</span>
-                    </li>
-                    <li>
-                      <img src="images/bssr_bz_b.png" alt="">被诉讼人 <span class="badge bg-sub" id="aj-box-bssr-num">0</span>
-                    </li>
-                    <li>
-                      <img src="images/dsr_bz_b.png" alt="">第三人 <span class="badge bg-sub" id="aj-box-dsr-num">0</span>
-                    </li>
-                    <li>
-                      <img src="images/sqzxr_bz_b.png" alt="">申请执行人 <span class="badge bg-sub" id="aj-box-sqzxr-num">0</span>
-                    </li>
-                    <li>
-                      <img src="images/bzxr_bz_b.png" alt="">被执行人 <span class="badge bg-sub" id="aj-box-bzxr-num">0</span>
-                    </li>
+                  <ul class="inline-list map-bottom-list" id="aj_box_ssdw_num">
                   </ul>
                 </div>
                 <!--底部数据展示及说明-->
-                <div class="map-bottom">
-                  <ul style="display:inline-block;width:48%;vertical-align:top;">
-                    <li>
-                      原告：
-                      <ul class="inline-list map-bottom-list add-name" id="one-aj-yg-list">
-                      </ul>
-                    </li>
-                    <li>
-                      被告：
-                      <ul class="inline-list map-bottom-list add-name" id="one-aj-bg-list">
-                      </ul>
-                    </li>
-                    <li>
-                      财产地址：
-                      <ul class="inline-list map-bottom-list add-name" id="one-aj-cc-list">
-                      </ul>
-                    </li>
-                    <li>
-                      第三人：
-                      <ul class="inline-list map-bottom-list add-name" id="one-aj-dsr-list">
-                      </ul>
-                    </li>
-                  </ul>
-                  <ul style="display:inline-block;width:48%;vertical-align:top;">
-                    <li>
-                      上诉人：
-                      <ul class="inline-list map-bottom-list add-name" id="one-aj-ssr-list">
-                      </ul>
-                    </li>
-                    <li>
-                      被上诉人：
-                      <ul class="inline-list map-bottom-list add-name" id="one-aj-bssr-list">
-                      </ul>
-                    </li>
-                    <li>
-                      申请执行人：
-                      <ul class="inline-list map-bottom-list add-name" id="one-aj-sqzxr-list">
-                      </ul>
-                    </li>
-                    <li>
-                      被执行人：
-                      <ul class="inline-list map-bottom-list add-name" id="one-aj-bzxr-list">
-                      </ul>
-                    </li>
-                  </ul>
+                <div class="map-bottom" id="aj-mapbox-bottom">
+                      <span>原告：<ul class="inline-list map-bottom-list add-name" ></ul></span>
                 </div>
               </div>
             </div>
@@ -253,31 +186,7 @@
             <!--图标说明-->
             <div style="zoom: 0.6;position:absolute;top:0;background: burlywood;;width: 100%;">
 
-              <ul class="inline-list map-bottom-list">
-                <li>
-                  <img src="images/yg_bz_b.png" alt="">原告 <span class="badge bg-sub" id="map-box-yg-num">0</span>
-                </li>
-                <li>
-                  <img src="images/bg_bz_b.png" alt="">被告 <span class="badge bg-sub" id="map-box-bg-num">0</span>
-                </li>
-                <li>
-                  <img src="images/cc_bz_n.png" alt="">财产 <span class="badge bg-sub" id="map-box-cc-num">0</span>
-                </li>
-                <li>
-                  <img src="images/ssr_bz_b.png" alt="">诉讼人 <span class="badge bg-sub" id="map-box-ssr-num">0</span>
-                </li>
-                <li>
-                  <img src="images/bssr_bz_b.png" alt="">被诉讼人 <span class="badge bg-sub" id="map-box-bssr-num">0</span>
-                </li>
-                <li>
-                  <img src="images/dsr_bz_b.png" alt="">第三人 <span class="badge bg-sub" id="map-box-dsr-num">0</span>
-                </li>
-                <li>
-                  <img src="images/sqzxr_bz_b.png" alt="">申请执行人 <span class="badge bg-sub" id="map-box-sqzxr-num">0</span>
-                </li>
-                <li>
-                  <img src="images/bzxr_bz_b.png" alt="">被执行人 <span class="badge bg-sub" id="map-box-bzxr-num">0</span>
-                </li>
+              <ul class="inline-list map-bottom-list"  id="map_box_ssdw_num">
               </ul>
             </div>
             <!--底部数据展示及说明-->

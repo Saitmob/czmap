@@ -85,20 +85,24 @@ function creatDataInfo() {
 	shadow.size.height = 40;
 	shadow.size.width = 40;
 	var region_arr = [];
-	if (region_address.SP.ADDRESS != undefined && region_address.SP.ADDRESS.length > 0) {
+	console.log(region_address);
+	if (region_address.SP.ADDRESS != undefined) {
 		$.each(region_address.SP.ADDRESS, function (k, v) {
-			region_arr.push(v);
+			$.each(v,function(k2,v2){
+				region_arr.push(v2);
+			});
 		});
 	}
 	if (region_address.ZX.ADDRESS != undefined) {
 		$.each(region_address.ZX.ADDRESS, function (k, v) {
-			region_arr.push(v);
+			$.each(v,function(k2,v2){
+				region_arr.push(v2);
+			});
 		});
 	}
 	var points = [];
 	var points_str = [];
 	var noPoint = '';
-	console.log(region_arr);
 	if (region_arr.length > 0) { //如果地点大于0
 		$.each(region_arr, function (k, v) {
 			if (v.POINT.x != undefined&&v.POINT.x !=0&&v.POINT.x !='' && v.POINT.y != undefined&&v.POINT.y != 0&&v.POINT.y != '') {
@@ -121,7 +125,7 @@ function creatDataInfo() {
 				} else if (v.ADD_TYPE == '被告') {
 					iconUrl = 'images/bg_bz.png';
 				} else if (v.ADD_TYPE == '财产') {
-					iconUrl = 'images/cc_bz_n.png';
+					iconUrl = 'images/cc_bz_b.png';
 					var size = new BMap.Size(30, 30);
 				} else if (v.ADD_TYPE == '上诉人') {
 					iconUrl = 'images/ssr_bz.png';
@@ -162,12 +166,12 @@ function creatDataInfo() {
 			var view = map.getViewport(eval(points));
 			var mapZoom = view.zoom;
 			var centerPoint = view.center;
+			mapZoom = (mapZoom>16)?15:mapZoom;
 			map.centerAndZoom(centerPoint, mapZoom);
 		}
 		if (noPoint.length > 0) {
 			layer.alert(noPoint + '无法定位到地图中');
 		}
-		console.log(points_str);
 	} else {
 		layer.alert('没有地点可展示');
 	}
@@ -195,58 +199,81 @@ function map_box_aj_num() {
 }
 //当事人以及财产地址数
 function set_map_box_dsrnum() {
-	var yg_num = 0;
-	var bg_num = 0;
-	var cc_num = 0;
-	var ssr_num = 0;
-	var bssr_num = 0;
-	var dsr_num = 0;
-	var sqzxr_num = 0;
-	var bzxr_num = 0;
+	// var yg_num = 0;
+	// var bg_num = 0;
+	// var cc_num = 0;
+	// var ssr_num = 0;
+	// var bssr_num = 0;
+	// var dsr_num = 0;
+	// var sqzxr_num = 0;
+	// var bzxr_num = 0;
+	// $.each(region_address.SP.ADDRESS, function (k, v) {
+	// 	if (v.ADD_TYPE == '原告') {
+	// 		yg_num++;
+	// 	} else if (v.ADD_TYPE == '被告') {
+	// 		bg_num++;
+	// 	} else if (v.ADD_TYPE == '财产') {
+	// 		cc_num++;
+	// 	} else if (v.ADD_TYPE == '上诉人') {
+	// 		ssr_num++;
+	// 	} else if (v.ADD_TYPE == '被上诉人') {
+	// 		bssr_num++;
+	// 	} else if (v.ADD_TYPE == '第三人') {
+	// 		dsr_num++;
+	// 	} else if (v.ADD_TYPE == '申请执行人') {
+	// 		sqzxr_num++;
+	// 	} else if (v.ADD_TYPE == '被执行人') {
+	// 		bzxr_num++;
+	// 	}
+	// });
+	// $.each(region_address.ZX.ADDRESS, function (k, v) {
+	// 	if (v.ADD_TYPE == '原告') {
+	// 		yg_num++;
+	// 	} else if (v.ADD_TYPE == '被告') {
+	// 		bg_num++;
+	// 	} else if (v.ADD_TYPE == '财产') {
+	// 		cc_num++;
+	// 	} else if (v.ADD_TYPE == '上诉人') {
+	// 		ssr_num++;
+	// 	} else if (v.ADD_TYPE == '被上诉人') {
+	// 		bssr_num++;
+	// 	} else if (v.ADD_TYPE == '第三人') {
+	// 		dsr_num++;
+	// 	} else if (v.ADD_TYPE == '申请执行人') {
+	// 		sqzxr_num++;
+	// 	} else if (v.ADD_TYPE == '被执行人') {
+	// 		bzxr_num++;
+	// 	}
+	// });
+	// $('#map-box-yg-num').html(yg_num);
+	// $('#map-box-bg-num').html(bg_num);
+	// $('#map-box-cc-num').html(cc_num);
+	// $('#map-box-ssr-num').html(ssr_num);
+	// $('#map-box-bssr-num').html(bssr_num);
+	// $('#map-box-dsr-num').html(dsr_num);
+	// $('#map-box-sqzxr-num').html(sqzxr_num);
+	// $('#map-box-bzxr-num').html(bzxr_num);
+	// if (aj_type == 'sp') {
+	// 	type = 'SP';
+	// } else {
+	// 	type = 'ZX';
+	// }
+	var add_num_str = '';
+	var add_str = '';
 	$.each(region_address.SP.ADDRESS, function (k, v) {
-		if (v.ADD_TYPE == '原告') {
-			yg_num++;
-		} else if (v.ADD_TYPE == '被告') {
-			bg_num++;
-		} else if (v.ADD_TYPE == '财产') {
-			cc_num++;
-		} else if (v.ADD_TYPE == '上诉人') {
-			ssr_num++;
-		} else if (v.ADD_TYPE == '被上诉人') {
-			bssr_num++;
-		} else if (v.ADD_TYPE == '第三人') {
-			dsr_num++;
-		} else if (v.ADD_TYPE == '申请执行人') {
-			sqzxr_num++;
-		} else if (v.ADD_TYPE == '被执行人') {
-			bzxr_num++;
-		}
+		add_num_str += '<li><img src="images/' + ryType[k] + '_bz_b.png" alt=""><span id="map_box_ssdw_'+ryType[k]+'_num">' + k + ' <span class="badge bg-sub" >' + v.length + '</span></li>';
+		
 	});
+	$('#map_box_ssdw_num').html(add_num_str);
 	$.each(region_address.ZX.ADDRESS, function (k, v) {
-		if (v.ADD_TYPE == '原告') {
-			yg_num++;
-		} else if (v.ADD_TYPE == '被告') {
-			bg_num++;
-		} else if (v.ADD_TYPE == '财产') {
-			cc_num++;
-		} else if (v.ADD_TYPE == '上诉人') {
-			ssr_num++;
-		} else if (v.ADD_TYPE == '被上诉人') {
-			bssr_num++;
-		} else if (v.ADD_TYPE == '第三人') {
-			dsr_num++;
-		} else if (v.ADD_TYPE == '申请执行人') {
-			sqzxr_num++;
-		} else if (v.ADD_TYPE == '被执行人') {
-			bzxr_num++;
+		if($("#map_box_ssdw_"+ryType[k]+"_num").length==0)
+		{
+			add_num_str += '<li><img src="images/' + ryType[k] + '_bz_b.png" alt=""><span id="map_box_ssdw_'+ryType[k]+'_num">' + k + ' <span class="badge bg-sub" >' + v.length + '</span></li>';
+		}else{
+			var num = $("#map_box_ssdw_"+ryType[k]+"_num").html();
+			num = parseInt(num)+v.length;
+			$("#map_box_ssdw_"+ryType[k]+"_num").html(num);
 		}
 	});
-	$('#map-box-yg-num').html(yg_num);
-	$('#map-box-bg-num').html(bg_num);
-	$('#map-box-cc-num').html(cc_num);
-	$('#map-box-ssr-num').html(ssr_num);
-	$('#map-box-bssr-num').html(bssr_num);
-	$('#map-box-dsr-num').html(dsr_num);
-	$('#map-box-sqzxr-num').html(sqzxr_num);
-	$('#map-box-bzxr-num').html(bzxr_num);
+	$('#map_box_ssdw_num').html(add_num_str);
 }

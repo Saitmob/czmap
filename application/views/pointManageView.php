@@ -2,199 +2,349 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <title>案件信息录入</title>
-  <link rel="stylesheet" href="<?=base_url()?>js/pintuer/pintuer.css">
-  <link rel="stylesheet" href="<?=base_url()?>css/indexStyle.css">
-  <link rel="stylesheet" href="<?=base_url()?>js/layer/skin/layer.css">
-  <link rel="stylesheet" href="<?=base_url()?>js/ztree/zTreeStyle/zTreeStyle.css">
-  <link rel="stylesheet" href="<?=base_url()?>css/bmap.css">
-  <script src="<?=base_url()?>js/jquery-1.12.0.min.js"></script>
-  <script src="<?=base_url()?>js/jquery.base64.js"></script>
-  <script src="<?=base_url()?>js/weburl.js"></script>
-  <script src="<?=base_url()?>js/pintuer/pintuer.js"></script>
-  <script src="<?=base_url()?>js/apiv1.3.min.js"></script>
-  <script src="<?=base_url()?>js/layer/layer.js"></script>
-  <script src="<?=base_url()?>js/laypage/laypage.js"></script>
-  <script src="<?=base_url()?>js/laydate.js"></script>
-  <script src="<?=base_url()?>js/ztree/jquery.ztree.core.min.js"></script>
-  <script src="<?=base_url()?>js/common/region.js"></script>
-  <script src="<?=base_url()?>js/add_or_update_data.js"></script>
-  <style>
-    .cz-container ul input {
-      float: right;
-    }
-  </style>
+	<meta charset="UTF-8">
+	<title>多元化解矛盾系统人员管理</title>
+	<script src="<?=base_url()?>js/jquery-1.12.0.min.js"></script>
+	<link rel="stylesheet" href="<?=base_url()?>js/pintuer/pintuer.css">
+	<!--<link rel="stylesheet" href="<?=base_url()?>js/ztree/demo.css">-->
+	<link rel="stylesheet" href="<?=base_url()?>css/indexStyle.css">
+	<link rel="stylesheet" href="<?=base_url()?>js/ztree/zTreeStyle/zTreeStyle.css">
+	<script src="<?=base_url()?>js/weburl.js"></script>
+	<!--<script src="<?=base_url()?>js/pintuer/pintuer.js"></script>-->
+	<script src="<?=base_url()?>js/layer/layer.js"></script>
+	<script src="<?=base_url()?>js/laypage/laypage.js"></script>
+	<script src="<?=base_url()?>js/laydate/laydate.js"></script>
+	<!--<script src="<?=base_url()?>js/getDataGraph.js"></script>-->
+	<script src="<?=base_url()?>js/ztree/jquery.ztree.core.min.js"></script>
+	<script src="<?=base_url()?>js/jQuery-File-Upload/vendor/jquery.ui.widget.js"></script>
+	<script src="<?=base_url()?>js/jQuery-File-Upload/jquery.iframe-transport.js"></script>
+	<script src="<?=base_url()?>js/jQuery-File-Upload/jquery.fileupload.js"></script>
+	<script src="<?=base_url()?>js/common/uploadfile.js"></script>
+	<script src="<?=base_url()?>js/common/region.js"></script>
+	<script src="<?=base_url()?>js/personManage.js"></script>
+	<!--<script src="http://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
+<script src="<?=base_url()?>js/jQuery-File-Upload/jquery.fileupload-image.js"></script>-->
 </head>
+<style>
+	.person-num {
+		margin: 20px 10px 10px 10px;
+	}
+
+	.person-num div {
+		margin: 0 10px;
+		display: inline-block;
+	}
+
+</style>
 
 <body>
-  <div class="header">
-    <span class="title"></span>
-    <!--用户登录-->
-    <div class="user-box" style="display:inline-block;">
-      <div>欢迎：<span class="user-name">...</span></div>
-      <div class="logout"><a href="<?=base_url()?>index.php/welcome/logout">退出</a></div>
-    </div>
-    <!--导航-->
-    <div class="manager-entrance">
-      <ul>
-        <!--<li class="header-nav"><a href="<?=base_url()?>index.php/welcome/personManage">人员管理</a> </li>
-        <li class="nav-fgx"></li>
-        <li class="header-nav"><a href="<?=base_url()?>index.php/welcome/addNDelData">案件数据管理</a></li>-->
-        <li class="header-nav"><a href="<?=base_url()?>index.php/pointManage/">坐标管理</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="cz-container add-del-main">
-    <ul class="cz-nav">
-      <a href="<?=base_url()?>">
-        <li>首页</li>
-      </a>
-      <li> > </li>
-      <li class="cur-nav">案件信息管理</li>
-    </ul>
-    <button class="button bg-sub button-small" style="margin:10px" onClick="show_case_list()">预览</button>
-    <button class="button bg-sub button-small" onClick="show_editor_panel()" >添加</button>
-    <div class="search-box">
-      <input type="text" class="input input-small wide-input" style="padding-left: 5px;" placeholder="输入案号搜索">
-      <input type="button" id="search-btn" value="搜索">
-    </div>
-    <!--编辑面板-->
-    <div id="editor-panel" style="display:none;">
+	<div class="header">
+		<span class="title"></span>
+		<!--用户登录-->
+		<div class="user-box" style="display:inline-block;">
+			<div>欢迎：<span class="user-name">...</span></div>
+			<div class="logout"><a href="<?=base_url()?>index.php/welcome/logout">退出</a></div>
+		</div>
+		<!--导航-->
+		<div class="manager-entrance">
+			<ul>
+				<li class="header-nav"><a href="<?=base_url()?>index.php/welcome/personManage">人员管理</a> </li>
+				<li class="nav-fgx"></li>
+				<li class="header-nav"><a href="<?=base_url()?>index.php/welcome/addNDelData">案件数据管理</a></li>
+			</ul>
+		</div>
 
-      <div class="top">
-        <!--<input type="button" value="百度地图坐标拾取入口" id="map-point-get" onclick="window.open('http://api.map.baidu.com/lbsapi/getpoint/index.html','','width='+(window.screen.availWidth-10)+',height='+(window.screen.availHeight-70)+ 'top=0;left=0;resizable=no')">-->
-        <input type="button" class="button bg-sub button-small" style="float:left;" value="案件地址坐标拾取" id="map-point-get">
+	</div>
+	<div class="cz-container" style="margin-top:20px;width:1200px;background: rgba(255, 255, 255, 0.7);border-radius: 5px;height:700px;">
+		<ul class="cz-nav">
+			<a href="<?=base_url()?>">
+				<li>首页</li>
+			</a>
+			<li> > </li>
+			<li class="cur-nav">人员管理</li>
+		</ul>
+		<div class="data_list">
+			<div class="ry-search-box">
+				<input type="text" class="input input-small" id="search-person-text" style="width:160px;display:inline-block;margin-right:10px;">
+				<button class="button bg-sub button-small" id="search-person-btn">查询</button>
+				<button class="button bg-sub button-small" id="add-person-btn">添加人员</button>
 
+				<form action="" style="display:inline-block;">
+					<span class="button bg-sub button-small" style="position: relative;cursor:pointer;"><span>导入人员表</span>
+					<input id="excelFile" type="file" name="file" multiple=""  class="file-upload-btn">
+					</span>
+				</form>
+				<a href="<?=base_url()?>ces.xlsx"><span class="button bg-sub button-small" style="position: relative;cursor:pointer;"><span>模板下载</span>
+<input type="button" name="file" multiple="" class="file-upload-btn">
+</span>
+</a>
+			</div>
+			<!--展示类型选择-->
+			<div style="margin:10px">
+				<!--<span class='ry-option'>所属区域：</span>
+				<span class='ry-option-data' style="width:60px;">
+<button class="button bg-sub button-small ry-option-list-btn" style="margin:0 4px;" id="editor-select-region">选择</button>
+<span></span>
 
-      </div>
+				</span>
+				<span id="editor-region-selected-list" class="list-link" style="min-height:30px;width:200px;display:inline-block;vertical-align:bottom;"></span>-->
+        区域：
+				<select class="input input-small"   style="width:90px;display:inline-block" id="person-region-select">
+          <option value="all" selected="selected">全部</option>
+          <option value="cz_jz">江州区</option>
+          <option value="cz_td">天等县</option>
+          <option value="cz_dx">大新县</option>
+          <option value="cz_px">凭祥市</option>
+          <option value="cz_nm">宁明县</option>
+          <option value="cz_fs">扶绥县</option>
+          <option value="cz_lz">龙州县</option>
+        </select>
+        人员类型：
+				<select class="input input-small"   style="width:90px;display:inline-block" id="person-type-select">
+          <option value="all" selected="selected">全部</option>
+          <option value="执行员">执行员</option>
+          <option value="网格员">网格员</option>
+        </select>
+        <!--人员数展示-->
+			<div class="person-num" style="display:inline-block">
+				<div>
+					法律顾问 <span class="badge bg-sub" id="flgw-num">0</span>
+				</div>
+				<div>
+					网格员 <span class="badge bg-sub" id="wgy-num">0</span>
+				</div>
+			</div>
+			</div>
+      
+			
+			<!--人员信息查询-->
+			<div class="person-list">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>姓名</th>
+							<th>性别</th>
+							<th>出生年月</th>
+							<th>职务</th>
+							<th>地址</th>
+							<th>联系号码</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="person-list-data">
+						<tr class="list-tr">
+							<td class='list-item-name'>张三</td>
+							<td class='list-item-sex'>男</td>
+							<td class='list-item-age'>100</td>
+							<td class='list-item-duty'>陪审员</td>
+							<td class='list-item-region'>大新县</td>
+							<td class='list-item-phone'>10086</td>
+							<td>
+								<!--<button class="button bg-mix button-small ry-option-list-btn" onClick="browsePerson(this)">查看</button>-->
+								<button class="button bg-sub button-small ry-option-list-btn" onClick="editorPerson(this)">查看 / 编辑</button>
+								<button class="button bg-red button-small ry-option-list-btn" onClick="deletePerson()">删除</button>
+								<input type="hidden" class="list-item-pid" value="1">
+								<input type="hidden" class="list-item-photoId" value="3">
+							</td>
+						</tr>
 
-      <div style="float:left">
+					</tbody>
+				</table>
+				<div id="my_list_page" style="height:30px;width:100%;"></div>
+			</div>
+			<!--人员信息录入及修改-->
+			<div action="" class="editor-list" id="editor-panel">
+				<ul class="editor-panel-ul">
+					<li>
+						<div class="edit_right">
 
-        <ul>
+							<div style="width:100px;height:120px;line-height:116px;border:1px solid #abc;background:#fff;display:inline-block;vertical-align: bottom;text-align:center;margin: 20px 60px;margin-top: 10px;"
+							class="editor-photo">
+							</div>
+							<span class='ry-option-data' style="text-align: center;">
+							<form action="" style="display:block;">
+							<span class="button bg-sub button-small" style="position: relative;cursor:pointer;"><span>选择</span>
+							<input id="fileupload" type="file" name="files[]" multiple=""  class="file-upload-btn">
+							</form>
+							</span>
+							</span>
+							<span class='ry-option-data' style="text-align: center;">
+								<button class="button bg-sub button-small ry-option-list-btn editor-select-region" onclick='chooseregion()' style="display: block;margin: 20px auto;" ><span class="icon-map-marker"></span><t>选择区域</t></button>
+							</span>
+						</div>
+						<div class="edit_left">
+							<div class="line-div">
+								<span class='ry-option'>姓名：</span>
+								<span class='ry-option-data'><input type="text" class="input input-small input-auto editor-name" ></span>
+							</div>
+							<div class="line-div">
+								<span class='ry-option'>性别：</span>
+								<span class='ry-option-data'>
+								<span class='ry-option-data'>
+									<select class="input input-small input-auto editor-sex" >
+									<option value="男" selected="selected">男</option>
+									<option value="女">女</option>
+									<option value="">未知</option>
+									</select>
+								</span>	
+							</div>	
+							<div class="line-div">
+								<span class='ry-option'>出生年月：</span>
+								<span class='ry-option-data'><input type="text" class="input input-small input-number editor-age input-auto" ></span>
+							</div>	
+							<div class="line-div">
+								<span class='ry-option'>职务：</span>
+								<span class='ry-option-data'>
+								<select class="input input-small editor-rybs input-auto" >
+								<option value="执行员" selected="selected">执行员</option>
+								<option value="网格员">网格员</option>
+								<option value="法律顾问">法律顾问</option>
+								</select>
+								</span>
+							</div>
+							<div class="line-div">
+								<span class='ry-option'>联系号码：</span>
+								<span class='ry-option-data'><input type="text" class="input input-small editor-phone input-auto" ></span>
+							</div>
+							<div class="line-div">
+								<span class='ry-option'>内网邮箱：</span>
+								<span class='ry-option-data'><input type="text" class="input input-small editor-email input-auto" ></span>
+							</div>				
+						</div>
+					</li>
+<!-- 					<li>
+	<span class='ry-option'>地址：</span>
+	<span class='ry-option-data'><textarea type="text"  rows="5" class="input editor-intro" ></textarea>
+</li> -->
+					<li>
+						<span class='ry-option'>民族：</span>
+						<select class="input input-small editor-nation" >
+						<option value="读取中...">读取中...</option>
+						</select>
+					</li>
+					<li>
+						<span class='ry-option'>学历：</span>
+						<select class="input input-small editor-education" >
+						<option value="博士" selected="selected">博士</option>
+						<option value="硕士">硕士</option>
+						<option value="本科">本科</option>
+						<option value="大专">大专</option>
+						<option value="中专">中专</option>
+						<option value="高中">高中</option>
+						<option value="初中">初中</option>
+						<option value="小学">小学</option>
+						<option value="未知">未知</option>
+						</select>
+					</li>
+					<li>
+						<span class='ry-option'>工作地点：</span>
+						<span class='ry-option-data'><input type="text" class="input input-small editor-company" ></span>
+					</li>
+					<li>
+						<span class='ry-option'>政治面貌：</span>
+						<select class="input input-small editor-zzmm" >
+						<option value="中共党员" selected="selected">中共党员</option>
+						<option value="中共预备党员">中共预备党员</option>
+						<option value="共青团员">共青团员</option>
+						<option value="民革党员">民革党员</option>
+						<option value="民盟盟员">民盟盟员</option>
+						<option value="群众">群众</option>
+						<option value="">未知</option>
+						</select>
+					</li>
+					<li>
+						<span class='ry-option'>职业：</span>
+						<span class='ry-option-data'><input type="text" class="input input-small editor-duty" ></span>
+					</li>
+</ul>
+<input type="hidden"  class="ry-email" name="user-email" value="gyqinxp@gxfy.com">
+<input type="hidden" class="ry-id" name="pid">
+<input type="hidden" class="ry-photoId" name="photoId" value="">
+<input type="hidden" class="ry-intro">
+<!--保存-->
+<div style="text-align:center">
+<button class="button bg-sub button-small ry-option-list-btn ry-save-btn" style="margin:0 4px;" >保存</button>
+</div>
 
-          <!--<li>选择区域：
-<select style="float: right;width:50%;" id="region" name="region" class="input input-small">
-<option value="cz_td" selected="selected">天等县</option>
-<option value="cz_dx">大新县</option>
-<option value="cz_lz">龙州县</option>
-<option value="cz_jz">江州区</option>
-<option value="cz_fs">扶绥县</option>
-<option value="cz_px">凭祥市</option>
-<option value="cz_nm">宁明县</option>
-</select><b>*</b>
-</li>-->
-          <li style="width:420px;">所属地区：
-            <button class="button bg-sub button-small" style="margin:0 4px;" id="select-region">选择</button>
-            <div id="editor-region-selected-list" class="list-link" style="min-height:40px;width:68%;float:right;display:inline-block;"></div><b>*</b>
-          </li>
-          <li style="clear:left;">详细地址：
-            <input type="text" class="input input-small wide-input must" id="address" name="address"><b>*</b>
-          </li>
+</div>
 
-          <li>
-            X坐标：
-            <input type="text" class="input input-small wide-input must" id="point_x" name="point_x"><b>*</b>
-          </li>
-          <li>
-            Y坐标：
-            <input type="text" class="input input-small wide-input must" id="point_y" name="point_y"><b>*</b>
-          </li>
-          <li>
-            案件类型：
-            <select name="this_area" id="case_type" class="input input-small" style="float: right;width: 82px; padding-left: 15px;">
-              <option value="1">审判案件</option>
-              <option value="2">执行案件</option>
-            </select><b>*</b>
-          </li>
-        </ul>
-        <ul>
-          <li>
-            法院名称：
-            <input type="text" class="input input-small wide-input must" id="court_name" name="court_name"><b>*</b>
-          </li>
-          <li>
-            案号：
-            <input type="text" class="input input-small wide-input must" id="an_hao" name="an_hao"><b>*</b>
-          </li>
-          <li>
-            立案时间：
-            <input onClick="laydate()" class="input input-small wide-input must" id="li_an_date" name="li_an_date"><b>*</b>
-          </li>
-          <!--<li>
-    案由：
-    <input type="text" class="input input-small wide-input must" id="an_you" name="an_you"><b>*</b>
-    </li>-->
-        </ul>
-        <ul>
-          <li>
-            被执行人：
-            <input type="text" class="input input-small wide-input must" id="bzxr" name="bzxr"><b>*</b>
-          </li>
-          <li>
-            标的（万元）：
-            <input type="text" class="input input-small wide-input must" id="bd" name="bd" style="width: 140px;"><b>*</b>
-          </li>
-          <li>
-            是否属于崇左地区：
-            <select name="this_area" id="this_area" class="input input-small" style="float: right;width: 60px; padding-left: 15px;">
-              <option value="1">是</option>
-              <option value="0">否</option>
-            </select><b>*</b>
-          </li>
-          <li>
-            备注：
-            <input type="text" class="input input-small wide-input" id="note" name="note">
-          </li>
-        </ul>
-      </div>
-      <!-- 清除浮动撑开父元素 -->
-      <div style="clear: both;"></div>
-      <div class="submit">
-        <button type="button" id="submit" class="submit_btn">保存</button>
-        <button type="button" id="delete" class="submit_btn">删除</button>
-      </div>
-    </div>
-    <!--预览面板-->
-    <div id="show-panel" style="margin-top:10px;">
-      <div>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>案号</th>
-              <th>案由</th>
-              <th>法院名称</th>
-              <th>区域</th>
-              <th>被执行人</th>
-              <th>立案日期</th>
-              <th>详细地址</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody id="case-list-data">
-            <tr>
-              <td class='list-item-ah'>张三</td>
-              <td class='list-item-ay'>男</td>
-              <td class='list-item-court-name'>100</td>
-              <td class='list-item-retion'>陪审员</td>
-              <td class='list-item-bzxr'>大新县</td>
-              <td class='list-item-date'>10086</td>
-              <td class='list-item-address'>10086</td>
-              <td>
-                <!--<button class="button bg-mix button-small ry-option-list-btn" onClick="browsePerson(this)">查看</button>-->
-                <button class="button bg-sub button-small ry-option-list-btn case-editor" >查看 / 编辑</button>
-                <button class="button bg-red button-small ry-option-list-btn case-delete" >删除</button>
-                <input type="hidden" class="list-item-caseid" value="1">
-              </td>
-            </tr>
-
-          </tbody>
-        </table>
-        <div id="case_list_page" style="height:30px;text-align:center;"></div>
-      </div>
-    </div>
-  </div>
-
+</div>
+</div>
+<script>
+$(function () {
+    // $.each($('#test-table'),function(k,v)
+    // {
+    //   var val = $(v).children().text();
+    //   val = val.replace(/(^\s+)|(\s+$)/g,"");
+    //   if(val=='2'){
+    //     console.log($(v).parent());
+    //     // $(v).parent().remove();
+    //   }
+    //   console.log(val);
+    // });
+/*    $('#fileupload').fileupload({
+        dataType: 'json',
+        acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+        add: function (e, data) {
+            var allow_file_arr = ['jpeg','jpg','png','gif'];
+            var fileType = data.files[0].name;
+            fileType = fileType.split('.');
+            fileType = fileType[1];
+            if($.inArray(fileType.toLowerCase(), allow_file_arr) == -1)
+            {
+                layer.alert("请上传'jpeg'、'jpg'、'png'、'gif'等格式文件");
+            }else{
+                // layer.alert('图片格式正确');
+                data.submit();
+            }
+            // data.context = $('<p/>').text('Uploading...').appendTo(document.body);
+            // data.submit();
+        },
+        done: function (e, data) {
+            console.log(data);
+            if(data.total>3*1000*1000||data.total==0)
+            {
+                layer.alert('请上传大于0MB且小于1MB的图片');
+            }else{
+                // $('#editor-photo').prop('src',weburl+data.result.file_path);
+                $('#ry-photoId').val(data.result.file_id);
+                // console.log(data.result.file_path);
+                showPhoto(data.result.file_path);
+                // $.each(data.result.files, function (index, file) {
+                //     $('<p/>').text(file.name).appendTo(document.body);
+                // });
+            }
+        }
+    });*/
+/*    $('#excelFile').fileupload({
+        acceptFileTypes: /(\.|\/)(xls|xlsx)$/i,
+        add: function (e, data) {
+            var allow_file_arr = ['xls','xlsx'];
+            var fileType = data.files[0].name;
+            fileType = fileType.split('.');
+            fileType = fileType[fileType.length-1];
+			console.log(fileType);
+            if($.inArray(fileType.toLowerCase(), allow_file_arr) == -1)
+            {
+                layer.alert('请上传excel格式文件');
+            }else{
+                // layer.alert('图片格式正确');
+                data.submit();
+            }
+            // data.context = $('<p/>').text('Uploading...').appendTo(document.body);
+            // data.submit();
+        },
+        done: function (e, data) {
+            if(data.result==1)
+            {
+                layer.alert('导入成功');
+            }else{
+                layer.alert('导入失败，请检查excel文件内容格式');
+            }
+        }
+    });*/
+});
+</script>
 </body>
 
 </html>

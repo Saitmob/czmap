@@ -174,6 +174,7 @@ function cz_map() {
 // 		}
 // 	});
 // }
+
 // 案件展示地图
 function show_map(aj_type, aj_id, aj_bs) {
 	$('#map1_is_show').val('0');
@@ -182,71 +183,27 @@ function show_map(aj_type, aj_id, aj_bs) {
 	$('#aj_box_wraper').animate({
 		'left': '-' + left + 'px'
 	}, 300);
-	var yg_str = '';
-	var bg_str = '';
-	var cc_str = '';
-	var dsr_str = '';
-	var ssr_str = '';
-	var bssr_str = '';
-	var sqzxr_str = '';
-	var bzxr_str = '';
-	var yg_num = 0;
-	var bg_num = 0;
-	var cc_num = 0;
-	var dsr_num = 0;
-	var ssr_num = 0;
-	var bssr_num = 0;
-	var sqzxr_num = 0;
-	var bzxr_num = 0;
 	var type = '';
 	if (aj_type == 'sp') {
 		type = 'SP';
 	} else {
 		type = 'ZX';
 	}
+	var span_n = 0;
+	var add_num_str = '';
+	var add_str = '';
 	$.each(region_address[type].ADDRESS, function (k, v) {
-		if (v.ADD_TYPE == '原告') {
-			yg_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
-			yg_num++;
-		} else if (v.ADD_TYPE == '被告') {
-			bg_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
-			bg_num++;
-		} else if (v.ADD_TYPE == '财产') {
-			cc_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
-			cc_num++;
-		} else if (v.ADD_TYPE == '上诉人') {
-			ssr_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
-			ssr_num++;
-		} else if (v.ADD_TYPE == '被上诉人') {
-			bssr_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
-			bssr_num++;
-		} else if (v.ADD_TYPE == '第三人') {
-			dsr_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
-			dsr_num++;
-		} else if (v.ADD_TYPE == '申请执行人') {
-			sqzxr_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
-			sqzxr_num++;
-		} else if (v.ADD_TYPE == '被执行人') {
-			bzxr_str += '<li onclick="centerPoint(\'' + v.POINT.x + '\',\'' + v.POINT.y + '\')">' + v.NAME + '</li>';
-			bzxr_num++;
-		}
+		add_num_str += '<li><img src="images/' + ryType[k] + '_bz_b.png" alt="">' + k + ' <span class="badge bg-sub" >' + v.length + '</span></li>';
+		var p_name = '';
+		$.each(v, function (k2, v2) {
+			p_name += '<i class="add-name" onclick="centerPoint(\'' + v2.POINT.x + '\',\'' + v2.POINT.y + '\')">' + v2.NAME + '</i>';
+		});
+		var span_str = '<span>' + k + '：' + p_name + '</span>';
+		add_str += span_str;
 	});
-	$('#aj-box-yg-num').html(yg_num);
-	$('#aj-box-bg-num').html(bg_num);
-	$('#aj-box-cc-num').html(cc_num);
-	$('#aj-box-ssr-num').html(ssr_num);
-	$('#aj-box-bssr-num').html(bssr_num);
-	$('#aj-box-dsr-num').html(dsr_num);
-	$('#aj-box-sqzxr-num').html(sqzxr_num);
-	$('#aj-box-bzxr-num').html(bzxr_num);
-	$('#one-aj-yg-list').html(yg_str);
-	$('#one-aj-bg-list').html(bg_str);
-	$('#one-aj-cc-list').html(cc_str);
-	$('#one-aj-ssr-list').html(ssr_str);
-	$('#one-aj-bssr-list').html(bssr_str);
-	$('#one-aj-dsr-list').html(dsr_str);
-	$('#one-aj-sqzxr-list').html(sqzxr_str);
-	$('#one-aj-bzxr-list').html(bzxr_str);
+	$('#aj_box_ssdw_num').html(add_num_str);
+	$('#aj-mapbox-bottom').html(add_str);
+
 	// 弹出案件面板
 	$('#case_detail_panel').animate({
 		'height': '400px'
@@ -278,8 +235,13 @@ function show_map(aj_type, aj_id, aj_bs) {
 }
 //将地图的中心定位到该点
 function centerPoint(x, y) {
-	var centerPoint = new BMap.Point(x, y);
-	window.map.centerAndZoom(centerPoint, 14);
+	if (x == undefined||x=='undefined' || y == undefined||y=='undefined') {
+		layer.alert('无法定位到该坐标');
+	} else {
+		var centerPoint = new BMap.Point(x, y);
+		window.map.centerAndZoom(centerPoint, 14);
+	}
+
 }
 
 function show_ajList() {
@@ -315,18 +277,17 @@ function show_map_box() {
 	// console.log(r_id);
 	var fjm = $('#current_fjm').val();
 	$('#map-box-court-name').html(regionChange(r_id));
-	var index = layer.load(1, {
-		shade: [0.5, '#000'] //0.1透明度的白色背景
-	});
-	console.log('show_map'+index);
-	getregion_data(fjm); //获取该区域案件信息
-	$.when(getregion_data(fjm)).done(function (data) {
-		console.log(data);
-		region_address = data;
-		layer.close(index);
-		initMap(fjm, 1); //初始化第一个地图
-	});
-	
+	//获取该区域案件信息
+	if ($.isEmptyObject(region_address) == true || region_address.REGION_POINT.fjm != fjm||region_address.REGION_TYPE!='ONE_REGION') {
+		var index = layer.load(1, {
+			shade: [0.5, '#000'] //0.1透明度的白色背景
+		});
+		$.when(getregion_data(fjm)).done(function (data) {
+			window.region_address = data;
+			layer.close(index);
+			initMap(fjm, 1); //初始化第一个地图
+		});
+	}
 }
 
 // 展示案件列表
