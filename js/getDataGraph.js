@@ -67,14 +67,14 @@ function getregion_data(fjm) {
 }
 // getregion_data('K00');
 
-function getRdataById(fjm, aj_type, aj_id) {
+function getRdataById(fjm, aj_type, aj_bs) {
 	$.ajax({
 		type: 'post',
 		url: weburl + 'index.php/welcome/getRdataById',
 		data: {
 			'fjm': fjm,
 			'aj_type': aj_type,
-			'aj_id': aj_id
+			'aj_id': aj_bs
 		},
 		dataType: 'json',
 		async: false, //设置为同步操作就可以给全局变量赋值成功

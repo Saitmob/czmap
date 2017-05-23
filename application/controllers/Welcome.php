@@ -5,6 +5,7 @@ class Welcome extends CI_Controller {
     
     public function __construct()
     {
+        // session_start();
         parent::__construct();
         $this->load->model('map_case_model','mapcase');
     }
@@ -36,7 +37,7 @@ class Welcome extends CI_Controller {
         $_SESSION = array();
         session_destroy();
         $logoutService = base_url();
-        $this->phpcas->logoutWithRedirectService("http://192.168.1.199:8050/cas/logout?service=$logoutService");
+        $this->phpcas->logoutWithRedirectService("http://147.1.6.16:8080/cas/logout?service=$logoutService");
     }
     public function index()
     {
@@ -307,7 +308,7 @@ class Welcome extends CI_Controller {
         {
             $aj_type = $this->input->post('aj_type');
             $fjm = $this->input->post('fjm');
-            $data = $this->mapcase->getRdataById($fjm,$aj_type,'AJ_ID',$aj_id);
+            $data = $this->mapcase->getRdataById($fjm,$aj_type,'AJBS',$aj_id);
             echo json_encode($data);
         }
         
@@ -327,14 +328,14 @@ class Welcome extends CI_Controller {
         $data = $this->mapcase->getSpZxNum();
         echo json_encode($data);
     }
-    // public function getPersonInfo()
-    // {
-    //     $id = $this->input->post('id');
-    //     if(!empty($id))
-    //     {
-    //         $data = $this->mapcase->getPersonInfo($id);
-    //         // var_dump($data);
-    //         echo json_encode($data);
-    //     }
-    // }
+    public function getPersonInfo()
+    {
+        $id = $this->input->post('id');
+        if(!empty($id))
+        {
+            $data = $this->mapcase->getPersonInfo($id);
+            // var_dump($data);
+            echo json_encode($data);
+        }
+    }
 }

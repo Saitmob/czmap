@@ -32,12 +32,12 @@ class case_data_model extends CI_Model {
         $add_cc_num=count($res3);
         $add_num = $add_dsr_num+$add_cc_num;
         // 合议庭成员
-        $sql = "SELECT xm,jsmc FROM {$aj_type}_hytcy WHERE ajbs = '{$ajbs}'";
+        $sql = "SELECT xm,jsmc FROM {$aj_type}_hytcy WHERE ajbs = '{$ajbs}' AND jsmc is not null";
         $query = $this->ajxx->query($sql);
         $res4 = $query->result();
         foreach ($res4 as $key => $value) {
             $jsmc = (isset($value->jsmc))?("（".$value->jsmc."）"):'';
-            $hytcy_name[] = $value->xm;
+            $hytcy_name[] = $value->xm.$jsmc;
         }
         $hytcy_name = implode('、',$hytcy_name);
         $bdje = substr($res1->bdje,0,-4);

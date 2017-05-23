@@ -88,14 +88,14 @@ function creatDataInfo() {
 	console.log(region_address);
 	if (region_address.SP.ADDRESS != undefined) {
 		$.each(region_address.SP.ADDRESS, function (k, v) {
-			$.each(v,function(k2,v2){
+			$.each(v, function (k2, v2) {
 				region_arr.push(v2);
 			});
 		});
 	}
 	if (region_address.ZX.ADDRESS != undefined) {
 		$.each(region_address.ZX.ADDRESS, function (k, v) {
-			$.each(v,function(k2,v2){
+			$.each(v, function (k2, v2) {
 				region_arr.push(v2);
 			});
 		});
@@ -105,19 +105,19 @@ function creatDataInfo() {
 	var noPoint = '';
 	if (region_arr.length > 0) { //如果地点大于0
 		$.each(region_arr, function (k, v) {
-			if (v.POINT.x != undefined&&v.POINT.x !=0&&v.POINT.x !='' && v.POINT.y != undefined&&v.POINT.y != 0&&v.POINT.y != '') {
+			if (v.POINT.x != undefined && v.POINT.x != 0 && v.POINT.x != '' && v.POINT.y != undefined && v.POINT.y != 0 && v.POINT.y != '') {
 				// xx先判断坐标是否重复，重复则做偏移处理
 				var point = new BMap.Point(v.POINT.x, v.POINT.y);
-				var point_str = v.POINT.x+','+v.POINT.y;
-				if($.inArray(point_str,points_str)!=-1){
-					point = new BMap.Point(parseFloat(v.POINT.x)+0.0007, parseFloat(v.POINT.y)+0.0003);
-					var x = parseFloat(v.POINT.x)+0.0007;
-					var y = parseFloat(v.POINT.y)+0.0003;
-					point_str = x+0.0007+','+y;
+				var point_str = v.POINT.x + ',' + v.POINT.y;
+				if ($.inArray(point_str, points_str) != -1) {
+					point = new BMap.Point(parseFloat(v.POINT.x) + 0.0007, parseFloat(v.POINT.y) + 0.0003);
+					var x = parseFloat(v.POINT.x) + 0.0007;
+					var y = parseFloat(v.POINT.y) + 0.0003;
+					point_str = x + 0.0007 + ',' + y;
 				}
 				points.push(point);
 				points_str.push(point_str);
-				var content = "地址："+v.ADD_NAME+"<br>"+v.BZ_INFO+v.BZ_BOTTOM;
+				var content = "地址：" + v.ADD_NAME + "<br>" + v.BZ_INFO + v.BZ_BOTTOM;
 				var iconUrl = '';
 				var size = new BMap.Size(20, 24);
 				if (v.ADD_TYPE == '原告') {
@@ -137,23 +137,26 @@ function creatDataInfo() {
 					iconUrl = 'images/bzxr_bz.png';
 				} else if (v.ADD_TYPE == '第三人') {
 					iconUrl = 'images/dsr_bz.png';
-				}else{
+				} else {
 					iconUrl = 'images/bg_bz.png';
 				}
 				// var myIcon = new BMap.Icon(iconUrl, new BMap.Size(40,40),{imageOffset:new BMap.Size(100, 40) });
 				var myIcon = new BMap.Icon(iconUrl, size);
 				var marker = new BMap.Marker(point, {
 					icon: myIcon
-				}); // 创建标注
+				});
 				marker.setShadow(shadow);
 				map.addOverlay(marker); // 将标注添加到地图中
 				addClickHandler(content, marker, point);
-				var ssdw = v.ADD_TYPE;
-				var label = new BMap.Label("<p style='height:16px;line-height:13px;padding:3px 5px;margin-bottom:0;'>" + ssdw + "</p>", {
-					offset: new BMap.Size(20, -15)
-				}); //offset设置偏移量
-				marker.setLabel(label);
-			} else if(v.ADD_NAME!=null) {
+				// 创建标注
+				if (region_arr.length < 14) {
+					var ssdw = v.ADD_TYPE;
+					var label = new BMap.Label("<p style='height:16px;line-height:13px;padding:3px 5px;margin-bottom:0;'>" + ssdw + "</p>", {
+						offset: new BMap.Size(20, -15)
+					}); //offset设置偏移量
+					marker.setLabel(label);
+				}
+			} else if (v.ADD_NAME != null) {
 				noPoint += v.ADD_NAME + '、';
 
 			}
@@ -166,7 +169,7 @@ function creatDataInfo() {
 			var view = map.getViewport(eval(points));
 			var mapZoom = view.zoom;
 			var centerPoint = view.center;
-			mapZoom = (mapZoom>16)?15:mapZoom;
+			mapZoom = (mapZoom > 16) ? 15 : mapZoom;
 			map.centerAndZoom(centerPoint, mapZoom);
 		}
 		if (noPoint.length > 0) {
@@ -261,18 +264,17 @@ function set_map_box_dsrnum() {
 	var add_num_str = '';
 	var add_str = '';
 	$.each(region_address.SP.ADDRESS, function (k, v) {
-		add_num_str += '<li><img src="images/' + ryType[k] + '_bz_b.png" alt=""><span id="map_box_ssdw_'+ryType[k]+'_num">' + k + ' <span class="badge bg-sub" >' + v.length + '</span></li>';
-		
+		add_num_str += '<li><img src="images/' + ryType[k] + '_bz_b.png" alt=""><span id="map_box_ssdw_' + ryType[k] + '_num">' + k + ' <span class="badge bg-sub" >' + v.length + '</span></li>';
+
 	});
 	$('#map_box_ssdw_num').html(add_num_str);
 	$.each(region_address.ZX.ADDRESS, function (k, v) {
-		if($("#map_box_ssdw_"+ryType[k]+"_num").length==0)
-		{
-			add_num_str += '<li><img src="images/' + ryType[k] + '_bz_b.png" alt=""><span id="map_box_ssdw_'+ryType[k]+'_num">' + k + ' <span class="badge bg-sub" >' + v.length + '</span></li>';
-		}else{
-			var num = $("#map_box_ssdw_"+ryType[k]+"_num").html();
-			num = parseInt(num)+v.length;
-			$("#map_box_ssdw_"+ryType[k]+"_num").html(num);
+		if ($("#map_box_ssdw_" + ryType[k] + "_num").length == 0) {
+			add_num_str += '<li><img src="images/' + ryType[k] + '_bz_b.png" alt=""><span id="map_box_ssdw_' + ryType[k] + '_num">' + k + ' <span class="badge bg-sub" >' + v.length + '</span></li>';
+		} else {
+			var num = $("#map_box_ssdw_" + ryType[k] + "_num").html();
+			num = parseInt(num) + v.length;
+			$("#map_box_ssdw_" + ryType[k] + "_num").html(num);
 		}
 	});
 	$('#map_box_ssdw_num').html(add_num_str);

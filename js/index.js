@@ -312,7 +312,7 @@ function show_case_list(page, fjm, case_type) {
 			var i = 1;
 			$.each(data, function (k, v) {
 				var ajType = getAjType(v.ah)
-				str += '<tr><td>' + i + '</td><td>' + v.ah + '</td><td>' + ((v.ajzt == undefined || v.ajzt == '') ? '未结' : v.ajzt) + '</td><td>' + v.larq + '</td><td><button class="button button--rayen button--border-medium button--text-thin button--size-s button--inverted" data-text="地图" onclick="getRdataById(\'' + fjm + '\',\'' + ajType + '\',\'' + v.aj_id + '\');initMap(\'' + fjm + '\',2);show_map(\'' + ajType + '\',\'' + v.aj_id + "','" + v.ajbs + '\');"><span>地图</span></button></td></tr>';
+				str += '<tr><td>' + i + '</td><td>' + v.ah + '</td><td>' + ((v.ajzt == undefined || v.ajzt == '') ? '未结' : v.ajzt) + '</td><td>' + v.larq + '</td><td><button class="button button--rayen button--border-medium button--text-thin button--size-s button--inverted" data-text="地图" onclick="getRdataById(\'' + fjm + '\',\'' + ajType + '\',\'' + v.ajbs + '\');initMap(\'' + fjm + '\',2);show_map(\'' + ajType + '\',\'' + v.aj_id + "','" + v.ajbs + '\');"><span>地图</span></button></td></tr>';
 				i++;
 			});
 			$('#index-case-list').html(str);
@@ -479,15 +479,15 @@ function get_person_info(id) {
 			console.log(a);
 		}
 	});
-	var photo_url = (person_info.photo_url == null) ? './photo.jpg' : person_info.photo_url;
+	var photo_url = (person_info.photo_url == null) ? './photo.jpg' : ('person_photo/'+person_info.photo_url);
 	layer.open({
 		type: 1,
 		title: false,
 		skin: 'layui-layer-rim', //加上边框
-		area: ['320px', '480px'], //宽高
+		area: ['380px', '480px'], //宽高
 		btn: ['确定'],
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div style="padding:10px;" class="map-person-info"><ul><li>姓名：' + person_info.name + '</li><li>性别：' + ((person_info.sex) ? person_info.sex : '') + '</li><li>出生年月：' + ((person_info.csny) ? person_info.csny : '') + '</li><li>职务：' + ((person_info.duty) ? person_info.duty : '') + '</li><li>人员类型：' + ((person_info.rybs) ? person_info.rybs : '') + '</li><li>联系电话：' + ((person_info.phone) ? person_info.phone : '') + '</li><li style="text-align:center"><img style="width:100px;height:120px;" src="' + photo_url + '?v=' + Math.random() + '"/></li></ul></div>',
+		content: '<div style="padding:10px;" class="map-person-info"><ul><li>姓名：' + person_info.name + '</li><li>性别：' + ((person_info.sex) ? person_info.sex : '') + '</li><li>出生年月：' + ((person_info.csny) ? person_info.csny : '') + '</li><li>职务：' + ((person_info.duty) ? person_info.duty : '') + '</li><li>人员类型：' + ((person_info.rybs) ? person_info.rybs : '') + '</li><li>联系电话：' + ((person_info.phone) ? person_info.phone : '') + '<button class="button bg-sub button-small" style="margin:0 10px;" onclick="dial_up(\'0018377775127\');">拨号</button><button class="button bg-sub button-small " onclick="TV_HangUpCtrl(0)">挂断</button></li><li style="text-align:center"><img style="width:100px;height:120px;" src="' + photo_url + '?v=' + Math.random() + '"/></li></ul></div>',
 		yes: function (i) {
 			// 关闭则删除文件
 			$.ajax({

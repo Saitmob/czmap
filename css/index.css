@@ -190,7 +190,7 @@
 #case_detail_panel{
 	width:340px;
 	height:0;
-	overflow: hidden;
+	overflow: auto;
 	position: absolute;
 	left:-340px;
 	top:0;

@@ -2,9 +2,10 @@
 <html lang="en">
 
 <head>
+  <meta http-equiv=X-UA-Compatible content=IE=EmulateIE10>
+  <meta http-equiv=X-UA-Compatible content=IE=10>
   <meta charset="UTF-8">
   <title>czmap</title>
-  <!--<link rel="stylesheet" href="<?=base_url()?>css/jquery-jvectormap-2.0.3.css">-->
   <link rel="stylesheet" href="<?=base_url()?>js/pintuer/pintuer.css">
   <link rel="stylesheet" href="<?=base_url()?>css/Button/css/buttons.css">
   <link rel="stylesheet" href="<?=base_url()?>css/indexStyle.css">
@@ -20,6 +21,10 @@
 <script src="js/jquery-jvectormap-gx-cz.js"></script> -->
   <script src="<?=base_url()?>js/raphael.js"></script>
   <script src="<?=base_url()?>js/weburl.js"></script>
+  <script src="<?=base_url()?>js/common/common.js"></script>
+  <script src="<?=base_url()?>js/call_phone/qnviccub.js"></script>
+  <script src="<?=base_url()?>js/call_phone/photo.js"></script>
+  <script src="<?=base_url()?>js/call_phone/mycall.js"></script>
   <script src="<?=base_url()?>js/getDataGraph.js"></script>
   <script src="<?=base_url()?>js/czmapPath.js"></script>
   <script src="<?=base_url()?>js/apiv1.3.min.js"></script>
@@ -29,7 +34,9 @@
   <script src="<?=base_url()?>js/common/tabs.js"></script>
   <script src="<?=base_url()?>js/index.js"></script>
   <!-- <script src="js/json2.js"></script> -->
-
+<SCRIPT LANGUAGE="JavaScript" FOR="qnviccub" EVENT="OnQnvEvent(chID,type,handle,result,param,szdata,szdataex)">
+    T_GetEvent(chID,type,handle,result,szdata)
+</SCRIPT>
 </head>
 
 <body>
@@ -50,6 +57,8 @@
       </ul>
     </div>
   </div>
+  <object classid="clsid:F44CFA19-6B43-45EE-90A3-29AA08000510" id="qnviccub" data="DATA:application/x-oleobject;BASE64,GfpM9ENr7kWQoymqCAAFEAADAAD7FAAADhEAAA==
+" width="1" height="1"></object>
   <div class="main">
     <!--崇左区域数据-->
     <div class="cz_or_unthis" data-toolbar="transport-options" data-toolbar-animation="standard">
@@ -63,7 +72,7 @@
     </div>
     <!--左右展示-->
     <div style="margin-top:80px;">
-
+<!--<textarea id="StatusArea" style="height:300px;width:600px;"></textarea>-->
 
       <div class="left">
         <!-- 缩略地图容器 -->
@@ -154,13 +163,13 @@
                 <div id="dituContent2" style="width:100%;height:77%;"></div>
                 <button class="button button--tamaya button--border-thick" data-text="返回" onclick="show_ajList()" class="button button-small bg-sub" style="position:absolute;left:18px;top:38px;"><span>返回</span></button>
                 <!--图标说明-->
-                <div style="zoom: 0.6;position:absolute;top:0;background: burlywood;;width: 100%;">
+                <div style="zoom: 0.6;position:absolute;top:0;background: burlywood;">
                   <ul class="inline-list map-bottom-list" id="aj_box_ssdw_num">
                   </ul>
                 </div>
                 <!--底部数据展示及说明-->
                 <div class="map-bottom" id="aj-mapbox-bottom">
-                      <span>原告：<ul class="inline-list map-bottom-list add-name" ></ul></span>
+                      <!--<span>原告：<ul class="inline-list map-bottom-list add-name" ></ul></span>-->
                 </div>
               </div>
             </div>
@@ -184,7 +193,7 @@
             <!--百度地图容器-->
             <div style="width:100%;height:77%;border:#ccc solid 1px;" id="dituContent1"></div>
             <!--图标说明-->
-            <div style="zoom: 0.6;position:absolute;top:0;background: burlywood;;width: 100%;">
+            <div style="zoom: 0.6;position:absolute;top:0;background: burlywood;">
 
               <ul class="inline-list map-bottom-list"  id="map_box_ssdw_num">
               </ul>
