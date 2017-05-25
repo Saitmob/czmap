@@ -167,7 +167,6 @@ function editorPerson(ele) {
 		region = $p.find('.list-item-region').text(),
 		phone = $p.find('.list-item-phone').text(),
 		email = $p.find('.list-item-email').text();
-		console.log(sex);
 	// region = regionChange(region);
 	switch (sex) {
 		case '男':
@@ -355,7 +354,7 @@ function showPersonInfoPanel(pId) {
 			laydate({
 				elem: '#text .editor-age',
 				format: 'YYYY-MM-DD', // 分隔符可以任意定义，该例子表示只显示年月
-				min: laydate.now(), 
+				max: laydate.now(), 
 				festival: true,
 				istoday: true,
 				start: laydate.now(0, "YYYY-MM-DD"),
@@ -370,7 +369,7 @@ function showPersonInfoPanel(pId) {
 				MyUpload.request({
 					class: ".layui-layer-content .file-upload-btn",
 					singleFileUploads: true,
-					postfix: 'doc,docx,xlsx,xls,png,jpg,jpeg,gif',
+					postfix: 'png,jpg,jpeg,gif',
 					myData: { folder: 'project', 's_id': $(".layui-layer-content .ry-save-btn").val() }
 				}, function (data) {
 				}, function (data) {
@@ -398,7 +397,6 @@ function showPersonInfoPanel(pId) {
 }
 
 function changeRangeText(id, name) {
-	console.log(1);
 	var idstring = $('.layui-layer-content .icon-map-marker').data('id');
 	var namestring = $('.layui-layer-content .icon-map-marker').data('name');
 	idstring += id + ',';
@@ -406,6 +404,9 @@ function changeRangeText(id, name) {
 	$('.layui-layer-content .icon-map-marker').data('name', namestring);
 	$('.icon-map-marker').css('font-size', '12px');
 	$('.layui-layer-content .editor-select-region t').html('修改区域');
+    if (GetLength(name) > 5) { 
+       name = cutstr(name, 5)+'...';
+    }
 	$('.layui-layer-content .icon-map-marker').html(name);
 	$('.layui-layer-content .icon-map-marker').data('id', idstring);
 	$('.layui-layer-content .icon-map-marker').data('name', namestring);
@@ -569,3 +570,49 @@ function show_person_list(cur_page, per_page_num, show_type, type_val) {
 		}
 	});
 }
+
+
+    var GetLength = function (str) {
+        ///<summary>获得字符串实际长度，中文2，英文1</summary>
+        ///<param name="str">要获得长度的字符串</param>
+        var realLength = 0, len = str.length, charCode = -1;
+        for (var i = 0; i < len; i++) {
+            charCode = str.charCodeAt(i);
+            if (charCode >= 0 && charCode <= 128) realLength += 1;
+            else realLength += 2;
+        }
+        return realLength;
+    };
+
+    //js截取字符串，中英文都能用  
+    //如果给定的字符串大于指定长度，截取指定长度返回，否者返回源字符串。  
+    //字符串，长度  
+
+    /** 
+     * js截取字符串，中英文都能用 
+     * @param str：需要截取的字符串 
+     * @param len: 需要截取的长度 
+     */
+    function cutstr(str, len) {
+        var str_length = 0;
+        var str_len = 0;
+        str_cut = new String();
+        str_len = str.length;
+        for (var i = 0; i < str_len; i++) {
+            a = str.charAt(i);
+            str_length++;
+            if (escape(a).length > 4) {
+                //中文字符的长度经编码之后大于4  
+                str_length++;
+            }
+            str_cut = str_cut.concat(a);
+            if (str_length >= len) {
+                str_cut = str_cut.concat("...");
+                return str_cut;
+            }
+        }
+        //如果给定字符串小于指定长度，则返回源字符串；  
+        if (str_length < len) {
+            return str;
+        }
+    }

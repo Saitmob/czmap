@@ -45,14 +45,14 @@ function is_mic(t) {
 
 //挂机回调方法
 function end_dial() {
-    layer.alert('通话结束');
+    
 }
 
 function DetectActiveX() {
 	try {
 		var comActiveX = new ActiveXObject('qnviccub.qnviccub');
 	} catch (e) {
-        layer.alert('请安装或打开ActiveX控件');
+        layer.alert('请安装或打开ActiveX控件,并正确安装拨号驱动');
 		return false;
 	}
 	return true;

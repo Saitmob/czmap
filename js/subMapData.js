@@ -52,8 +52,8 @@ function setMapEvent() {
 }
 var opts = {
 	width: 580, // 信息窗口宽度
-	height: 160, // 信息窗口高度
-	title: "<font color='red'>案件信息</font>", // 信息窗口标题
+	height: 220, // 信息窗口高度
+	title: "<font color='red'>当事人信息</font>", // 信息窗口标题
 	enableMessage: true, //设置允许信息窗发送短息
 	message: "亲耐滴，晚上一起吃个饭吧？戳下面的链接看下地址喔~"
 }
@@ -147,7 +147,13 @@ function creatDataInfo() {
 				});
 				marker.setShadow(shadow);
 				map.addOverlay(marker); // 将标注添加到地图中
-				addClickHandler(content, marker, point);
+				marker.addEventListener('click',function(e){
+					// content = 'hello';
+					var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+					map.openInfoWindow(infoWindow,point);
+					// addClickHandler(content, marker, point);
+				});
+				
 				// 创建标注
 				if (region_arr.length < 14) {
 					var ssdw = v.ADD_TYPE;
@@ -173,7 +179,7 @@ function creatDataInfo() {
 			map.centerAndZoom(centerPoint, mapZoom);
 		}
 		if (noPoint.length > 0) {
-			layer.alert(noPoint + '无法定位到地图中');
+			// layer.alert(noPoint + '无法定位到地图中');
 		}
 	} else {
 		layer.alert('没有地点可展示');

@@ -174,7 +174,43 @@ public function getTWByGis($gis_id)
 {
     if(!empty($gis_id)&&$gis_id!=0)
     {
-        $sql = "SELECT person_id from person_add_lib where gis_id=".$gis_id." GROUP BY person_id";
+        // 判断当事人的gis_id层级，并拿到该层级的所有父级gis_id
+        $sql = "SELECT level,ADDRESS,provinceId,cityId,xianId,villageId,cunId,tunId from cz_gis_library WHERE ID={$gis_id}";
+        $query = $this->db->query($sql);
+        $row = $query->row();
+        $str_append = '';
+        switch ($row->level) {
+            case 1:
+                $str_append.=" OR provinceId='".$row->provinceId."'";
+                break;
+            case 2:
+                $str_append.=" OR ( level<2 AND (cityId='".$row->cityId."' OR  provinceId='".$row->provinceId."'))";
+                break;
+            case 3:
+                $str_append.=" OR ( level<3 AND ( xianId='".$row->xianId."' OR cityId='".$row->cityId."' OR provinceId='".$row->provinceId."'))";
+                break;
+            case 4:
+                $str_append.=" OR ( level<4  AND (villageId='".$row->villageId."' OR xianId='".$row->xianId."' OR  cityId='".$row->cityId."' OR provinceId='".$row->provinceId."'))";
+                break;
+            case 5:
+                $str_append.="  OR ( level<5 AND (cunId='{".$row->cunId."}' OR villageId='".$row->villageId."' OR xianId='".$row->xianId."' OR  cityId='".$row->cityId."' OR provinceId='".$row->provinceId."'))";
+                break;
+            default:
+                break;
+        }
+        // 拿到并拿到该层级的所有父级gis_id
+        $sql = "SELECT ID,ADDRESS from cz_gis_library WHERE ID={$gis_id} {$str_append} GROUP BY ID";
+        $query = $this->db->query($sql);
+        $res = $query->result();
+        $id_arr = array();
+        foreach ($res as $key => $value) {
+                $id_arr[] = $value->ID;
+        }
+        $id_str = implode(',',$id_arr);
+        // echo $sql.'<br>';
+        // $sql = "SELECT person_id from person_add_lib where gis_id=".$gis_id." GROUP BY person_id";
+        $sql = "SELECT person_id from person_add_lib where gis_id in ({$id_str}) GROUP BY person_id";
+        // echo $sql.'<br>';
         $query = $this->db->query($sql);
         $person_arr = $query->result();
         $tjyArr=array();
@@ -185,7 +221,6 @@ public function getTWByGis($gis_id)
             $sql = "SELECT id,name,rybs from person where id=".$valp->person_id;
             $query = $this->db->query($sql);
             $res = $query->row();
-            // var_dump($res);
             if(!empty($res))
             {
                 if($res->rybs=='法律顾问')
@@ -201,9 +236,19 @@ public function getTWByGis($gis_id)
             
         }
         if(!empty($tjyArr)&&!empty($tjyArr['name'])){
+            if(count($tjyArr['name'])>4)
+            {
+                $tjyArr['name']=array_slice($tjyArr['name'],0,2);
+                $tjyArr['id'] = array_slice($tjyArr['id'],0,2);
+            }
             $tjy = implode('、',$tjyArr['name']);
         }
         if(!empty($wgyArr)&&!empty($wgyArr['name'])){
+            if(count($wgyArr['name'])>4)
+            {
+                $wgyArr['name'] = array_slice($wgyArr['name'],0,1);
+                $wgyArr['id'] = array_slice($wgyArr['id'],0,1);
+            }
             $wgy = implode('、',$wgyArr['name']);
         }
         $data = array(

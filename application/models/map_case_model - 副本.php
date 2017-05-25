@@ -183,7 +183,7 @@ class map_case_model extends CI_Model {
             $qx=true;
         }
         if($showType=='ALL'){
-            $sql="SELECT * FROM  {$type}_ajxx  where fjm = '{$showTypeVal}' AND s=1 ORDER BY s";
+            $sql="SELECT * FROM  {$type}_ajxx  where fjm = '{$showTypeVal}'";
         }elseif($showType=='AJ_TYPE'){
             $currPage = (int)$currPage;
             $start = ($currPage-1)*$perPageNum;
@@ -223,6 +223,16 @@ class map_case_model extends CI_Model {
                     if((int)$val->gis_id!=0)
                     {
                         $point = $this->regionmatch->getPointById($val->gis_id);
+                        // if(in_array($point,$points))
+                        // {
+                        //     $p_key = array_search($point,$points);
+                        //     $bz_info .= $ADDRESS[$p_key]['BZ_INFO'];
+                        //     $ADDRESS[$p_key-$reduce_num]['BZ_BOTTOM']='';
+                        //     array_splice($points,$p_key,1);
+                        //     $reduce_num++;
+                        //     // array_splice($ADDRESS,$p_key,1);
+                        // }
+                        // $points[] = $point;
                     }else{
                         $point = array();
                     }
@@ -848,7 +858,7 @@ public function indexShowCaseList($currpage,$perPageNum,$fjm,$case_type='ALL'){
     $currpage = (int)$currpage;
     $start = ($currpage-1)*$perPageNum;
     if($case_type=='ALL'){
-        $sql="(SELECT * FROM sp_ajxx WHERE fjm='{$fjm}' AND s=1 ORDER BY s ) union all (SELECT * FROM zx_ajxx WHERE fjm='{$fjm}' AND s=1 ORDER BY s )  ORDER BY larq DESC LIMIT {$start},{$perPageNum}";
+        $sql="(SELECT * FROM sp_ajxx WHERE fjm='{$fjm}' ) union all (SELECT * FROM zx_ajxx WHERE fjm='{$fjm}' )  ORDER BY larq  LIMIT {$start},{$perPageNum}";
         $query = $this->ajxq->query($sql);
         $res = $query->result();
     }
@@ -859,7 +869,7 @@ public function indexShowPageNum($type,$val,$fjm='')
     $num=0;
     if($type=='CASE'&&$fjm!=''){
         if($val=='ALL'){
-            $sql = "(SELECT aj_id FROM sp_ajxx WHERE fjm='{$fjm}' AND s=1 ORDER BY s ) union all (SELECT aj_id FROM zx_ajxx WHERE fjm='{$fjm}' AND s=1 ORDER BY s ) ";
+            $sql = "(SELECT aj_id FROM sp_ajxx WHERE fjm='{$fjm}' ) union all (SELECT aj_id FROM zx_ajxx WHERE fjm='{$fjm}' ) ";
             $query = $this->ajxq->query($sql);
             $res = $query->result();
             $num = count($res);
@@ -949,7 +959,7 @@ public function getSpZxNum()
 }
 private function getAjNum($fjm,$type)
 {
-    $sql = "SELECT aj_id from {$type}_ajxx where fjm='{$fjm}' AND s=1";
+    $sql = "SELECT aj_id from {$type}_ajxx where fjm='{$fjm}' ";
     $query = $this->ajxq->query($sql);
     $aj_res = $query->result();
     $aj_num = count($aj_res);

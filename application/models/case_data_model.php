@@ -17,7 +17,7 @@ class case_data_model extends CI_Model {
         $add_cc_num = 0;
         $hytcy_name = array();
         $data = array();
-        $sql = "SELECT * FROM {$aj_type}_ajxx WHERE aj_id = '{$aj_id}'";
+        $sql = "SELECT * FROM {$aj_type}_ajxx WHERE aj_id = '{$aj_id}' AND s=1";
         $query = $this->ajxx->query($sql);
         $res1 = $query->row();
         // 当事人

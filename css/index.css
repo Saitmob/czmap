@@ -144,8 +144,10 @@
 }
 #aj-mapbox-bottom>span{
 	display: inline-block;
-	width:48%;
+	width:44%;
+	margin-left:4%; 
 	min-height:27px;
+	vertical-align: top;
 }
 /*.map-bottom  i{
 	padding:0 6px;

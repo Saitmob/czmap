@@ -6,7 +6,7 @@
         postfix: '',
         myData: {},
         url: weburl + 'index.php/Uploadfile/upload',
-        acceptFileTypes: /(\.|\/)(gif|jpe?g|png|doc|docx|xls|rar|xlsx)$/i,
+        acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
         maxFileSize: 99 * 1024 * 1024,
         minFileSize: 5,
         maxNumberOfFiles: 50,
@@ -39,7 +39,7 @@
                         data.submit();
                     }
                     else {
-                        layer.alert("您选择的上传文件格式有误！");
+                        layer.alert("只能上传png、jpg、jpeg、jhit类型的文件！");
                     }
                 }
             },

@@ -127,11 +127,14 @@ function get_sp_zx_num() {
 			//区域案件数对象
 			regionJsonObj.cz_jz = 0;
 			$.each(data, function (k, v) {
-				if (k != 'K60') {
+				if (k != 'K60'&&k!='K67') {
 					regionJsonObj[fjmToRid(k)] = v.sp;
 					regionJsonObj[fjmToRid(k)] += v.zx;
-				} else {
-					regionJsonObj.cz_jz += v.sp;
+				} else if(k=='K60') {
+					regionJsonObj.cz_jz2 = v.sp;
+					regionJsonObj.cz_jz2 += v.zx;
+				}else if(k=='K67'){
+					regionJsonObj.cz_jz = v.sp;
 					regionJsonObj.cz_jz += v.zx;
 				}
 			});

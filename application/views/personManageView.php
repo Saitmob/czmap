@@ -104,6 +104,7 @@
           <option value="all" selected="selected">全部</option>
           <option value="执行员">执行员</option>
           <option value="网格员">网格员</option>
+          <option value="法律顾问">法律顾问</option>
         </select>
         <!--人员数展示-->
 			<div class="person-num" style="display:inline-block">
@@ -206,10 +207,10 @@
 								<span class='ry-option'>联系号码：</span>
 								<span class='ry-option-data'><input type="text" class="input input-small editor-phone input-auto" ></span>
 							</div>
-							<div class="line-div">
-								<span class='ry-option'>内网邮箱：</span>
-								<span class='ry-option-data'><input type="text" class="input input-small editor-email input-auto" ></span>
-							</div>				
+<!-- 							<div class="line-div">
+			<span class='ry-option'>内网邮箱：</span>
+			<span class='ry-option-data'><input type="text" class="input input-small editor-email input-auto" ></span>
+		</div>		 -->		
 						</div>
 					</li>
 <!-- 					<li>
