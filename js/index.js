@@ -34,18 +34,31 @@ $(function () {
 function cz_map() {
 	var bodyW = window.screen.width;
 	var bodyH = document.body.clientHeight;
+	var scale0 = (0.37 * bodyW) / 520;
 	var scale = (0.385 * bodyW) / 520;
-	var R = Raphael("city_map", 520, 620);
+	var R = Raphael("city_map", 520 * scale, 620 * scale);
 	// console.log(R.transform());
 	// console.log(Raphael.angle(10,50,100,120));
 	//调用绘制地图方法
 	paintMap(R);
 	// console.log(R.canvas.transform);
-	R.canvas.setAttribute("transform", "scale(" + scale + ")");
+	R.canvas.setAttribute("transform", "scale(" + scale0 + ")");
 
 	var textAttr = {
 		"fill": "#000",
 		"font-size": "22px",
+		"cursor": "pointer",
+		"font-family": "微软雅黑"
+	};
+	var textAttr2 = {
+		"fill": "#000",
+		"font-size": "14px",
+		"cursor": "pointer",
+		"font-family": "微软雅黑"
+	};
+	var textAttr3 = {
+		"fill": "red",
+		"font-size": "17px",
 		"cursor": "pointer",
 		"font-family": "微软雅黑"
 	};
@@ -62,6 +75,10 @@ function cz_map() {
 			// china[state]['path'].transform('s0.5');
 			//***修改部分地图文字偏移坐标
 			switch (china[state]['name']) {
+				case "江州区":
+					xx -= 15;
+					yy += 30;
+					break;
 				case "大新县":
 					xx += 5;
 					yy += 10;
@@ -76,9 +93,21 @@ function cz_map() {
 					break;
 
 			}
-
 			//写入文字
-			china[state]['text'] = R.text(xx, yy, china[state]['name'] + '\n' + china[state]['data']).attr(textAttr);
+
+			
+			if (china[state]['id'] == 'cz_jz') {
+				// china[state]['text3']=R.text(xx-30, yy-60,  '★').attr(textAttr3);
+				china[state]['text'] = R.text(xx+10, yy+40, china[state]['name'] + '\n' + china[state]['data']).attr(textAttr2);
+				china[state]['text2'] = R.text(xx-10, yy-10, '★ 崇左中院 \n' + china[state]['data2']).attr(textAttr3);
+			}else{
+				china[state]['text'] = R.text(xx, yy, china[state]['name'] + '\n' + china[state]['data']).attr(textAttr);
+			}
+			// console.log(china[state]);
+			// china[state]['text']+=R.text(xx, yy,  china[state]['data']).attr(textAttr2);
+
+			// china[state]['text'].push(R.text(xx, yy,  china[state]['data']).attr(textAttr2));
+			// console.log(china[state]['text']);
 
 			// var tspanArr = document.getElementsByTagName('tspan');
 			// //更改字体
@@ -135,6 +164,7 @@ function cz_map() {
 				// getData(china[state]['id']);
 				// createDataGrahp(china[state]['id']);
 			};
+			// 大区文字
 			china[state]['text'][0].onmouseover = function (e) {
 				$(this).on('mousemove', function (e) {
 					show_tips(e.clientX, e.clientY, china[state]['id']);
@@ -155,9 +185,31 @@ function cz_map() {
 			};
 			china[state]['text'][0].onclick = function () {
 				region_click(china[state]['id']);
-				// initMap(rId_to_fjm(china[state]['id']));
-				// document.getElementsByTagName('iframe')[0].src = "maptest.php?region=" + china[state]['id'];
 			};
+			// 崇左中院
+			if (china[state]['text2'] != undefined) {
+				china[state]['text2'][0].onmouseover = function (e) {
+					$(this).on('mousemove', function (e) {
+						show_tips(e.clientX, e.clientY, china[state]['id']);
+					});
+					st.animate({
+						fill: '#FF7771',
+						stroke: "#F56A6A"
+					}, 500);
+				};
+				china[state]['text2'][0].onmouseout = function () {
+					$('#map_tips').css({
+						'display': 'none'
+					});
+					st.animate({
+						fill: china[state]['color'],
+						stroke: "#F56A6A"
+					}, 500);
+				};
+				china[state]['text2'][0].onclick = function () {
+					region_click(china[state]['id']);
+				};
+			}
 
 		})(china[state]['path'], state);
 	}
@@ -196,7 +248,12 @@ function show_map(aj_type, aj_id, aj_bs) {
 		add_num_str += '<li><img src="images/' + ryType[k] + '_bz_b.png" alt="">' + k + ' <span class="badge bg-sub" >' + v.length + '</span></li>';
 		var p_name = '';
 		$.each(v, function (k2, v2) {
-			p_name += '<i class="add-name" onclick="centerPoint(\'' + v2.POINT.x + '\',\'' + v2.POINT.y + '\')">' + v2.NAME + '</i>';
+			if (v2.POINT.x == undefined || v2.POINT.y == undefined) {
+				p_name += '<i class="add-name" style="color:#FC806D" onclick="centerPoint(\'' + v2.POINT.x + '\',\'' + v2.POINT.y + '\')">' + v2.NAME + '</i>' + ((v2.ADD_NAME != null) ? ('（' + v2.ADD_NAME + '）') : '');
+			} else {
+				p_name += '<i class="add-name" onclick="centerPoint(\'' + v2.POINT.x + '\',\'' + v2.POINT.y + '\')">' + v2.NAME + '</i>';
+			}
+
 		});
 		var span_str = '<span>' + k + '：' + p_name + '</span>';
 		add_str += span_str;
@@ -226,7 +283,8 @@ function show_map(aj_type, aj_id, aj_bs) {
 			$('#case_panel_court').html(data.COURT);
 			$('#case_panel_larq').html(data.LARQ);
 			$('#case_panel_hytcy').html(data.HYTCY);
-			$('#case_panel_bdje').html(data.BDJE + '元');
+			var bdje = (data.BDJE == false) ? '' : (data.BDJE + '元');
+			$('#case_panel_bdje').html(bdje);
 		},
 		error: function (a, b, c) {
 			console.log(a);
@@ -235,7 +293,7 @@ function show_map(aj_type, aj_id, aj_bs) {
 }
 //将地图的中心定位到该点
 function centerPoint(x, y) {
-	if (x == undefined||x=='undefined' || y == undefined||y=='undefined') {
+	if (x == undefined || x == 'undefined' || y == undefined || y == 'undefined') {
 		layer.alert('无法定位到该坐标');
 	} else {
 		var centerPoint = new BMap.Point(x, y);
@@ -278,7 +336,7 @@ function show_map_box() {
 	var fjm = $('#current_fjm').val();
 	$('#map-box-court-name').html(regionChange(r_id));
 	//获取该区域案件信息
-	if ($.isEmptyObject(region_address) == true || region_address.REGION_POINT.fjm != fjm||region_address.REGION_TYPE!='ONE_REGION') {
+	if ($.isEmptyObject(region_address) == true || region_address.REGION_POINT.fjm != fjm || region_address.REGION_TYPE != 'ONE_REGION') {
 		var index = layer.load(1, {
 			shade: [0.5, '#000'] //0.1透明度的白色背景
 		});
@@ -442,7 +500,7 @@ function court_select_event() {
 		$('#aj-box-ssaj-num').html(sp_zx_obj[fjm].sp);
 		$('#aj-box-zxaj-num').html(sp_zx_obj[fjm].zx);
 		show_case_list(1, fjm);
-
+		$('#aj-box-court-name').html(fjmToName(fjm));
 	});
 	$('.aj-box-court-name-select').eq(1).change(function () {
 		var fjm = $(this).val();
@@ -472,37 +530,39 @@ function get_person_info(id) {
 		},
 		dataType: 'json',
 		success: function (data) {
-			console.log(data);
 			person_info = data;
 		},
 		error: function (a, b, c) {
 			console.log(a);
 		}
 	});
-	var photo_url = (person_info.photo_url == null) ? './photo.jpg' : ('person_photo/'+person_info.photo_url);
+	var photo_url = (person_info.photo_url == null) ? './photo.jpg' : (person_info.photo_url);
 	layer.open({
 		type: 1,
 		title: false,
 		skin: 'layui-layer-rim', //加上边框
-		area: ['380px', '480px'], //宽高
+		area: ['380px', '490px'], //宽高
 		btn: ['确定'],
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div style="padding:10px;" class="map-person-info"><ul><li>姓名：' + person_info.name + '</li><li>性别：' + ((person_info.sex) ? person_info.sex : '') + '</li><li>出生年月：' + ((person_info.csny) ? person_info.csny : '') + '</li><li>职务：' + ((person_info.duty) ? person_info.duty : '') + '</li><li>人员类型：' + ((person_info.rybs) ? person_info.rybs : '') + '</li><li>联系电话：' + ((person_info.phone) ? person_info.phone : '') + '<button class="button bg-sub button-small" style="margin:0 10px;" onclick="dial_up(\'0018377775127\');">拨号</button><button class="button bg-sub button-small " onclick="TV_HangUpCtrl(0)">挂断</button></li><li style="text-align:center"><img style="width:100px;height:120px;" src="' + photo_url + '?v=' + Math.random() + '"/></li></ul></div>',
+		content: '<div style="padding:10px;" class="map-person-info"><ul><li>姓名：' + person_info.name + '</li><li>性别：' + ((person_info.sex) ? person_info.sex : '') + '</li><li>出生年月：' + ((person_info.csny) ? person_info.csny : '') + '</li><li>职务：' + ((person_info.duty) ? person_info.duty : '') + '</li><li>人员类型：' + ((person_info.rybs) ? person_info.rybs : '') + '</li><li>联系电话：<select class="input input-small " id="phone-add0-' + person_info.phone + '" style="display:inline-block;width:70px;"><option value="">不加0</option><option value="0">+0</option><option value="00">+00</option></select><span id="p_' + person_info.phone + '">' + ((person_info.phone) ? person_info.phone : '') + '</span><button class="button bg-sub button-small" style="margin:0 10px;" onclick="call_one_person(' + person_info.phone + ');">拨号</button></li><li style="text-align:center"><img style="width:100px;height:120px;" src="' + photo_url + '?v=' + Math.random() + '"/></li></ul></div>',
 		yes: function (i) {
-			// 关闭则删除文件
-			$.ajax({
-				type: 'post',
-				url: weburl + 'index.php/common/file_delete/delete_file',
-				data: {
-					file_name: person_info.file_name + '.jpg'
-				},
-				success: function (data) {},
-			});
+			// 挂断电话
+			TV_HangUpCtrl(0);
 			layer.close(i);
 		},
-		end: function () {}
+		end: function () {
+			TV_HangUpCtrl(0);
+			// console.log(callIsEnd);
+		}
 	});
 
+}
+// 拨号是否加0
+function call_one_person(p) {
+	// var phone = $('#p_'+p).html();
+	phone = $('#phone-add0-' + p).val() + 18377775127;
+	console.log(phone);
+	dial_up(phone);
 }
 // 首页获取审理案件数，地点数以及网格员数等
 function get_index_all_num() {
