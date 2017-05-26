@@ -99,7 +99,7 @@
                         data.submit();
                     }
                     else {
-                        layer.alert("您选择的上传文件格式有误！");
+                        layer.alert("只能上传更换xls,xlsx文件！");
                     }
                 }
             },

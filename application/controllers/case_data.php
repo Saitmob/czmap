@@ -16,8 +16,7 @@ class case_data extends CI_Controller {
         if(!empty($ajbs))
         {
             $aj_type = $this->input->post('aj_type');
-            $aj_id = $this->input->post('aj_id');
-            $data = $this->case->get_case_base_data($aj_type,$aj_id,$ajbs);
+            $data = $this->case->get_case_base_data($aj_type,$ajbs);
             echo json_encode($data);
         }
     }

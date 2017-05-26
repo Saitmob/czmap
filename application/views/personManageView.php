@@ -3,6 +3,8 @@
 
 <head>
 	<meta charset="UTF-8">
+	<meta http-equiv=X-UA-Compatible content=IE=EmulateIE10>
+  	<meta http-equiv=X-UA-Compatible content=IE=10>
 	<title>多元化解矛盾系统人员管理</title>
 	<script src="<?=base_url()?>js/jquery-1.12.0.min.js"></script>
 	<link rel="stylesheet" href="<?=base_url()?>js/pintuer/pintuer.css">

@@ -6,7 +6,7 @@ class caseDetail extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
-        // $this->load->model('map_case_model','mapcase');
+        //$this->load->model('map_case_model','mapcase');
         $this->load->model('case_detail_model','case');
     }
     //
@@ -37,15 +37,22 @@ class caseDetail extends CI_Controller {
         echo json_encode($data);
     }
     //审判案件详情
-    public function spcaseDetail(){
+    public function getcaseDetail(){
         $an_hao = urldecode($_GET['AH']);
-        $case_type = $_GET['CASE_TYPE'];
+        $type = urldecode($_GET['type']);
+        //$case_type = $_GET['CASE_TYPE'];
         // $spsoap =  new SoapClient("http://147.1.4.28:8080/dwjk/services/GxsssjService?wsdl");
         // $spsoap =  new SoapClient("http://192.168.1.107:8080/dwjk/services/GxsssjService?wsdl");
         // $data = $spsoap->getAj(array('ah' => $an_hao, 'dsr' => ''));
-        $data = array(
-            'result'=>$this->case->getSpCaseDetail($an_hao)
-        );
-        $this->load->view('caseDetailView',$data);
+        $data = $this->case->getCaseDetail($an_hao,$type);
+        if ($type == 'sp') {
+            $data['casetype'] = 'sp';
+            $this->load->view('spcaseDetailView',$data);
+        }
+        else{
+            $data['casetype'] = 'zx';
+            $this->load->view('zxcaseDetailView',$data);
+        }
+        
     }
 }

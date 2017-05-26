@@ -1,11 +1,12 @@
 //选择人员所属区域
 var regionSelectMultiple;
 
-function selectRegion(multiple, callbackFun) {
+function selectRegion(multiple, callbackFun,callbackFun2) {
     var zTree;
     var demoIframe;
     regionSelectMultiple = multiple || false;//默认不多选
     var callbackFun = callbackFun || function() {console.log('未定义回调方法')};
+    var callbackFun2 = callbackFun2 || function() {console.log('未定义回调方法2')};
     var setting = {
         view: {
             dblClickExpand: false,
@@ -41,7 +42,7 @@ function selectRegion(multiple, callbackFun) {
         type: 1,
         title: false,
         skin: 'layui-layer-rim', //加上边框
-        area: ['540px', '440px'], //宽高
+        area: ['540px', '460px'], //宽高
         btn: ['确定'],
         closeBtn: 0,
         // content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
@@ -49,10 +50,15 @@ function selectRegion(multiple, callbackFun) {
         yes: function(i) {
             var idObjArr = $('#region-selected-list').find('a[id^="region_"]');
             var idArr = [];
+            var nameArr = [];
+            var name = '';
             $.each(idObjArr, function(k, v) {
                 var id = parseInt($(v).attr('id').substr(7));
                 idArr.push(id);
+                name = $.trim($("#region_"+id).text().replace("删除",""));
+                nameArr.push(name);
             });
+            callbackFun2(idArr,nameArr,name);
             layer.close(i);
         },
         end: function() {

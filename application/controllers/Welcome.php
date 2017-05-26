@@ -28,6 +28,13 @@ class Welcome extends CI_Controller {
         $data['department_id'] = $_SESSION['department_id'];
         //部门名称
         $data['department_name'] = $_SESSION['department_name'];
+        // 权限
+        $_SESSION['user_qx_level'] = 1;
+        if($_SESSION['user_rybs']==180225133||$_SESSION['user_rybs']==180224934)
+        {
+            $_SESSION['user_qx_level'] = 1;
+        }
+        $data['user_qx_level']=$_SESSION['user_qx_level'];
         echo json_encode($data);
     }
     //退出

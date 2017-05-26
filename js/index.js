@@ -1,5 +1,4 @@
 $(function () {
-
 	// 获取首页头部各个数据
 	get_index_all_num();
 	//获取地图相关案件数据
@@ -13,8 +12,10 @@ $(function () {
 		resetAjBox();
 	};
 	cz_map();
+	//案件面板初始化
+	init_aj_list_panel('');
 	// 左侧区块点击
-	region_click('cz_jz');
+	// region_click('cz_jz');
 	// 法院选择事件
 	court_select_event();
 	//获取非该区域案件信息
@@ -228,7 +229,7 @@ function cz_map() {
 // }
 
 // 案件展示地图
-function show_map(aj_type, aj_id, aj_bs) {
+function show_map(aj_type,  aj_bs) {
 	$('#map1_is_show').val('0');
 	$('#map2_is_show').val('1');
 	var left = $('#aj_or_map_panel').outerWidth();
@@ -270,7 +271,6 @@ function show_map(aj_type, aj_id, aj_bs) {
 		url: weburl + 'index.php/case_data/get_case_base_data',
 		data: {
 			aj_type: aj_type,
-			aj_id: aj_id,
 			ajbs: aj_bs
 		},
 		dataType: 'json',
@@ -324,6 +324,11 @@ function show_aj_box() {
 }
 // 地图展示案件
 function show_map_box() {
+	if(userObj.user_qx_level!=1)
+	{
+		layer.alert('无权限查看该信息');
+		return false;
+	}
 	$('#map1_is_show').val('1');
 	$('#map2_is_show').val('0');
 	$('#case_detail_panel').animate({
@@ -366,11 +371,11 @@ function show_case_list(page, fjm, case_type) {
 		async: false,
 		success: function (data) {
 			var str = '';
-			var pageNum = showPapeNum('CASE', case_type, fjm);
-			var i = 1;
-			$.each(data, function (k, v) {
+			var pageNum = data.pagecount.count;
+			var i = (page-1)*perPageNum+1;
+			$.each(data.result, function (k, v) {
 				var ajType = getAjType(v.ah)
-				str += '<tr><td>' + i + '</td><td>' + v.ah + '</td><td>' + ((v.ajzt == undefined || v.ajzt == '') ? '未结' : v.ajzt) + '</td><td>' + v.larq + '</td><td><button class="button button--rayen button--border-medium button--text-thin button--size-s button--inverted" data-text="地图" onclick="getRdataById(\'' + fjm + '\',\'' + ajType + '\',\'' + v.ajbs + '\');initMap(\'' + fjm + '\',2);show_map(\'' + ajType + '\',\'' + v.aj_id + "','" + v.ajbs + '\');"><span>地图</span></button></td></tr>';
+				str += '<tr><td>' + i + '</td><td>' + v.ah + '</td><td>' + ((v.ajzt == undefined || v.ajzt == '') ? '未结' : v.ajzt) + '</td><td>' + v.larq + '</td><td><button style="margin-right:6px;" class="button button--rayen button--border-medium button--text-thin button--size-s button--inverted" data-text="详情" onclick="case_detail_open(\''+v.ajbs+'\',\''+ajType+'\',this)"><span>详情</span></button><button class="button button--rayen button--border-medium button--text-thin button--size-s button--inverted" data-text="地图" onclick="getRdataById(\'' + fjm + '\',\'' + ajType + '\',\'' + v.ajbs + '\');initMap(\'' + fjm + '\',2);show_map(\'' + ajType + "','" + v.ajbs + '\');"><span>地图</span></button></td></tr>';
 				i++;
 			});
 			$('#index-case-list').html(str);
@@ -391,27 +396,38 @@ function show_case_list(page, fjm, case_type) {
 		}
 	});
 }
-//总页数
-function showPapeNum(type, val, fjm) {
-	var type = type || 'ALL';
-	var val = val || 'ALL';
-	var fjm = fjm || '';
-	var num = 0;
-	$.ajax({
-		type: 'post',
-		url: weburl + 'index.php/welcome/indexShowPageNum',
-		async: false,
-		data: {
-			type: type,
-			val: val,
-			fjm: fjm
-		},
-		success: function (data) {
-			num = data;
-		}
-	});
-	return num;
+function case_detail_open(ajbs,ajtype,ele)
+{
+	// if(ajtype=='sp')
+	// {
+	// 	layer.alert('该演示版本暂无诉讼案件详情');
+	// 	return false;
+	// }
+	var href = weburl+'index.php/caseDetail/getcaseDetail?AH='+ajbs+'&type='+ajtype;
+	$(ele).css({'backgroundColor':'rgba(0,0,0,0)'});
+	window.open(href);
 }
+// //总页数
+// function showPapeNum(type, val, fjm) {
+// 	var type = type || 'ALL';
+// 	var val = val || 'ALL';
+// 	var fjm = fjm || '';
+// 	var num = 0;
+// 	$.ajax({
+// 		type: 'post',
+// 		url: weburl + 'index.php/welcome/indexShowPageNum',
+// 		async: false,
+// 		data: {
+// 			type: type,
+// 			val: val,
+// 			fjm: fjm
+// 		},
+// 		success: function (data) {
+// 			num = data;
+// 		}
+// 	});
+// 	return num;
+// }
 
 function resetAjBox() {
 	var panelWidth = $('#aj_or_map_panel').width();
@@ -464,9 +480,26 @@ function show_tips_content(r_id) {
 	}
 }
 
-
+function init_aj_list_panel(fjm)
+{
+	if(userObj.user_qx_level==1)
+	{
+		$('#aj-box-court-name').html(fjmToName(fjm));
+		
+	}else{
+		$('#aj-box-court-name').parent().html('我的案件');
+		$('.aj-box-court-name-select').css('display', 'none');
+	}
+	show_case_list(1, fjm);
+}
 //左侧地图点击
 function region_click(r_id) {
+	// 无权限则无法点击
+	if(userObj.user_qx_level!=1)
+	{
+		layer.alert('无权限查看该信息');
+		return false;
+	}
 	var r_name = regionChange(r_id);
 	var fjm = rIdToFjm(r_id)
 	$('#current_region').val(r_id);
@@ -475,8 +508,10 @@ function region_click(r_id) {
 	$('#aj-box-ssaj-num').html(sp_zx_obj[fjm].sp);
 	$('#aj-box-zxaj-num').html(sp_zx_obj[fjm].zx);
 
-	$('#aj-box-r-name').html(r_name);
-	$('#aj-box-court-name').html(fjmToName(fjm));
+	// $('#aj-box-r-name').html(r_name);
+	// 权限设置
+	
+	init_aj_list_panel(fjm);
 	if (r_id == 'cz_jz') {
 		$('.aj-box-court-name-select').css('display', 'inline-block');
 		$('.aj-box-court-name-select').val(fjm);
@@ -486,6 +521,7 @@ function region_click(r_id) {
 	// 更改右侧列表
 	show_case_list(1, fjm);
 	// 更改右侧“地图” 如果地图为展示状态，则初始化地图，否则不作处理
+	
 	if ($('#map1_is_show').val() == '1') {
 		show_map_box();
 	}
@@ -583,4 +619,13 @@ function get_index_all_num() {
 			console.log(a);
 		}
 	});
+}
+// 首页布局更改
+function changeBj()
+{
+	var width = window.screen.width;
+	var height = window.screen.height;
+	console.log(width);
+	console.log(height);
+	console.log(width/height);
 }

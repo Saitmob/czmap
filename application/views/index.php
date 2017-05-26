@@ -62,13 +62,13 @@
   <div class="main">
     <!--崇左区域数据-->
     <div class="cz_or_unthis" data-toolbar="transport-options" data-toolbar-animation="standard">
-      <h3 class="active-aj-num">崇左地区法院数：<span class="aj-num">8</span> </h3>
+      <h3>崇左地区法院数：<span class="aj-num">8</span> </h3>
       <h3>法官人数：<span class="aj-num" >201</span> </h3>
       <h3>正在审理案件：<span class="aj-num" id="index_all_num_aj"></span> </h3>
       <h3>地点数：<span class="aj-num" id="index_all_num_add"></span> </h3>
 
       <div style="position:absolute;width: 380px;height: 40px;background-color: rgba(0,0,0,0.4);line-height:40px;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;left: 50%;margin-left: -410px;"><span style="font-size:13px;margin-right:10px;"></span> 区/县：<span class="yj-num">7</span>&nbsp;&nbsp;乡/镇：<span class="yj-num">79</span>&nbsp;&nbsp;村/社区：<span class="yj-num">829</span> </div>
-      <div style="position:absolute;width: 380px;height: 40px;background-color: rgba(0,0,0,0.4);line-height:40px;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;left: 50%;margin-left: 30px;"><span style="font-size:13px;margin-right:10px;"></span> 陪审员：<span class="yj-num">642</span>&nbsp;&nbsp;网格员：<span class="yj-num" id="index_all_num_wgy"></span>&nbsp;&nbsp;法律顾问：<span class="yj-num" id="index_all_num_flgw"></span> </div>
+      <div style="position:absolute;width: 380px;height: 40px;background-color: rgba(0,0,0,0.4);line-height:40px;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;left: 50%;margin-left: 30px;"><span style="font-size:13px;margin-right:10px;"></span> 陪审员：<span class="yj-num">467</span>&nbsp;&nbsp;网格员：<span class="yj-num" id="index_all_num_wgy"></span>&nbsp;&nbsp;法律顾问：<span class="yj-num" id="index_all_num_flgw"></span> </div>
     </div>
     <!--左右展示-->
     <div style="margin-top:80px;">
@@ -76,7 +76,7 @@
 
       <div class="left">
         <!-- 缩略地图容器 -->
-        <div id="city_map" style="width: 520px;height: 620px;marin-top:-30px;">
+        <div id="city_map" style="width: 520px;height: 620px;margin-top:-70px;">
           <!--鼠标提示-->
           <div id="map_tips">
             诉讼案件：<span id="ss-num-tips"></span>
@@ -116,7 +116,7 @@
             <div id="aj_box_wraper">
               <div id="aj_box_list" style="float:left;">
                 <div class="nav_head">
-                  <span class="nav_head_first">案件</span> > <span class="nav_head_last"><span id="aj-box-r-name"></span>案件</span>
+                  <!--<span class="nav_head_first">案件</span> > <span class="nav_head_last"><span id="aj-box-r-name"></span>案件</span>-->
                   <ul class="ajs-num" style="display:inline-block;margin-left:20px;">
                     <li>
                       诉讼案件 <span class="badge bg-sub" id="aj-box-ssaj-num">0</span>
@@ -131,7 +131,7 @@
                   </select>
                 </div>
                 <h2 class="text_center"><span id='aj-box-court-name'></span>未结案件</h2>
-                <table class="cz_table cz_table_hover" style="width:100%;margin-top:10px;">
+                <table class="cz_table cz_table_hover" style="width:100%;margin-top:10px;overflow:auto;">
                   <thead>
                     <tr>
                       <th>
@@ -146,7 +146,7 @@
                       <th>
                         立案日期
                       </th>
-                      <th style="width:14%;">
+                      <th style="">
                         操作
                       </th>
                     </tr>

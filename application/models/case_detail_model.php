@@ -6,14 +6,15 @@ class case_detail_model extends CI_Model {
     {
         parent::__construct();
         $this->load->database();
-        $this->load->library('regionmatch');
+        //$this->load->library('regionmatch');
     }
-    public function insertSpAjDetail($AH,$RX_HYTCRBS,$SSDW,$RX_FY,$RX_AJZT,$RX_AYMC,$RX_SJYBS,$RX_SJY,$RX_CBR,$RX_CBBMMC,$RX_HYTCY,$RX_CBRBS,$RX_AJLX,$AJBS,$MC)
+    public function insertAjDetail($AH,$RX_HYTCRBS,$SSDW,$RX_FY,$RX_AJZT,$RX_AYMC,$RX_SJYBS,$RX_SJY,$RX_CBR,$RX_CBBMMC,$RX_HYTCY,$RX_CBRBS,$RX_AJLX,$AJBS,$MC)
     {
         $result=0;
         $sql = "SELECT ID FROM sp_case_detail WHERE AH='{$AH}'";
         $query = $this->db->query($sql);
-        if(empty($query->row()))
+        $row = $query->row();
+        if(empty($row))
         {
             $sql = "INSERT INTO sp_case_detail (AH,RX_HYTCRBS,SSDW,RX_FY,RX_AJZT,RX_AYMC,RX_SJYBS,RX_SJY,RX_CBR,RX_CBBMMC,RX_HYTCY,RX_CBRBS,RX_AJLX,AJBS,MC) VALUES ('{$AH}','{$RX_HYTCRBS}','{$SSDW}','{$RX_FY}','{$RX_AJZT}','{$RX_AYMC}','{$RX_SJYBS}','{$RX_SJY}','{$RX_CBR}','{$RX_CBBMMC}','{$RX_HYTCY}','{$RX_CBRBS}','{$RX_AJLX}','{$AJBS}','{$MC}')";
             $query = $this->db->query($sql);
@@ -72,8 +73,8 @@ class case_detail_model extends CI_Model {
             $result= 1;
         }
         $data = array(
-            'result'=>$result,
-            'ay'=>$ay
+        'result'=>$result,
+        'ay'=>$ay
         );
         return $data;
     }
@@ -85,29 +86,191 @@ class case_detail_model extends CI_Model {
         return $data;
     }
     //
-    public function getSpCaseDetail($AH)
+    public function getCaseDetail($an_hao,$type)
     {
-        $sql = "SELECT * FROM sp_case_detail WHERE AH='{$AH}'";
-        $query = $this->db->query($sql);
-        $res = $query->result();
-        $str = '';
-        if(!empty($res))
-        {
-            foreach ($res as $key => $value) {
-                $ah = (empty($value->AH))?'无':$value->AH;
-                $ajzt = (empty($value->RX_AJZT))?'无':$value->RX_AJZT;
-                $ay = (empty($value->RX_AYMC))?'无':$value->RX_AYMC;
-                $sjy = (empty($value->RX_SJY))?'无':$value->RX_SJY;
-                $cbr = (empty($value->RX_CBR))?'无':$value->RX_CBR;
-                $hyt = (empty($value->RX_HYTCY))?'无':$value->RX_HYTCY;
-                $rylx = (empty($value->SSDW))?'无':$value->SSDW;//人员类型
-                $rymc = (empty($value->MC))?'无':$value->MC;//人员类型
-                $str .="<tr><td>".$ah."</td><td>".$ajzt."</td><td>".$ay."</td><td>".$sjy."</td><td>".$cbr."</td><td>".$hyt."</td><td>".$rylx."/".$rymc."</td></tr>" ;
-            }
-        }else{
-            $str='无案件详情';
+        $sjzx  = $this->load->database("sjzx",true);
+        if ($type != "zx") {
+            $table = $type."ajjbxx";
+            $sql = "(
+            SELECT
+            AH ,/*案号*/
+            '民事' as AJLX,/*案件类型*/
+            ajlyxmc ,/*案件来源*/
+            SDSZRQ  ,/*收到诉状日期*/
+            LAAYMC AS ZZMMC,/*案由*/
+            LABM,/*立案部门*/
+            SADJRMC,/*收案登记人*/
+            SPRMC,/*收案登记人*/
+            LASPRQ,/*立案审批日期*/
+            LARQ,/*立案日期*/
+            CBSPT,/*承办审判庭*/
+            cbrmc,/*承办人*/
+            SXQSRQ,/*审限起始日期*/
+            SXJMRQ,/*审限届满日期*/
+            AJJZJDMC/*案件进展阶段*/
+            from
+            msysajjbxx
+            WHERE
+            AJBS = ?
+            )
+            UNION
+            (
+            SELECT
+            AH,
+            '民事' AS AJLX,
+            ajlyxmc,
+            SDSZRQ,
+            LAAYMC AS ZZMMC,
+            LABM,
+            SADJRMC,
+            SPRMC,
+            LASPRQ,
+            LARQ,
+            CBSPT,
+            cbrmc,
+            SXQSRQ,
+            SXJMRQ,
+            AJJZJDMC
+            FROM
+            msesajjbxx
+            WHERE
+            AJBS = ?
+            )
+            UNION
+            (
+            SELECT
+            AH ,/*案号*/
+            '刑事' as AJLX,/*案件类型*/
+            ajlyxmc ,/*案件来源*/
+            SDSZRQ  ,/*收到诉状日期*/
+            QSZZMMC AS ZZMMC,/*案由*/
+            LABM,/*立案部门*/
+            SADJRMC,/*收案登记人*/
+            SPRMC,/*收案登记人*/
+            LASPRQ,/*立案审批日期*/
+            LARQ,/*立案日期*/
+            CBSPT,/*承办审判庭*/
+            cbrmc,/*承办人*/
+            SXQSRQ,/*审限起始日期*/
+            SXJMRQ,/*审限届满日期*/
+            AJJZJDMC/*案件进展阶段*/
+            FROM
+            xsysajjbxx
+            WHERE
+            AJBS = ?
+            )
+            UNION
+            (
+            SELECT
+            AH ,/*案号*/
+            '刑事' as AJLX,/*案件类型*/
+            ajlyxmc ,/*案件来源*/
+            SDSZRQ  ,/*收到诉状日期*/
+            ZZMMC,/*案由*/
+            LABM,/*立案部门*/
+            SADJRMC,/*收案登记人*/
+            SPRMC,/*收案登记人*/
+            LASPRQ,/*立案审批日期*/
+            LARQ,/*立案日期*/
+            CBSPT,/*承办审判庭*/
+            cbrmc,/*承办人*/
+            SXQSRQ,/*审限起始日期*/
+            SXJMRQ,/*审限届满日期*/
+            AJJZJDMC/*案件进展阶段*/
+            FROM
+            xsesajjbxx
+            WHERE
+            AJBS = ?
+            )
+            UNION
+            (
+            SELECT
+            AH,
+            '行政' AS AJLX,
+            ajlyxmc,
+            SDSZRQ,
+            laaymc AS ZZMMC,
+            LABM,
+            SADJRMC,
+            SPRMC,
+            LASPRQ,
+            LARQ,
+            CBSPT,
+            cbrmc,
+            SXQSRQ,
+            SXJMRQ,
+            AJJZJDMC
+            FROM
+            xzysajjbxx
+            WHERE
+            AJBS = ?
+            )
+            UNION
+            (
+            SELECT
+            AH,
+            '行政' AS AJLX,
+            ajlyxmc,
+            SDSZRQ,
+            laaymc AS ZZMMC,
+            LABM,
+            SADJRMC,
+            SPRMC,
+            LASPRQ,
+            LARQ,
+            CBSPT,
+            cbrmc,
+            SXQSRQ,
+            SXJMRQ,
+            AJJZJDMC
+            FROM
+            xzesajjbxx
+            WHERE
+            AJBS = ?
+            )";
+            $query = $sjzx->query($sql,array($an_hao,$an_hao,$an_hao,$an_hao,$an_hao,$an_hao));
+            $result['ajjbxx'] = $query->row_array();
         }
-        return $str;
+        else{
+            $table = $type."ajjbxx";
+            $sql = "SELECT AH,
+            SATJMC,
+            AJLYMC,
+            SDCLRQ,
+            SQZXBDJE,
+            LAAYMC,
+            LABM,
+            SADJRMC,
+            SCRMC,
+            SCRQ,
+            SPRMC,
+            LASPRQ,
+            SPYJMC,
+            LARQ,
+            JSRQ,
+            CBSPT,
+            CBRMC,
+            GXYJMC,
+            AJJZJDMC,
+            ZDLXJE,
+            SJDWJE,
+            ZXQXQSRQ,
+            ZXQXJMRQ,
+            FDZXQX,
+            ZXCQTS
+            from {$table} where AJBS=?";
+            $query = $sjzx->query($sql,array($an_hao));
+            $result['ajjbxx'] = $query->row_array();
+            $sql = "SELECT
+            a.AH,
+            (SELECT b.AY from aydm b where b.AYDM= a.AY) as AYMC,
+            (SELECT b.FYMC from fybm b where b.FYDM= a.JBFY) as JBFYMC,
+            (SELECT b.AJLBMC from ajlbxx b where b.AJLBDM= a.AJLB) as AJLBMC
+            FROM `ysqkxx` a where a.AJBS=?";
+            $query = $sjzx->query($sql,array($an_hao));
+            $result['ysxx'] = $query->row_array();
+        }
+        return $result;
     }
     
 }

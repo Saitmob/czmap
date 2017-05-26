@@ -154,7 +154,6 @@ A:active {
     left: auto;
     right: auto;
     width: 100%;
-    margin: 20px 0;
     height: auto;
     /*background-color: #CAF9BD;*/
 }
@@ -176,12 +175,12 @@ A:active {
 /*崇左地区或非崇左地区*/
 
 .cz_or_unthis {
-    margin: 10px auto;
+    margin: 0 auto;
     width: 80%;
     min-width:840px;
-    height: 90px;
+    height: 68px;
     background: url(../images/cz/bg_kuang.png) no-repeat;
-    background-size: 100% 90px;
+    background-size: 100% 68px;
     color: #fff;
     text-align: center;
 }
@@ -189,7 +188,7 @@ A:active {
 .cz_or_unthis h3 {
     display: inline-block;
     margin: 0 20px;
-    line-height: 90px;
+    line-height: 68px;
 }
 
 .cz_or_unthis a {

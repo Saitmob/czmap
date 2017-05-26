@@ -1,4 +1,8 @@
 $(function () {
+	if(userObj.user_qx_level!=1)
+	{
+		return false;
+	}
 	$(".aj_n_map ul li").click(function (e) {
 
 		// make sure we cannot click the slider

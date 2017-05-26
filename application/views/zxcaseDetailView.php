@@ -41,7 +41,7 @@
       <div class="li-mask"><p class="fl_lp">原审信息</p></div>
     </ul>
   </div>
-  <ul class="fl_r">
+  <ul class="fl_r" casetype="<?=$casetype?>">
     <li class="ysxx">
         <blockquote class="quote border-anblue blue_bg">
             <strong>原审信息</strong> 

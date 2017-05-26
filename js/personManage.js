@@ -6,7 +6,7 @@ $(function () {
 		MyUploadexl.request({
 			id: "#excelFile",
 			singleFileUploads: true,
-			postfix: 'doc,docx,xlsx,xls,png,jpg,jpeg,gif',
+			postfix: 'xlsx,xls',
 			myData: { folder: 'project', 's_id': 0 }
 		}, function (data) {
 		}, function (data) {
@@ -118,7 +118,7 @@ function show_list(range, persontype, name, cur_page, per_page_num)//区域，�
 function chooseregion(){
 	$('.layui-layer-content .icon-map-marker').data('id', '');
 	$('.layui-layer-content .icon-map-marker').data('name', '');
-	selectRegion(true, changeRangeText);
+	selectRegion(true, "", changeRangeText);
 }
 
 function deletePerson(id) {
@@ -278,11 +278,13 @@ function savePersonInfo() {
 	var regionArr = [];
 	var regionStr = '';
 	var idstring = $('.layui-layer-content .icon-map-marker').data('id');
-	if (idstring.length > 0) {
+	var namestring = $('.layui-layer-content .icon-map-marker').data('name');
+	var namearr = namestring.split(',');
+/*	if (idstring.length > 0) {
 		idstring = idstring.substring(0, idstring.length - 1);
 		var regionArr = idstring.split(',');
-	}
-	regionStr = regionArr.toString();
+	}*/
+	regionStr = idstring;
 	if (name == '') {
 		layer.alert('请填写姓名');
 		return false;
@@ -297,7 +299,7 @@ function savePersonInfo() {
 		data: {
 			'email': email,
 			'gis_id': regionStr,
-			'gis_name': $(".layui-layer-content .icon-map-marker").html(),
+			'gis_name': namearr[namearr.length-1],
 			'name': name,
 			'pId': $(".layui-layer-content .ry-save-btn").data('pId'),
 			'photoId': $('.layui-layer-content .ry-photoId').val(),
@@ -396,11 +398,9 @@ function showPersonInfoPanel(pId) {
 	});
 }
 
-function changeRangeText(id, name) {
-	var idstring = $('.layui-layer-content .icon-map-marker').data('id');
-	var namestring = $('.layui-layer-content .icon-map-marker').data('name');
-	idstring += id + ',';
-	namestring += name + ',';
+function changeRangeText(idarr, namearr, name) {
+	var namestring = namearr.join(',');
+	var idstring = idarr.join(',');
 	$('.layui-layer-content .icon-map-marker').data('name', namestring);
 	$('.icon-map-marker').css('font-size', '12px');
 	$('.layui-layer-content .editor-select-region t').html('修改区域');
@@ -416,12 +416,14 @@ function changeRangeText(id, name) {
 	// 	$('.layui-layer-content .icon-map-marker').data('name', '');
 	// 	//selectRegion(true, changeRangeText);
 	// });
-	$('.layui-layer-content .editor-select-region').on('mouseenter', function () {
-		layer.tips(namestring, '.layui-layer-content .editor-select-region', {
-			tips: [1, '#3595CC'],
-			time: 2000
+	if (namestring != "") {
+		$('.layui-layer-content .editor-select-region').on('mouseenter', function () {
+			layer.tips(namestring, '.layui-layer-content .editor-select-region', {
+				tips: [1, '#3595CC'],
+				time: 2000
+			});
 		});
-	});
+	}
 }
 
 function addPersonClick() {

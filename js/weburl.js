@@ -223,6 +223,7 @@ function getUserInfo() {
 		async: false,
 		success: function (data) {
 			userObj = data;
+            console.log(data);
 			$('.user-name').html(data.user_name);
 		}
 	});

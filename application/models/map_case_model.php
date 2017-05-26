@@ -110,7 +110,7 @@ class map_case_model extends CI_Model {
                     $ah_str = (($qx)?('；<a href="'.$URL.'" target="_blank" >'.$val['DO_AH'].'</a>；'):('；'.$val['DO_AH'].'；'));
                 }
                 
-                $detail_info .= ($k+1)."、".$val['COURT_NAME'].$ah_str.(($val['LA_DATE']==NULL)?'无立案时间':$val['LA_DATE']).'；'.$val['AN_REASON'].'；'.(($val['BZXR_NAME']==NULL)?'无被执行人':$val['BZXR_NAME']).'；标的：'.$val['BD'].'万元；备注：'.$val['NOTE']."<br><div style='position:absolute;bottom:0px;height：80px;width:80%;padding-top:10px;border-top:1px solid;'>陪审员：".$psy."；执行员：".$zxy."；网格员：".$wgy."</div>";
+                $detail_info .= ($k+1)."、".$val['COURT_NAME'].$ah_str.(($val['LA_DATE']==NULL)?'无立案时间':$val['LA_DATE']).'；'.$val['AN_REASON'].'；'.(($val['BZXR_NAME']==NULL)?'无被执行人':$val['BZXR_NAME']).'；标的：'.$val['BD'].'万元；备注：'.$val['NOTE']."<br><div style='position:absolute;bottom:0px;height：30px;width:90%;padding-top:10px;border-top:1px solid;'>陪审员：".$psy."；执行员：".$zxy."；网格员：".$wgy."</div>";
                 $case_num+=1;
             }
             $res3[$key]['detail_info'] = $detail_info;
@@ -301,7 +301,7 @@ class map_case_model extends CI_Model {
                     'NAME'=>$val->xm,
                     'ADD_NAME'=>$val->xxdz,
                     'BZ_INFO'=>$bz_info,
-                    'BZ_BOTTOM'=>"<div style='position:absolute;bottom:0px;height:53px;overflow:auto;width:80%;padding-top:10px;border-top:1px solid;'>法律顾问：".$tjy."；网格员：".$wgy."</div>"
+                    'BZ_BOTTOM'=>"<div style='position:absolute;bottom:0px;height:30px;overflow:auto;width:90%;padding-top:10px;border-top:1px solid;'>法律顾问：".$tjy."；网格员：".$wgy."</div>"
                     );
                     $i++;
                 }
@@ -587,7 +587,21 @@ class map_case_model extends CI_Model {
             $sql = "INSERT INTO person (name,sex,csny,nation,education,company,ndsfd,zzmm,rybs,zzet,photo_url,photo_type,phone,duty,address) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             $query = $this->db->query($sql, array($name,$sex,$csny,$nation,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photo,$phototype,$phone,$duty,$gis_name));
             $result = $this->db->insert_id();
-            $this->insertlib($gis_id, $result);
+            if(!empty($gis_id)){
+                if (stripos($gis_id, ",") != "")
+                {
+                    $gis_id_arr = explode(",", $gis_id);
+                    $gis_id_arr = explode(",", $gis_id);
+                    foreach ($gis_id_arr as $key => $value)
+                    {
+                        $this->insertlib($value, $result);
+                    }
+                }
+                else
+                {
+                    $this->insertlib($gis_id, $result);
+                }
+            }
         }
         else
         {
@@ -848,9 +862,22 @@ public function indexShowCaseList($currpage,$perPageNum,$fjm,$case_type='ALL'){
     $currpage = (int)$currpage;
     $start = ($currpage-1)*$perPageNum;
     if($case_type=='ALL'){
-        $sql="(SELECT * FROM sp_ajxx WHERE fjm='{$fjm}' AND s=1 ORDER BY s ) union all (SELECT * FROM zx_ajxx WHERE fjm='{$fjm}' AND s=1 ORDER BY s )  ORDER BY larq DESC LIMIT {$start},{$perPageNum}";
-        $query = $this->ajxq->query($sql);
-        $res = $query->result();
+        $perPageNum = (int)$perPageNum;
+        if ($_SESSION['user_qx_level'] != 1) {
+            $sql = "(SELECT a.ah, a.ajzt, a.larq, a.ajbs FROM sp_ajxx AS a LEFT JOIN sp_hytcy AS b ON a.ajbs = b.ajbs WHERE b.rybs = ?  AND a.s=1 ) union all (SELECT c.ah, c.ajzt, c.larq, c.ajbs FROM zx_ajxx AS c LEFT JOIN zx_hytcy AS d ON c.ajbs = d.ajbs  WHERE d.rybs = ?  AND c.s=1)  ORDER BY larq DESC LIMIT ?,?";
+            $query = $this->ajxq->query($sql, array($_SESSION['user_rybs'],  $_SESSION['user_rybs'],  $start, $perPageNum));
+            $sql = "select sum(total) as count from ((SELECT count(0) as total FROM sp_ajxx AS a LEFT JOIN sp_hytcy AS b ON a.ajbs = b.ajbs WHERE b.rybs = ? AND a.s=1 ) union all (SELECT count(0) as total FROM zx_ajxx AS c LEFT JOIN zx_hytcy AS d ON c.ajbs = d.ajbs  WHERE d.rybs = ?  AND c.s=1))t";
+            $query_count = $this->ajxq->query($sql, array($_SESSION['user_rybs'],  $_SESSION['user_rybs']));
+        }
+        else{
+            $sql = "(SELECT ah, ajzt, larq, ajbs FROM sp_ajxx WHERE  fjm=? AND s=1 ) union all (SELECT ah, ajzt, larq, ajbs FROM zx_ajxx  WHERE  fjm=? AND s=1)  ORDER BY larq DESC LIMIT ?,?";
+            $query = $this->ajxq->query($sql, array($fjm, $fjm, $start, $perPageNum));
+            $sql = "select sum(total) as count from ((SELECT count(0) as total FROM sp_ajxx WHERE  fjm=? AND s=1 ) union all (SELECT count(0) as total FROM zx_ajxx  WHERE  fjm=? AND s=1))t";
+            $query_count = $this->ajxq->query($sql, array($fjm, $fjm));
+        }
+        
+        $res['result'] = $query->result();
+        $res['pagecount'] = $query_count->row();
     }
     return $res;
 }
@@ -949,7 +976,7 @@ public function getSpZxNum()
 }
 private function getAjNum($fjm,$type)
 {
-    $sql = "SELECT aj_id from {$type}_ajxx where fjm='{$fjm}' AND s=1";
+    $sql = "SELECT aj_id from {$type}_ajxx where fjm='{$fjm}'";
     $query = $this->ajxq->query($sql);
     $aj_res = $query->result();
     $aj_num = count($aj_res);
