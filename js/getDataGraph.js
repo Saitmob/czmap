@@ -68,6 +68,7 @@ function getregion_data(fjm) {
 // getregion_data('K00');
 
 function getRdataById(fjm, aj_type, aj_bs) {
+	var deferred = $.Deferred();
 	$.ajax({
 		type: 'post',
 		url: weburl + 'index.php/welcome/getRdataById',
@@ -77,17 +78,17 @@ function getRdataById(fjm, aj_type, aj_bs) {
 			'aj_id': aj_bs
 		},
 		dataType: 'json',
-		async: false, //设置为同步操作就可以给全局变量赋值成功
 		success: function (data) {
 			// region_data = data.region_data;
 			// region_point = data.point;
-			region_address = data;
+			deferred.resolve(data);
 			// region_repeat_data = data.repeat_region_data;
 		},
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
 			console.log(XMLHttpRequest + ';' + errorThrown);
 		}
 	});
+	return deferred.promise();
 }
 //获取非崇左区域案件信息
 // var unthis_area_data = {};

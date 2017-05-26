@@ -178,7 +178,7 @@ class map_case_model extends CI_Model {
     {
         $qx = false;
         $rybs = $_SESSION['user_rybs'];
-        if($rybs==180225133)
+        if($_SESSION['user_qx_level']==1)
         {
             $qx=true;
         }
@@ -249,7 +249,7 @@ class map_case_model extends CI_Model {
                             {
                                 $tjy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['tjy']['id'][$kt].')">'.$valt.'、</span>';
                             }else{
-                                $tjy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'</span>';
+                                $tjy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'、</span>';
                             }
                         }
                     }
@@ -263,7 +263,7 @@ class map_case_model extends CI_Model {
                             {
                                 $wgy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['wgy']['id'][$kt].')">'.$valt.'、</span>';
                             }else{
-                                $wgy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'</span>';
+                                $wgy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'、</span>';
                             }
                             
                         }
