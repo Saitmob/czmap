@@ -85,7 +85,6 @@ function creatDataInfo() {
 	shadow.size.height = 40;
 	shadow.size.width = 40;
 	var region_arr = [];
-	console.log(region_address);
 	if (region_address.SP.ADDRESS != undefined) {
 		$.each(region_address.SP.ADDRESS, function (k, v) {
 			$.each(v, function (k2, v2) {
@@ -117,7 +116,7 @@ function creatDataInfo() {
 				}
 				points.push(point);
 				points_str.push(point_str);
-				var content = "地址：" + v.ADD_NAME + "<br>" + v.BZ_INFO + v.BZ_BOTTOM;
+				var content = "地址：" + v.ADD_NAME + "<br>" + v.BZ_INFO;
 				var iconUrl = '';
 				var size = new BMap.Size(20, 24);
 				if (v.ADD_TYPE == '原告') {
@@ -150,7 +149,8 @@ function creatDataInfo() {
 				marker.addEventListener('click',function(e){
 					// content = 'hello';
 					var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
-					map.openInfoWindow(infoWindow,point);
+					get_dsr_info(v.AJBS,v.AJ_TYPE,v.DATA_ID,content,point);
+					// map.openInfoWindow(infoWindow,point);
 					// addClickHandler(content, marker, point);
 				});
 				
@@ -186,7 +186,26 @@ function creatDataInfo() {
 	}
 
 }
-
+// 获取左边弹窗内容
+function get_dsr_info(ajbs,aj_type,dsr_id,content,point)
+{
+	$.ajax({
+		type:'post',
+		url:weburl+'index.php/welcome/get_dsr_info',
+		data:{
+			ajbs:ajbs,
+			dsr_id:dsr_id,
+			aj_type:aj_type
+		},
+		// dataType:'json',
+		success:function(data){
+			console.log(data);
+			content+=data;
+			var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+			map.openInfoWindow(infoWindow,point);
+		}
+	})
+}
 function addClickHandler(content, marker, point) {
 	marker.addEventListener("click", function () {
 		openInfo(content, point)

@@ -214,7 +214,7 @@ function TV_Initialize() {
 				TV_SetParam(j, QNV_PARAM_AM_LINEIN, 5); //把输入能量增益调为5
 			}
 			//设置忙音侦测数
-			TV_SetParam(0, QNV_PARAM_BUSY, 2);
+			TV_SetParam(0, QNV_PARAM_BUSY, 5);
 			AppendStatus("打开设备成功 通道数:" + channels + " 序列号:" + qnviccub.QNV_DevInfo(0, QNV_DEVINFO_GETSERIAL) + " 设备类型:" + qnviccub.QNV_DevInfo(0, QNV_DEVINFO_GETTYPE) + " ver:" + qnviccub.QNV_DevInfo(0, QNV_DEVINFO_FILEVERSION));
 		} else {
 			AppendStatus("打开设备失败,请检查设备是否已经插入并安装了驱动,并且没有其它程序已经打开设备");
@@ -298,8 +298,7 @@ function TV_StartDial(uID, szCode) { //正常拨号必须使用 DIALTYPE_DTMF
 		return false;
 	} else {
 		AppendStatusEx(uID, "开始拨号:" + szCode);
-		// 弹出通话笔记记录面板
-		notePanel();
+		
 		start_i = layer.alert('开始拨号...');
         callIsEnd=0;
 		return true;
@@ -390,15 +389,17 @@ function getNowFormatDate() {
 }
 
 // 通话笔记记录面板
-function notePanel() {
+function notePanel(phone,name,address) {
+	var date = new Date();
+	var year = date.toLocaleDateString();
 	layer.open({
 		type: 1,
-		title: false,
+		title: '通话笔记',
 		skin: 'layui-layer-rim', //加上边框
-		area: ['380px', '490px'], //宽高
+		area: ['420px', '580px'], //宽高
 		btn: ['确定'],
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div style="padding:10px;" class="map-person-info"><ul><li>通话笔记：<textarea type="text" class="input" style="height:300px;" ></textarea></li><li>通话结果：<input type="text" class="input input-small aj-box-court-name-select" style="display:inline-block;width:140px;"></input><button class="button bg-sub button-small " onclick="TV_HangUpCtrl(0)" style="display:inline-block;margin-left:10px;vartical-align:middle;">挂断</button></li></ul></div>',
+		content: '<div style="padding:10px;" class="map-person-info-no-border"><ul><li>姓名：'+name+'</li>地址：'+phone+'</li><li>地址：'+address+'</li><li>联系时间：'+year+'</li><li>通话笔记：<textarea type="text" class="input" style="height:100px;" ></textarea></li><li>通话结果：<textarea type="text" class="input" style="height:100px;" ></textarea><button class="button bg-sub button-small " onclick="TV_HangUpCtrl(0)" style="display:inline-block;margin:4px 0;vartical-align:middle;">挂断</button></li></ul></div>',
 		yes: function (i) {
             layer.close(i);
         },

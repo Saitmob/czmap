@@ -27,7 +27,11 @@ class RegionMatch extends CI_Model {
             }
             $addArr[]=$add;
         }
-        $addStr = implode(';',$addArr);
+        if(!empty($addArr)){
+            $addStr = implode(';',$addArr);
+        }else{
+            $addStr = '';
+        }
         return $addStr;
     }
     //名称匹配拿到坐标
@@ -211,7 +215,7 @@ public function getTWByGis($gis_id)
     $id_str = implode(',',$id_arr);
     // echo $sql.'<br>';
     // $sql = "SELECT person_id from person_add_lib where gis_id=".$gis_id." GROUP BY person_id";
-    $sql = "SELECT person_id from person_add_lib where gis_id in ({$id_str}) OR gis_id={$gis_id} GROUP BY person_id";
+    $sql = "SELECT p.id,p.name,p.rybs from person p LEFT JOIN (SELECT person_id from person_add_lib where gis_id in ({$id_str}) OR gis_id={$gis_id} GROUP BY person_id) padd ON p.id=padd.person_id";
     // echo $sql.'<br>';
     $query = $this->db->query($sql);
     $person_arr = $query->result();
@@ -219,17 +223,17 @@ public function getTWByGis($gis_id)
     $wgyArr=array();
     $tjy='';
     $wgy='';
-    foreach ($person_arr as $kp => $valp) {
-        $sql = "SELECT id,name,rybs from person where id=".$valp->person_id;
-        $query = $this->db->query($sql);
-        $res = $query->row();
-        if(!empty($res))
+    foreach ($person_arr as $kp => $res) {
+        //     $sql = "SELECT id,name,rybs from person where id=".$valp->person_id;
+        //     $query = $this->db->query($sql);
+        //     $res = $query->row();
+        if(!empty($res)&&!empty($res->rybs))
         {
             if($res->rybs=='法律顾问')
             {
                 $tjyArr['name'][$res->id]=$res->name;
                 $tjyArr['id'][$res->id]=$res->id;
-            }elseif($res->rybs=='网格员')
+            }elseif($res->rybs=='网格员'&&!empty($res->rybs))
             {
                 $wgyArr['name'][$res->id]=$res->name;
                 $wgyArr['id'][$res->id]=$res->id;
@@ -240,25 +244,45 @@ public function getTWByGis($gis_id)
     if(!empty($tjyArr)&&!empty($tjyArr['name'])){
         if(count($tjyArr['name'])>4)
         {
-            $tjyArr['name']=array_slice($tjyArr['name'],0,2);
-            $tjyArr['id'] = array_slice($tjyArr['id'],0,2);
+            $rand = rand(0,count($tjyArr['name']));
+            $tjyArr['name']=array_slice($tjyArr['name'],$rand,2);
+            $tjyArr['id'] = array_slice($tjyArr['id'],$rand,2);
         }
         $tjy = implode('、',$tjyArr['name']);
     }
     if(!empty($wgyArr)&&!empty($wgyArr['name'])){
         if(count($wgyArr['name'])>4)
         {
-            $wgyArr['name'] = array_slice($wgyArr['name'],0,1);
-            $wgyArr['id'] = array_slice($wgyArr['id'],0,1);
+            $rand = rand(0,count($wgyArr['name']));
+            $wgyArr['name'] = array_slice($wgyArr['name'],$rand,1);
+            $wgyArr['id'] = array_slice($wgyArr['id'],$rand,1);
         }
-        $wgy = implode('、',$wgyArr['name']);
+        // 测试用
+        if($gis_id==2417||$gis_id=='2417')
+        {
+            $wgy = '测试';
+            $wgyArr['id']=1436;
+        }else{
+            
+            $wgy = implode('、',$wgyArr['name']);
+        }
     }
-    $data = array(
-    'tjy'=>$tjyArr,
-    'tjystr'=>$tjy,
-    'wgy'=>$wgyArr,
-    'wgystr'=>$wgy,
-    );
+    if($gis_id==2417||$gis_id=='2417')
+    {
+        $data = array(
+        'tjy'=>$tjyArr,
+        'tjystr'=>$tjy,
+        'wgy'=>array('name'=>array('测试'),'id'=>array(1436)),
+        'wgystr'=>'测试',
+        );
+    }else{
+        $data = array(
+        'tjy'=>$tjyArr,
+        'tjystr'=>$tjy,
+        'wgy'=>$wgyArr,
+        'wgystr'=>$wgy,
+        );
+    }
     return $data;
 }
 

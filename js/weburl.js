@@ -10,12 +10,12 @@ $(function () {
 	$(document).ajaxSend(function (event, jqxhr, settings) {
 	});
 	$(document).ajaxError(function () {
-		if (CONNECT_ERROR == 0) {
-			// alert('与服务器断开连接');
-			document.write('请求超时，与服务器断开连接');
-			CONNECT_ERROR = 1;
-		}
-		return false;
+		// if (CONNECT_ERROR == 0) {
+		// 	// alert('与服务器断开连接');
+		// 	// document.write('请求超时，与服务器断开连接');
+		// 	CONNECT_ERROR = 1;
+		// }
+		// return false;
 	});
 	getUserInfo();
 	$('.header-nav').hover(function () {

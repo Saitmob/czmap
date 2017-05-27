@@ -17,7 +17,7 @@ class case_data_model extends CI_Model {
         $add_cc_num = 0;
         $hytcy_name = array();
         $data = array();
-        $sql = "SELECT * FROM {$aj_type}_ajxx WHERE ajbs = '{$ajbs}' AND s=1";
+        $sql = "SELECT * FROM {$aj_type}_ajxx WHERE ajbs = '{$ajbs}'";
         $query = $this->ajxx->query($sql);
         $res1 = $query->row();
         // 当事人
@@ -41,7 +41,12 @@ class case_data_model extends CI_Model {
         }
         $hytcy_name = implode('、',$hytcy_name);
         
-        $bdje = substr($res1->bdje,0,-4);
+        if(!empty($res1->bdje)){
+            $bdje = substr($res1->bdje,0,-4);
+        }else{
+            $bdje = '';
+        }
+        
         $data = array(
             'AH'=>$res1->ah,
             'LARQ'=>$res1->larq,

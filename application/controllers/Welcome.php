@@ -345,4 +345,14 @@ class Welcome extends CI_Controller {
             echo json_encode($data);
         }
     }
+    public function get_dsr_info()
+    {
+        $dsr_id = $this->input->post('dsr_id');
+        if(!empty($dsr_id)){
+            $ajbs=$this->input->post('ajbs');
+            $aj_type=$this->input->post('aj_type');
+            $data=$this->mapcase->get_bottom_content($ajbs,$aj_type,$dsr_id);
+            echo $data;
+        }
+    }
 }

@@ -10,11 +10,10 @@ function AppendStatus(szStatus) {
 //版本一：
 //使用3.5接口耳机与麦克风
 //拨号事件
-function dial_up(no) {
-    if(!DetectActiveX())
-    {
-        return false;
-    }
+function dial_up(no,name,address) {
+	if (!DetectActiveX()) {
+		return false;
+	}
 
 	//检测盒子控件是否安装
 	I_CheckActiveX();
@@ -28,6 +27,8 @@ function dial_up(no) {
 	TV_Initialize();
 	//打开耳机
 	TV_EnableLine2Spk(0, TRUE);
+	// 弹出通话笔记记录面板
+	notePanel(no,name,address);
 	//开始拨号
 	var is_dial = TV_StartDial(0, photo_number);
 }
@@ -45,14 +46,14 @@ function is_mic(t) {
 
 //挂机回调方法
 function end_dial() {
-    
+
 }
 
 function DetectActiveX() {
 	try {
 		var comActiveX = new ActiveXObject('qnviccub.qnviccub');
 	} catch (e) {
-        layer.alert('请安装或打开ActiveX控件,并正确安装拨号驱动');
+		layer.alert('请安装或打开ActiveX控件,并正确安装拨号驱动');
 		return false;
 	}
 	return true;

@@ -188,6 +188,9 @@
 	padding:10px 0;
 	border-bottom: 1px solid gray;
 }
+.map-person-info-no-border ul li{
+	padding:10px 0;
+}
 /*首页案件详细信息*/
 #case_detail_panel{
 	width:340px;

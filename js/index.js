@@ -13,7 +13,7 @@ $(function () {
 	};
 	cz_map();
 	//案件面板初始化
-	init_aj_list_panel('');
+	init_aj_list_panel('K67');
 	// 左侧区块点击
 	// region_click('cz_jz');
 	// 法院选择事件
@@ -417,7 +417,6 @@ function show_case_list(page, fjm, case_type) {
 		}
 	});
 }
-
 function case_detail_open(ajbs, ajtype, ele) {
 	// if(ajtype=='sp')
 	// {
@@ -575,7 +574,7 @@ function court_select_event() {
 }
 
 //通过人员id拿到信息
-function get_person_info(id) {
+function get_person_info(id,address) {
 	var person_info = {}
 	$.ajax({
 		type: 'post',
@@ -593,6 +592,7 @@ function get_person_info(id) {
 		}
 	});
 	var photo_url = (person_info.photo_url == null) ? './photo.jpg' : (person_info.photo_url);
+	person_info.address = address;
 	layer.open({
 		type: 1,
 		title: false,
@@ -600,7 +600,7 @@ function get_person_info(id) {
 		area: ['380px', '490px'], //宽高
 		btn: ['确定'],
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div style="padding:10px;" class="map-person-info"><ul><li>姓名：' + person_info.name + '</li><li>性别：' + ((person_info.sex) ? person_info.sex : '') + '</li><li>出生年月：' + ((person_info.csny) ? person_info.csny : '') + '</li><li>职务：' + ((person_info.duty) ? person_info.duty : '') + '</li><li>人员类型：' + ((person_info.rybs) ? person_info.rybs : '') + '</li><li>联系电话：<select class="input input-small " id="phone-add0-' + person_info.phone + '" style="display:inline-block;width:70px;"><option value="">不加0</option><option value="0">+0</option><option value="00">+00</option></select><span id="p_' + person_info.phone + '">' + ((person_info.phone) ? person_info.phone : '') + '</span><button class="button bg-sub button-small" style="margin:0 10px;" onclick="call_one_person(' + person_info.phone + ');">拨号</button></li><li style="text-align:center"><img style="width:100px;height:120px;" src="' + photo_url + '?v=' + Math.random() + '"/></li></ul></div>',
+		content: '<div id="persin_info_panel" style="padding:10px;" class="map-person-info"><ul><li>姓名：' + person_info.name + '</li><li>性别：' + ((person_info.sex) ? person_info.sex : '') + '</li><li>出生年月：' + ((person_info.csny) ? person_info.csny : '') + '</li><li>职务：' + ((person_info.duty) ? person_info.duty : '') + '</li><li>人员类型：' + ((person_info.rybs) ? person_info.rybs : '') + '</li><li>联系电话：<select class="input input-small " id="phone-add0-' + person_info.phone + '" style="display:inline-block;width:70px;"><option value="">不加0</option><option value="0">+0</option><option value="00">+00</option></select><span id="p_' + person_info.phone + '">' + ((person_info.phone) ? person_info.phone : '') + '</span><button class="button bg-sub button-small" style="margin:0 10px;" onclick="call_one_person(' + person_info.phone + ',\''+person_info.name+'\',\''+address+'\');">拨号</button></li><li style="text-align:center"><img style="width:100px;height:120px;" src="' + photo_url + '?v=' + Math.random() + '"/></li></ul></div>',
 		yes: function (i) {
 			// 挂断电话
 			TV_HangUpCtrl(0);
@@ -614,11 +614,10 @@ function get_person_info(id) {
 
 }
 // 拨号是否加0
-function call_one_person(p) {
+function call_one_person(p,name,address) {
 	// var phone = $('#p_'+p).html();
 	phone = $('#phone-add0-' + p).val() + 18377775127;
-	console.log(phone);
-	dial_up(phone);
+	dial_up(phone,name,address);
 }
 // 首页获取审理案件数，地点数以及网格员数等
 function get_index_all_num() {

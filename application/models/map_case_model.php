@@ -176,31 +176,33 @@ class map_case_model extends CI_Model {
     // 拿到address的各种坐标以及当事人信息和案件信息
     private function getAddress($type,$showType='ALL',$showTypeVal='',$currPage=0,$perPageNum=0)//分级码，案件类型,展示类型（全部展示，按照id展示），类型值，分页当前页码，分页每页行数
     {
-        $qx = false;
+        $qx = true;
         $rybs = $_SESSION['user_rybs'];
         if($_SESSION['user_qx_level']==1)
         {
             $qx=true;
         }
         if($showType=='ALL'){
-            $sql="SELECT * FROM  {$type}_ajxx  where fjm = '{$showTypeVal}' AND s=1 ORDER BY s";
+            // $sql="SELECT * FROM  {$type}_ajxx  where fjm = '{$showTypeVal}' ORDER BY s DESC ";
+            $sql=" SELECT * from {$type}_dsr p left join  (SELECT ajbs,larq,ah,fjm FROM  {$type}_ajxx  where fjm = '{$showTypeVal}' ORDER BY s DESC) aj on aj.ajbs=p.ajbs where aj.fjm='{$showTypeVal}'";
         }elseif($showType=='AJ_TYPE'){
             $currPage = (int)$currPage;
             $start = ($currPage-1)*$perPageNum;
             $sql="SELECT * FROM  {$type}_ajxx  where fjm = '{$showTypeVal}' LIMIT {$start} {$perPageNum}";
         }elseif($showType=='AJBS'){
-            $sql="SELECT * FROM  {$type}_ajxx  where ajbs='{$showTypeVal}'";
+            $sql=" SELECT * from {$type}_dsr p left join  (SELECT ajbs,larq,ah,fjm FROM  {$type}_ajxx  where ajbs = '{$showTypeVal}' ORDER BY s DESC) aj on aj.ajbs=p.ajbs where aj.ajbs='{$showTypeVal}'";
+            // $sql="SELECT * FROM  {$type}_ajxx  where ajbs='{$showTypeVal}'";
             // 拿到该案件的人员标识，更改权限
-            $sql_rybs = "SELECT rybs FROM  {$type}_hytcy  where  ajbs='{$showTypeVal}'";
-            $query_rybs = $this->ajxq->query($sql_rybs);
-            $rybs_arr = $query_rybs->result();
-            // var_dump($rybs_arr);
-            foreach ($rybs_arr as $key => $value_rybs) {
-                if($value_rybs->rybs==$rybs)
-                {
-                    $qx=true;
-                }
-            }
+            // $sql_rybs = "SELECT rybs FROM  {$type}_hytcy  where  ajbs='{$showTypeVal}'";
+            // $query_rybs = $this->ajxq->query($sql_rybs);
+            // $rybs_arr = $query_rybs->result();
+            // // var_dump($rybs_arr);
+            // foreach ($rybs_arr as $key => $value_rybs) {
+            //     if($value_rybs->rybs==$rybs)
+            //     {
+            //         $qx=true;
+            //     }
+            // }
         }
         $query = $this->ajxq->query($sql);
         $res = $query->result();
@@ -209,125 +211,110 @@ class map_case_model extends CI_Model {
         // 所有坐标数组，用于判断是否存在相同坐标，存在则内容显示在同一个坐标上
         // $points = array();
         // $reduce_num = 0;
-        foreach ($res as $key => $value) {
-            $ajbs = $value->ajbs;
-            // 当事人
-            $sql = "SELECT * FROM {$type}_dsr WHERE ajbs={$ajbs}";
-            $query = $this->ajxq->query($sql);
-            $dsr = $query->result();
-            if(!empty($dsr)){
-                $i=1;
-                foreach ($dsr as $k => $val) {
-                    // $point = $this->get_point();//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
-                    $bz_info='';
-                    if((int)$val->gis_id!=0)
-                    {
-                        $point = $this->regionmatch->getPointById($val->gis_id);
-                    }else{
-                        $point = array();
-                    }
-                    
-                    // $point = array('x'=>1,'y'=>1,'gisId'=>1);//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
-                    // 通过gis_id查询网格员以及调解员
-                    // $sql = "(SELECT gis_id,person_id from person_add_lib WHERE gis_id=".$val->gis_id.") ad LEFT JOIN (SELECT id,name from person) p ON ad.person_id=p.id";
-                    // $query = $this->db->query($sql);
-                    // $person_arr = $query->result();
-                    $person_arr=array();
-                    if((int)$val->gis_id!=0)
-                    {
-                        // var_dump((int)$val->gis_id);
-                        $person_arr = $this->regionmatch->getTWByGis($val->gis_id);
-                    }
-                    if(empty($person_arr['tjy'])||!isset($person_arr['tjy']))
-                    {
-                        $tjy='无';
-                    }else{
-                        $tjy='';
-                        
-                        foreach ($person_arr['tjy']['name'] as $kt => $valt) {
-                            if($qx)
-                            {
-                                $tjy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['tjy']['id'][$kt].')">'.$valt.'、</span>';
-                            }else{
-                                $tjy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'、</span>';
-                            }
-                        }
-                    }
-                    if(empty($person_arr['wgy'])||!isset($person_arr['wgy']))
-                    {
-                        $wgy='无';
-                    }else{
-                        $wgy='';
-                        foreach ($person_arr['wgy']['name'] as $kt => $valt) {
-                            if($qx)
-                            {
-                                $wgy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['wgy']['id'][$kt].')">'.$valt.'、</span>';
-                            }else{
-                                $wgy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'、</span>';
-                            }
-                            
-                        }
-                    }
-                    // $tjy = (empty($person_arr['tjy']))?'无':$person_arr['tjystr'];
-                    // $wgy = (empty($person_arr['wgy']))?'无':$person_arr['wgystr'];
-                    $larq = explode('-',$value->larq);
-                    $larq = $larq[0].'年'.$larq[1].'月'.$larq[2].'日';
-                    $ssdw=(isset($val->ssdw))?$val->ssdw:'诉讼地位：无';
-                    $xb = (isset($val->xb))?$val->xb:'性别：无';
-                    $mz = (isset($val->mz)&&!empty($val->mz))?$val->mz:'民族：无';
-                    $sfzh = (isset($val->sfzh))?$val->sfzh:'无';
-                    $lxdh = (isset($val->lxdh))?$val->lxdh:'无';
-                    // 当事人类型
-                    $frdb='';
-                    $res_jgdm='';
-                    if($val->dsr_type=='法人'){
-                        $frdb = (!empty($val->frdb))?($val->dsr_type.'：'.$val->frdb):'法人名称：无 ';
-                        // 法人机构代码
-                        $sql = "SELECT ZZJGDM FROM `ajdsrxx` where LXMC='法人' and ajbs={$ajbs} and DSRMC='".$val->xm."'";
-                        $query_fr = $this->sjzx->query($sql);
-                        $res_jgdm_o = $query_fr->row();
-                        if(!empty($res_jgdm))
-                        {
-                            $res_jgdm = $res_jgdm_o->ZZJGDM;
-                            $res_jgdm = ' &nbsp;&nbsp;法人机构代码：'.$res_jgdm;
-                        }else{
-                            $res_jgdm = ' &nbsp;&nbsp;机构代码：无';
-                        }
-                    }
-                    $bz_info .= $i.'、'.$value->ah.'<br>立案日期：'.$larq.'<br>当事人：'.$val->xm.'('.$ssdw.')、'.$xb.'、'.$mz.'、身份证号：'.$sfzh.'、联系电话：'.$lxdh."<br>".$frdb.' '.$res_jgdm.'<br>';
-                    $ADDRESS[$ssdw][]=array(
-                    'ADD_TYPE'=>$ssdw,
-                    'POINT'=>$point,
-                    'NAME'=>$val->xm,
-                    'ADD_NAME'=>$val->xxdz,
-                    'BZ_INFO'=>$bz_info,
-                    'BZ_BOTTOM'=>"<div style='position:absolute;bottom:0px;height:30px;overflow:auto;width:90%;padding-top:10px;border-top:1px solid;'>法律顾问：".$tjy."；网格员：".$wgy."</div>"
-                    );
-                    $i++;
-                }
-            }
-            // 财产地址
-            $sql = "SELECT * FROM {$type}_ccszd WHERE ajbs='{$ajbs}'";
-            $query = $this->ajxq->query($sql);
-            $ccszd = $query->result();
-            if(!empty($ccszd)){
-                $i=1;
-                foreach ($ccszd as $k => $val) {
-                    // $point = array('x'=>1,'y'=>1,'gisId'=>1);//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
+        // foreach ($res as $key => $dsr) {
+        // $ajbs = $value->ajbs;
+        // // 当事人
+        // $sql = "SELECT * FROM {$type}_dsr WHERE ajbs={$ajbs}";
+        // $query = $this->ajxq->query($sql);
+        // $dsr = $query->result();
+        if(!empty($res)){
+            $i=1;
+            foreach ($res as $k => $val) {
+                $ajbs = (!empty($val->ajbs)?$val->ajbs:'');
+                // $point = $this->get_point();//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
+                $bz_info='';
+                if((int)$val->gis_id!=0)
+                {
                     $point = $this->regionmatch->getPointById($val->gis_id);
-                    $ADDRESS['财产'][]=array(
-                    'ADD_TYPE'=>'财产',//财产
-                    'POINT'=>$point,
-                    'NAME'=>$val->ccdz,
-                    'ADD_NAME'=>$val->ccdz,
-                    'BZ_BOTTOM'=>'',
-                    'BZ_INFO'=>$i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>财产类型：'.$val->cclx
-                    );
-                    $i++;
+                }else{
+                    $point = array();
                 }
+                
+                // $point = array('x'=>1,'y'=>1,'gisId'=>1);//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
+                // 通过gis_id查询网格员以及调解员
+                // $sql = "(SELECT gis_id,person_id from person_add_lib WHERE gis_id=".$val->gis_id.") ad LEFT JOIN (SELECT id,name from person) p ON ad.person_id=p.id";
+                // $query = $this->db->query($sql);
+                // $person_arr = $query->result();
+                
+                // if((int)$val->gis_id!=0)
+                // {
+                    // var_dump((int)$val->gis_id);
+                    // $person_arr = $this->regionmatch->getTWByGis($val->gis_id);
+                // }
+                
+                
+                // $tjy = (empty($person_arr['tjy']))?'无':$person_arr['tjystr'];
+                // $wgy = (empty($person_arr['wgy']))?'无':$person_arr['wgystr'];
+                if(!empty($val->larq))
+                {
+                    $larq = explode('-',$val->larq);
+                    $larq = $larq[0].'年'.$larq[1].'月'.$larq[2].'日';
+                }else{
+                    $larq = '无立案日期';
+                }
+                $ssdw=(isset($val->ssdw))?$val->ssdw:'诉讼地位：无';
+                $xb = (isset($val->xb))?$val->xb:'性别：无';
+                $mz = (isset($val->mz)&&!empty($val->mz))?$val->mz:'民族：无';
+                $sfzh = (isset($val->sfzh))?$val->sfzh:'无';
+                $lxdh = (isset($val->lxdh))?$val->lxdh:'无';
+                // 当事人类型
+                // $frdb='';
+                // $res_jgdm='';
+                // if($val->dsr_type=='法人'){
+                //     $frdb = (!empty($val->frdb))?($val->dsr_type.'：'.$val->frdb):'法人名称：无 ';
+                //     // 法人机构代码
+                //     if(!empty($ajbs)){
+                //         $sql = "SELECT ZZJGDM FROM `ajdsrxx` where LXMC='法人' and ajbs={$ajbs} and DSRMC='".$val->xm."'";
+                //         $query_fr = $this->sjzx->query($sql);
+                //         $res_jgdm_o = $query_fr->row();
+                //         if(!empty($res_jgdm_o))
+                //         {
+                //             $res_jgdm = $res_jgdm_o->ZZJGDM;
+                //             $res_jgdm = ' &nbsp;&nbsp;法人机构代码：'.$res_jgdm;
+                //         }else{
+                //             $res_jgdm = ' &nbsp;&nbsp;机构代码：无';
+                //         }
+                //     }
+                    
+                // }
+                $bz_info .= $i.'、'.$val->ah.'<br>立案日期：'.$larq.'<br>当事人：'.$val->xm.'('.$ssdw.')、'.$xb.'、'.$mz.'、身份证号：'.$sfzh.'、联系电话：'.$lxdh."<br>";
+                $ADDRESS[$ssdw][]=array(
+                    'AJ_TYPE'=>$type,
+                    'AJBS'=>$ajbs,
+                    'DATA_TYPE'=>'DSR',
+                    'DATA_ID'=>$val->dsr_id,
+                'ADD_TYPE'=>$ssdw,
+                'POINT'=>$point,
+                'NAME'=>$val->xm,
+                'ADD_NAME'=>$val->xxdz,
+                'BZ_INFO'=>$bz_info
+                // 'BZ_BOTTOM'=>"<div style='position:absolute;bottom:0px;height:30px;overflow:auto;width:90%;padding-top:10px;border-top:1px solid;'>法律顾问：".$tjy."；网格员：".$wgy."</div>"
+                );
+                $i++;
             }
-            
         }
+        // // 财产地址
+        // $sql = "SELECT * FROM {$type}_ccszd WHERE ajbs='{$ajbs}'";
+        // $query = $this->ajxq->query($sql);
+        // $ccszd = $query->result();
+        // if(!empty($ccszd)){
+        //     $i=1;
+        //     foreach ($ccszd as $k => $val) {
+        //         // $point = array('x'=>1,'y'=>1,'gisId'=>1);//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
+        //         $point = $this->regionmatch->getPointById($val->gis_id);
+        //         $ADDRESS['财产'][]=array(
+        //         'ADD_TYPE'=>'财产',//财产
+        //         'POINT'=>$point,
+        //         'NAME'=>$val->ccdz,
+        //         'ADD_NAME'=>$val->ccdz,
+        //         'BZ_BOTTOM'=>'',
+        //         'BZ_INFO'=>$i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>财产类型：'.$val->cclx
+        //         );
+        //         $i++;
+        //     }
+        // }
+        
+        // }
         $aj_p_num=count($ADDRESS);//坐标数
         $data = array(
         'AJ_NUM'=>$aj_num,
@@ -336,6 +323,89 @@ class map_case_model extends CI_Model {
         );
         return $data;
     }
+    // 获取一个坐标的bottom内容
+    public function get_bottom_content($ajbs,$aj_type,$dsr_id)
+    {
+        $qx = true;
+        if($_SESSION['user_qx_level']==1)
+        {
+            $qx=true;
+        }
+        $sql = "SELECT dsr_type,frdb,xm,gis_id,xxdz from {$aj_type}_dsr where dsr_id={$dsr_id}";
+        $query = $this->ajxq->query($sql);
+        $row = $query->row();
+        // 当事人为法人时，列出法人名称及组织机构代码
+        $frdb='';
+        $res_jgdm='';
+        if($row->dsr_type=='法人'){
+            $frdb = (!empty($row->frdb))?($row->dsr_type.'：'.$row->frdb):'法人名称：无 ';
+            // 法人机构代码
+            if(!empty($ajbs)){
+                $sql = "SELECT ZZJGDM FROM `ajdsrxx` where LXMC='法人' and ajbs={$ajbs} and DSRMC='".$row->xm."'";
+                $query_fr = $this->sjzx->query($sql);
+                $res_jgdm_o = $query_fr->row();
+                if(!empty($res_jgdm_o))
+                {
+                    $res_jgdm = $res_jgdm_o->ZZJGDM;
+                    $res_jgdm = ' &nbsp;&nbsp;法人机构代码：'.$res_jgdm;
+                }else{
+                    $res_jgdm = ' &nbsp;&nbsp;机构代码：无';
+                }
+            }
+            
+        }
+        
+        $person_arr=array();
+        if($row->gis_id!=0)
+        {
+            $person_arr = $this->regionmatch->getTWByGis($row->gis_id);
+        }
+        if(empty($person_arr['tjy'])||!isset($person_arr['tjy']))
+        {
+            $tjy='无';
+        }else{
+            $tjy='';
+            
+            foreach ($person_arr['tjy']['name'] as $kt => $valt) {
+                if($qx)
+                {
+                    $tjy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['tjy']['id'][$kt].',\''.$row->xxdz.'\')">'.$valt.'、</span>';
+                }else{
+                    $tjy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'、</span>';
+                }
+            }
+        }
+        if(empty($person_arr['wgy'])||!isset($person_arr['wgy']))
+        {
+            $wgy='无';
+        }else{
+            $wgy='';
+            foreach ($person_arr['wgy']['name'] as $kt => $valt) {
+                if($qx)
+                {
+                    // if($ajbs==280700005001780)
+                    // {
+                    //     $wgy ='<span style="cursor:pointer;" onclick="get_person_info(1234,\''.$row->xxdz.'\')">唐上辉、</span>';
+                    // }else{
+                        $wgy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['wgy']['id'][$kt].',\''.$row->xxdz.'\'">'.$valt.'、</span>';
+                    // }
+                }else{
+                    $wgy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'、</span>';
+                }
+                
+            }
+        }
+        $bottom = $frdb.' '.$res_jgdm."<br><div style='position:absolute;bottom:0px;height:30px;overflow:auto;width:90%;padding-top:10px;border-top:1px solid;'>法律顾问：".$tjy."；网格员：".$wgy."</div>";
+        return $bottom;
+    }
+    //通过人员id获取当事人信息 （加载优化
+    // public function get_dsr_info($person_id,$aj_type)
+    // {
+    //     $sql = "SELECT * FROM {$aj_type}_dsr p left join (SELECT ah,larq,ajbs FROM {$aj_type}_ajxx) aj on p.ajbs=aj.ajbs";
+    //     $query = $this->ajxq->query($sql);
+    //     $res=$query->row();
+    //     var_dump($res);
+    // }
     public function getUnthisArea()
     {
         $sql = 'SELECT * FROM map_case WHERE THIS_AREA=0';
@@ -864,15 +934,15 @@ public function indexShowCaseList($currpage,$perPageNum,$fjm,$case_type='ALL'){
     if($case_type=='ALL'){
         $perPageNum = (int)$perPageNum;
         if ($_SESSION['user_qx_level'] != 1) {
-            $sql = "(SELECT a.ah, a.ajzt, a.larq, a.ajbs FROM sp_ajxx AS a LEFT JOIN sp_hytcy AS b ON a.ajbs = b.ajbs WHERE b.rybs = ?  AND a.s=1 ) union all (SELECT c.ah, c.ajzt, c.larq, c.ajbs FROM zx_ajxx AS c LEFT JOIN zx_hytcy AS d ON c.ajbs = d.ajbs  WHERE d.rybs = ?  AND c.s=1)  ORDER BY larq DESC LIMIT ?,?";
+            $sql = "(SELECT a.ah, a.ajzt, a.larq,a.s, a.ajbs FROM sp_ajxx AS a LEFT JOIN sp_hytcy AS b ON a.ajbs = b.ajbs WHERE b.rybs = ?   ) union all (SELECT c.ah, c.ajzt, c.larq, c.ajbs,c.s FROM zx_ajxx AS c LEFT JOIN zx_hytcy AS d ON c.ajbs = d.ajbs  WHERE d.rybs = ?  )  ORDER BY s DESC,larq DESC LIMIT ?,?";
             $query = $this->ajxq->query($sql, array($_SESSION['user_rybs'],  $_SESSION['user_rybs'],  $start, $perPageNum));
-            $sql = "select sum(total) as count from ((SELECT count(0) as total FROM sp_ajxx AS a LEFT JOIN sp_hytcy AS b ON a.ajbs = b.ajbs WHERE b.rybs = ? AND a.s=1 ) union all (SELECT count(0) as total FROM zx_ajxx AS c LEFT JOIN zx_hytcy AS d ON c.ajbs = d.ajbs  WHERE d.rybs = ?  AND c.s=1))t";
+            $sql = "select sum(total) as count from ((SELECT count(0) as total FROM sp_ajxx AS a LEFT JOIN sp_hytcy AS b ON a.ajbs = b.ajbs WHERE b.rybs = ?  ) union all (SELECT count(0) as total FROM zx_ajxx AS c LEFT JOIN zx_hytcy AS d ON c.ajbs = d.ajbs  WHERE d.rybs = ?  ))t";
             $query_count = $this->ajxq->query($sql, array($_SESSION['user_rybs'],  $_SESSION['user_rybs']));
         }
         else{
-            $sql = "(SELECT ah, ajzt, larq, ajbs FROM sp_ajxx WHERE  fjm=? AND s=1 ) union all (SELECT ah, ajzt, larq, ajbs FROM zx_ajxx  WHERE  fjm=? AND s=1)  ORDER BY larq DESC LIMIT ?,?";
+            $sql = "(SELECT ah, ajzt,s, larq, ajbs FROM sp_ajxx WHERE  fjm=? ) union all (SELECT ah, ajzt,s, larq, ajbs FROM zx_ajxx  WHERE  fjm=? )  ORDER BY s DESC,larq DESC LIMIT ?,?";
             $query = $this->ajxq->query($sql, array($fjm, $fjm, $start, $perPageNum));
-            $sql = "select sum(total) as count from ((SELECT count(0) as total FROM sp_ajxx WHERE  fjm=? AND s=1 ) union all (SELECT count(0) as total FROM zx_ajxx  WHERE  fjm=? AND s=1))t";
+            $sql = "select sum(total) as count from ((SELECT count(0) as total FROM sp_ajxx WHERE  fjm=? ) union all (SELECT count(0) as total FROM zx_ajxx  WHERE  fjm=? ))t";
             $query_count = $this->ajxq->query($sql, array($fjm, $fjm));
         }
         
@@ -886,7 +956,7 @@ public function indexShowPageNum($type,$val,$fjm='')
     $num=0;
     if($type=='CASE'&&$fjm!=''){
         if($val=='ALL'){
-            $sql = "(SELECT aj_id FROM sp_ajxx WHERE fjm='{$fjm}' AND s=1 ORDER BY s ) union all (SELECT aj_id FROM zx_ajxx WHERE fjm='{$fjm}' AND s=1 ORDER BY s ) ";
+            $sql = "(SELECT aj_id FROM sp_ajxx WHERE fjm='{$fjm}' ORDER BY s DESC ) union all (SELECT aj_id FROM zx_ajxx WHERE fjm='{$fjm}' ORDER BY s DESC ) ";
             $query = $this->ajxq->query($sql);
             $res = $query->result();
             $num = count($res);
@@ -988,6 +1058,10 @@ public function getPersonInfo($id)
     $query = $this->db->query($sql);
     $res = $query->row();
     $img = $res->photo;
+    // if($res->rybs=='法律顾问')
+    // {
+    //     $res->address = $this->regionmatch->idToRegionName($res->gis_id);
+    // }
     // $res->photo_name = time();
     // $a = file_put_contents('./'.$res->photo_name.'.jpg', $img);
     $res->photo = '';
