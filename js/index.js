@@ -510,6 +510,9 @@ function init_aj_list_panel(fjm) {
 		$('#aj-box-court-name').parent().html('我的案件');
 		$('.aj-box-court-name-select').css('display', 'none');
 	}
+	//案件面板诉讼案件数和执行案件数
+	$('#aj-box-ssaj-num').html(sp_zx_obj[fjm].sp);
+	$('#aj-box-zxaj-num').html(sp_zx_obj[fjm].zx);
 	show_case_list(1, fjm);
 }
 //左侧地图点击
@@ -523,9 +526,7 @@ function region_click(r_id) {
 	var fjm = rIdToFjm(r_id)
 	$('#current_region').val(r_id);
 	$('#current_fjm').val(fjm);
-	//案件面板诉讼案件数和执行案件数
-	$('#aj-box-ssaj-num').html(sp_zx_obj[fjm].sp);
-	$('#aj-box-zxaj-num').html(sp_zx_obj[fjm].zx);
+	
 
 	// $('#aj-box-r-name').html(r_name);
 	// 权限设置
@@ -574,7 +575,7 @@ function court_select_event() {
 }
 
 //通过人员id拿到信息
-function get_person_info(id,address) {
+function get_person_info(id,address,aj_type,ajbs) {
 	var person_info = {}
 	$.ajax({
 		type: 'post',
@@ -600,7 +601,7 @@ function get_person_info(id,address) {
 		area: ['380px', '490px'], //宽高
 		btn: ['确定'],
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div id="persin_info_panel" style="padding:10px;" class="map-person-info"><ul><li>姓名：' + person_info.name + '</li><li>性别：' + ((person_info.sex) ? person_info.sex : '') + '</li><li>出生年月：' + ((person_info.csny) ? person_info.csny : '') + '</li><li>职务：' + ((person_info.duty) ? person_info.duty : '') + '</li><li>人员类型：' + ((person_info.rybs) ? person_info.rybs : '') + '</li><li>联系电话：<select class="input input-small " id="phone-add0-' + person_info.phone + '" style="display:inline-block;width:70px;"><option value="">不加0</option><option value="0">+0</option><option value="00">+00</option></select><span id="p_' + person_info.phone + '">' + ((person_info.phone) ? person_info.phone : '') + '</span><button class="button bg-sub button-small" style="margin:0 10px;" onclick="call_one_person(' + person_info.phone + ',\''+person_info.name+'\',\''+address+'\',\''+person_info.rybs+'\');">拨号</button></li><li style="text-align:center"><img style="width:100px;height:120px;" src="' + photo_url + '?v=' + Math.random() + '"/></li></ul></div>',
+		content: '<div id="persin_info_panel" style="padding:10px;" class="map-person-info"><ul><li>姓名：' + person_info.name + '</li><li>性别：' + ((person_info.sex) ? person_info.sex : '') + '</li><li>出生年月：' + ((person_info.csny) ? person_info.csny : '') + '</li><li>职务：' + ((person_info.duty) ? person_info.duty : '') + '</li><li>人员类型：' + ((person_info.rybs) ? person_info.rybs : '') + '</li><li>联系电话：<select class="input input-small " id="phone-add0-' + person_info.phone + '" style="display:inline-block;width:70px;"><option value="">不加0</option><option value="0">+0</option><option value="00">+00</option></select><span id="p_' + person_info.phone + '">' + ((person_info.phone) ? person_info.phone : '') + '</span><button class="button bg-sub button-small" style="margin:0 10px;" onclick="call_one_person(' + person_info.phone + ',\''+person_info.name+'\',\''+address+'\',\''+person_info.rybs+'\',\''+aj_type+'\',\''+ajbs+'\');">拨号</button></li><li style="text-align:center"><img style="width:100px;height:120px;" src="' + photo_url + '?v=' + Math.random() + '"/></li></ul></div>',
 		yes: function (i) {
 			// 挂断电话
 			TV_HangUpCtrl(0);
@@ -614,10 +615,10 @@ function get_person_info(id,address) {
 
 }
 // 拨号是否加0
-function call_one_person(p,name,address,rybs) {
+function call_one_person(p,name,address,rybs,aj_type,ajbs) {
 	// var phone = $('#p_'+p).html();
 	phone = $('#phone-add0-' + p).val() + 18377775127;
-	dial_up(phone,name,address,rybs);
+	dial_up(phone,name,address,rybs,aj_type,ajbs);
 }
 // 首页获取审理案件数，地点数以及网格员数等
 function get_index_all_num() {
@@ -640,10 +641,10 @@ function get_index_all_num() {
 	});
 }
 // 首页布局更改
-function changeBj() {
-	var width = window.screen.width;
-	var height = window.screen.height;
-	console.log(width);
-	console.log(height);
-	console.log(width / height);
-}
+// function changeBj() {
+// 	var width = window.screen.width;
+// 	var height = window.screen.height;
+// 	console.log(width);
+// 	console.log(height);
+// 	console.log(width / height);
+// }

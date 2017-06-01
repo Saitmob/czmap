@@ -3,9 +3,7 @@ var weburl = 'http://147.1.7.45/czmapgit/';
 // var weburl = 'http://192.168.118.68/czmapn/';
 var CONNECT_ERROR = 0;
 $(function () {
-	$('.header').find('.title').on('click', function () {
-		window.location.href = weburl;
-	});
+
 	//请求超时
 	$(document).ajaxSend(function (event, jqxhr, settings) {});
 	$(document).ajaxError(function () {
@@ -16,21 +14,21 @@ $(function () {
 		// }
 		// return false;
 	});
-	getUserInfo();
+	
 
 	//头部
 	var header_str = '<span class="title"></span>' +
 		'<div class="user-box" style="display:inline-block;">' +
 		'<div>欢迎：<span class="user-name">...</span></div>' +
-		'<div class="logout"><a href="<?=base_url()?>index.php/welcome/logout">退出</a></div>' +
+		'<div class="logout"><a href="' + weburl + 'index.php/welcome/logout">退出</a></div>' +
 		'</div>' +
 		'<div class="manager-entrance">' +
 		'<ul>' +
-		'<li class="header-nav"><a href="<?=base_url()?>index.php/welcome/personManage">人员管理</a> </li>' +
+		'<li class="header-nav"><a href="' + weburl + 'index.php/welcome/personManage">人员管理</a> </li>' +
 		'<li class="nav-fgx"></li>' +
-		'<li class="header-nav"><a href="<?=base_url()?>index.php/welcome/addNDelData">案件数据管理</a></li>' +
+		'<li class="header-nav"><a href="' + weburl + 'index.php/welcome/addNDelData">案件数据管理</a></li>' +
 		'<li class="nav-fgx"></li>' +
-		'<li class="header-nav"><a href="<?=base_url()?>index.php/pointManage/">通话记录</a></li>' +
+		'<li class="header-nav"><a href="' + weburl + 'index.php/call_record/">通话记录</a></li>' +
 		'</ul>' +
 		'</div>';
 	$('.header').eq(0).append(header_str);
@@ -41,6 +39,10 @@ $(function () {
 		$(this).removeClass('active-nav');
 		// $(this).find('a').css('color', '#fff');
 	});
+	$('.header').find('.title').on('click', function () {
+		window.location.href = weburl;
+	});
+	getUserInfo();
 	validatorNum();
 	//底部
 	if (CONNECT_ERROR == 0) {

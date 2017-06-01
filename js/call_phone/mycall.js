@@ -10,8 +10,13 @@ function AppendStatus(szStatus) {
 //版本一：
 //使用3.5接口耳机与麦克风
 //拨号事件
-function dial_up(no,name,address,rybs) {
-	notePanel(no,name,address,rybs);
+function dial_up(no,name,address,rybs,aj_type,ajbs) {
+	var name = name||'';
+	var address = address||'';
+	var rybs = rybs||'';
+	var aj_type = aj_type||'';
+	var ajbs = ajbs||'';
+	notePanel(no,name,address,rybs,aj_type,ajbs);
 	// if (!DetectActiveX()) {
 	// 	return false;
 	// }

@@ -369,7 +369,7 @@ class map_case_model extends CI_Model {
             foreach ($person_arr['tjy']['name'] as $kt => $valt) {
                 if($qx)
                 {
-                    $tjy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['tjy']['id'][$kt].',\''.$row->xxdz.'\')">'.$valt.'、</span>';
+                    $tjy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['tjy']['id'][$kt].',\''.$row->xxdz.'\',\''.$aj_type.'\',\''.$ajbs.'\')">'.$valt.'、</span>';
                 }else{
                     $tjy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'、</span>';
                 }
@@ -387,7 +387,7 @@ class map_case_model extends CI_Model {
                     // {
                     //     $wgy ='<span style="cursor:pointer;" onclick="get_person_info(1234,\''.$row->xxdz.'\')">唐上辉、</span>';
                     // }else{
-                        $wgy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['wgy']['id'][$kt].',\''.$row->xxdz.'\')">'.$valt.'、</span>';
+                        $wgy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['wgy']['id'][$kt].',\''.$row->xxdz.'\',\''.$aj_type.'\',\''.$ajbs.'\')">'.$valt.'、</span>';
                     // }
                 }else{
                     $wgy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'、</span>';

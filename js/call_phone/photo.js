@@ -389,12 +389,16 @@ function getNowFormatDate() {
 }
 
 // 通话笔记记录面板
-function notePanel(phone, name, address, rybs) {
+function notePanel(phone, name, address, rybs,aj_type,ajbs) {
 	var date = new Date();
 	var timestamp = date.getTime();
 	var time = date.getFullYear() + '年' + date.getMonth() + '月' + date.getDay() + '日';
 	time += date.getHours() + '时' + date.getMinutes() + '分' + date.getSeconds() + '秒';
-	var isUp = false;
+	noteLayer(phone, name, address, rybs,aj_type,ajbs,time,timestamp);
+
+}
+function noteLayer(phone, name, address, rybs,aj_type,ajbs,time,timestamp)
+{
 	layer.open({
 		type: 1,
 		title: '通话笔记',
@@ -416,23 +420,25 @@ function notePanel(phone, name, address, rybs) {
 			'<option value="0">未接听</option>' +
 			'<option value="1">已接听</option>' +
 			'</select>' +
-			'<button class="button bg-dot button-small " onclick="TV_HangUpCtrl(0)" style="display:inline-block;margin:4px 0;width:80px;">挂断</button></li></ul></div><script>upload_record_file(' + timestamp + ')</script>',
+			'<button class="button bg-dot button-small " onclick="TV_HangUpCtrl(0)" style="display:inline-block;margin:4px 0;width:80px;">挂断</button></li></ul></div><script>upload_record_file(' + timestamp + ',\''+address+'\',\''+aj_type+'\',\''+ajbs+'\')</script>',
 		yes: function (i) {
-			if ($('.delete_file_btn').length == 0) {
+			if ($('.delete_file_btn').length == 0&&$('#call-sfjt').val() == 1) {
 				layer.alert('请务必上传录音文件');
+			}else{
+				layer.close(i);
 			}
 			note_layer_i = i;
 		},
 		end: function () {}
 	});
-
 }
+
 var note_layer_i;
 var need_del_files = [];
 var files_num = 0; //文件总数
 var files_arr = [];
 
-function upload_record_file(timestamp) {
+function upload_record_file(timestamp,address,aj_type,ajbs) {
 	$('#record-file').fileupload({
 		url: weburl + "index.php/call_record/upload_record_file",
 		dataType: 'json',
@@ -479,12 +485,15 @@ function upload_record_file(timestamp) {
 							name: $('#call-blxr-name').html(),
 							lxdx: $('#call-blxr-type').html(),
 							phone: $('#call-blxr-phone').html(),
+							address:address,
 							date: $('#call-date').html(),
 							time: timestamp,
 							lywj: files_arr,
 							note: note,
 							result: result,
-							sfjt: $('#call-sfjt').val()
+							sfjt: $('#call-sfjt').val(),
+							aj_type:aj_type,
+							ajbs:ajbs
 						},
 						success: function (data) {
 							layer.close(note_layer_i);
@@ -493,8 +502,7 @@ function upload_record_file(timestamp) {
 				}
 
 			} else {
-				if ($('#call-sfjt').val() == 1)
-					layer.alert('请上传录音文件');
+				
 			}
 		},
 		progressall: function (e, data) {
