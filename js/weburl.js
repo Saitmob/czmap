@@ -7,8 +7,7 @@ $(function () {
 		window.location.href = weburl;
 	});
 	//请求超时
-	$(document).ajaxSend(function (event, jqxhr, settings) {
-	});
+	$(document).ajaxSend(function (event, jqxhr, settings) {});
 	$(document).ajaxError(function () {
 		// if (CONNECT_ERROR == 0) {
 		// 	// alert('与服务器断开连接');
@@ -18,6 +17,23 @@ $(function () {
 		// return false;
 	});
 	getUserInfo();
+
+	//头部
+	var header_str = '<span class="title"></span>' +
+		'<div class="user-box" style="display:inline-block;">' +
+		'<div>欢迎：<span class="user-name">...</span></div>' +
+		'<div class="logout"><a href="<?=base_url()?>index.php/welcome/logout">退出</a></div>' +
+		'</div>' +
+		'<div class="manager-entrance">' +
+		'<ul>' +
+		'<li class="header-nav"><a href="<?=base_url()?>index.php/welcome/personManage">人员管理</a> </li>' +
+		'<li class="nav-fgx"></li>' +
+		'<li class="header-nav"><a href="<?=base_url()?>index.php/welcome/addNDelData">案件数据管理</a></li>' +
+		'<li class="nav-fgx"></li>' +
+		'<li class="header-nav"><a href="<?=base_url()?>index.php/pointManage/">通话记录</a></li>' +
+		'</ul>' +
+		'</div>';
+	$('.header').eq(0).append(header_str);
 	$('.header-nav').hover(function () {
 		$(this).addClass('active-nav');
 		// $(this).find('a').css('color', '#117799');
@@ -25,8 +41,6 @@ $(function () {
 		$(this).removeClass('active-nav');
 		// $(this).find('a').css('color', '#fff');
 	});
-	//头部
-
 	validatorNum();
 	//底部
 	if (CONNECT_ERROR == 0) {
@@ -223,7 +237,7 @@ function getUserInfo() {
 		async: false,
 		success: function (data) {
 			userObj = data;
-            console.log(data);
+			console.log(data);
 			$('.user-name').html(data.user_name);
 		}
 	});

@@ -298,9 +298,9 @@ function TV_StartDial(uID, szCode) { //正常拨号必须使用 DIALTYPE_DTMF
 		return false;
 	} else {
 		AppendStatusEx(uID, "开始拨号:" + szCode);
-		
+
 		start_i = layer.alert('开始拨号...');
-        callIsEnd=0;
+		callIsEnd = 0;
 		return true;
 	}
 }
@@ -314,6 +314,7 @@ function TV_EnableMic(uID, bEnable) {
 	TV_EnableMic2Line(uID, bEnable);
 }
 var callIsEnd;
+
 function TV_HangUpCtrl(uID) {
 	//停止录音
 	TV_StopRecordFile(0);
@@ -322,13 +323,12 @@ function TV_HangUpCtrl(uID) {
 	TV_EnableLine2Spk(0, FALSE);
 	TV_EnableHook(uID, FALSE);
 	photo_number = "";
-    if(callIsEnd==0)
-    {
-        callIsEnd=1;
-        layer.alert('通话结束');
-    }
-    console.log(callIsEnd);
-    //关闭设备
+	if (callIsEnd == 0) {
+		callIsEnd = 1;
+		layer.alert('通话结束');
+	}
+	console.log(callIsEnd);
+	//关闭设备
 	TV_Disable();
 	//挂断电话回调方法
 	end_dial();
@@ -389,20 +389,139 @@ function getNowFormatDate() {
 }
 
 // 通话笔记记录面板
-function notePanel(phone,name,address) {
+function notePanel(phone, name, address, rybs) {
 	var date = new Date();
-	var year = date.toLocaleDateString();
+	var timestamp = date.getTime();
+	var time = date.getFullYear() + '年' + date.getMonth() + '月' + date.getDay() + '日';
+	time += date.getHours() + '时' + date.getMinutes() + '分' + date.getSeconds() + '秒';
+	var isUp = false;
 	layer.open({
 		type: 1,
 		title: '通话笔记',
 		skin: 'layui-layer-rim', //加上边框
 		area: ['420px', '580px'], //宽高
+		closeBtn: 0,
 		btn: ['确定'],
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div style="padding:10px;" class="map-person-info-no-border"><ul><li>姓名：'+name+'</li>地址：'+phone+'</li><li>地址：'+address+'</li><li>联系时间：'+year+'</li><li>通话笔记：<textarea type="text" class="input" style="height:100px;" ></textarea></li><li>通话结果：<textarea type="text" class="input" style="height:100px;" ></textarea><button class="button bg-sub button-small " onclick="TV_HangUpCtrl(0)" style="display:inline-block;margin:4px 0;vartical-align:middle;">挂断</button></li></ul></div>',
+		content: '<div style="padding:10px;" class="map-person-info-no-border">' +
+			'<ul><li>姓名：<span id="call-blxr-name">' + name + '</span>（<span id="call-blxr-type">' + rybs + '</span>）</li>' +
+			'<li>电话：<span id="call-blxr-phone">' + phone + '</span></li>' +
+			'<li>地址：<span id="call-blxr-address">' + address + '</span></li>' +
+			'<li>联系时间：<span id="call-date">' + time + '</span></li>' +
+			'<li>通话笔记：<textarea type="text" class="input" style="height:80px;" id="call-note"></textarea></li>' +
+			'<li>通话结果：<textarea type="text" class="input" style="height:80px;" id="call-result"></textarea>' +
+			'<li><span class="button bg-sub button-small" style="position: relative;cursor:pointer;"><span>选择录音文件</span>' + '<input type="file" id="record-file" class="file-upload-btn" name="files[]" ></span>' +
+			'<ul id="record-files-list" class="inline-list" style="margin-left:20px;"></ul></li>' +
+			'<li><select class="input input-small " id="call-sfjt" style="display:inline-block;width:239px;margin-right:42px;height:32px;"></li>' +
+			'<option value="0">未接听</option>' +
+			'<option value="1">已接听</option>' +
+			'</select>' +
+			'<button class="button bg-dot button-small " onclick="TV_HangUpCtrl(0)" style="display:inline-block;margin:4px 0;width:80px;">挂断</button></li></ul></div><script>upload_record_file(' + timestamp + ')</script>',
 		yes: function (i) {
-            layer.close(i);
-        },
+			if ($('.delete_file_btn').length == 0) {
+				layer.alert('请务必上传录音文件');
+			}
+			note_layer_i = i;
+		},
 		end: function () {}
 	});
+
+}
+var note_layer_i;
+var need_del_files = [];
+var files_num = 0; //文件总数
+var files_arr = [];
+
+function upload_record_file(timestamp) {
+	$('#record-file').fileupload({
+		url: weburl + "index.php/call_record/upload_record_file",
+		dataType: 'json',
+		autoUpload: false,
+		// singleFileUploads: false,
+		// limitMultiFileUploads: 3,
+		// maxNumberOfFiles:2,
+		drop: function (e, data) {
+			$.each(data.files, function (index, file) {　　
+				alert('Dropped file: ' + file.name);　　
+			});
+		},
+		add: function (e, data) {
+			if (files_num == 1) {
+				layer.alert('只能上传一个文件');
+				return false;
+			}
+
+			files_num++;
+			var file_name = data.files[0].name
+			var file_d = '<li>' + file_name + '<i class="delete_file_btn" onclick="push_del_file(this,\'' + file_name + '\');">删除</i></li>';
+			$('#record-files-list').append(file_d);
+			files_arr.push(data.files[0].name);
+			$('.layui-layer-btn0').on('click', function () {
+				// console.log($("input[name^='files']"));
+				data.submit();
+			});
+		},
+		done: function (e, data) {
+			var filesList = $('input[type="file"]').prop('files');
+			if (data.result == 1) {
+				files_num--;
+				if (files_num == 0) { //所有文件上传后再进行数据插入
+					delete_record_file();
+					var note = $('#call-note').val();
+					var result = $('#call-result').val();
+					$.base64.utf8encode = true;
+					note = $.base64.encode(note);
+					result = $.base64.encode(result);
+					$.ajax({
+						type: 'post',
+						url: weburl + 'index.php/call_record/insert_call_record',
+						data: {
+							name: $('#call-blxr-name').html(),
+							lxdx: $('#call-blxr-type').html(),
+							phone: $('#call-blxr-phone').html(),
+							date: $('#call-date').html(),
+							time: timestamp,
+							lywj: files_arr,
+							note: note,
+							result: result,
+							sfjt: $('#call-sfjt').val()
+						},
+						success: function (data) {
+							layer.close(note_layer_i);
+						}
+					});
+				}
+
+			} else {
+				if ($('#call-sfjt').val() == 1)
+					layer.alert('请上传录音文件');
+			}
+		},
+		progressall: function (e, data) {
+			var progress = parseInt(data.loaded / data.total * 100, 10);
+			// console.log(progress + '%', data.loaded, data.total);
+		},
+	});
+
+}
+// 删除录音文件
+function delete_record_file() {
+	$.ajax({
+		type: 'post',
+		url: weburl + 'index.php/call_record/delete_record_file',
+		data: {
+			file_arr: need_del_files
+		},
+		success: function (data) {
+
+		}
+	})
+}
+
+function push_del_file(ele, file_name) {
+	files_num--;
+	need_del_files.push(file_name);
+	var i = $.inArray(file_name, files_arr);
+	files_arr.splice(i, 1);
+	$(ele).parent().remove();
 }

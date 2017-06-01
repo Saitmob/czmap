@@ -10,27 +10,27 @@ function AppendStatus(szStatus) {
 //版本一：
 //使用3.5接口耳机与麦克风
 //拨号事件
-function dial_up(no,name,address) {
-	if (!DetectActiveX()) {
-		return false;
-	}
-
-	//检测盒子控件是否安装
-	I_CheckActiveX();
-	//验证手机号是否正确
-	// if(!(/^1[34578]\d{9}$/.test(no))){
-	//     alert("手机号码有误");
-	//     return false;
+function dial_up(no,name,address,rybs) {
+	notePanel(no,name,address,rybs);
+	// if (!DetectActiveX()) {
+	// 	return false;
 	// }
-	photo_number = no;
-	//检测盒子是否开机，如果未开机则自动开机
-	TV_Initialize();
-	//打开耳机
-	TV_EnableLine2Spk(0, TRUE);
+
+	// //检测盒子控件是否安装
+	// I_CheckActiveX();
+	// //验证手机号是否正确
+	// // if(!(/^1[34578]\d{9}$/.test(no))){
+	// //     alert("手机号码有误");
+	// //     return false;
+	// // }
+	// photo_number = no;
+	// //检测盒子是否开机，如果未开机则自动开机
+	// TV_Initialize();
+	// //打开耳机
+	// TV_EnableLine2Spk(0, TRUE);
 	// 弹出通话笔记记录面板
-	notePanel(no,name,address);
 	//开始拨号
-	var is_dial = TV_StartDial(0, photo_number);
+	// var is_dial = TV_StartDial(0, photo_number);
 }
 
 //从拨号开始到通话结束的麦克风状态显示

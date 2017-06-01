@@ -17,6 +17,9 @@
   <script src="<?=base_url()?>js/jquery.base64.js"></script>
   <script src="<?=base_url()?>js/layer/layer.js"></script>
   <script src="<?=base_url()?>js/laypage/laypage.js"></script>
+  <script src="<?=base_url()?>js/jQuery-File-Upload/vendor/jquery.ui.widget.js"></script>
+  <script src="<?=base_url()?>js/jQuery-File-Upload/jquery.iframe-transport.js"></script>
+  <script src="<?=base_url()?>js/jQuery-File-Upload/jquery.fileupload.js"></script>
   <!-- <script src="js/jquery-jvectormap-2.0.3.min.js"></script>
 <script src="js/jquery-jvectormap-gx-cz.js"></script> -->
   <script src="<?=base_url()?>js/raphael.js"></script>
@@ -41,21 +44,7 @@
 
 <body>
   <div class="header">
-    <span class="title"></span>
-    <!--用户登录-->
-    <div class="user-box" style="display:inline-block;">
-      <div>欢迎：<span class="user-name">...</span></div>
-      <div class="logout"><a href="<?=base_url()?>index.php/welcome/logout">退出</a></div>
-    </div>
-    <!--导航-->
-    <div class="manager-entrance">
-      <ul>
-        <li class="header-nav"><a href="<?=base_url()?>index.php/welcome/personManage">人员管理</a> </li>
-        <li class="nav-fgx"></li>
-        <li class="header-nav"><a href="<?=base_url()?>index.php/welcome/addNDelData">案件数据管理</a></li>
-        <!--<li class="header-nav"><a href="<?=base_url()?>index.php/pointManage/">坐标管理</a></li>-->
-      </ul>
-    </div>
+    
   </div>
   <object classid="clsid:F44CFA19-6B43-45EE-90A3-29AA08000510" id="qnviccub" data="DATA:application/x-oleobject;BASE64,GfpM9ENr7kWQoymqCAAFEAADAAD7FAAADhEAAA==
 " width="1" height="1"></object>

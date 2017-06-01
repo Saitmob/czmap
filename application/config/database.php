@@ -72,10 +72,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $active_group = 'default';
 $query_builder = TRUE;
-
+// 数据库地址
+$p_db_ip = '147.1.4.104';
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => '147.1.4.104',
+	'hostname' => $p_db_ip,
 	'username' => 'lby',
 	'password' => 'lby/1234',
 	'database' => 'cz_map_data',
@@ -164,7 +165,7 @@ $db['portal'] = array(
 //案件详情
 $db['ajxq'] = array(
     'dsn'	=> '',
-    'hostname' => '147.1.4.104',
+    'hostname' => $p_db_ip,
     'port' => 3306,
     'username' => 'lby',
     'password' => 'lby/1234',
@@ -187,7 +188,7 @@ $db['ajxq'] = array(
 // 数据中心
 $db['sjzx'] = array(
     'dsn'	=> '',
-    'hostname' => '147.1.4.104',
+    'hostname' => $p_db_ip,
     'port' => 3306,
     'username' => 'lby',
     'password' => 'lby/1234',

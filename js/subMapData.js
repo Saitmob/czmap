@@ -186,7 +186,7 @@ function creatDataInfo() {
 	}
 
 }
-// 获取左边弹窗内容
+// 获取信息窗口底部内容
 function get_dsr_info(ajbs,aj_type,dsr_id,content,point)
 {
 	$.ajax({
@@ -199,7 +199,6 @@ function get_dsr_info(ajbs,aj_type,dsr_id,content,point)
 		},
 		// dataType:'json',
 		success:function(data){
-			console.log(data);
 			content+=data;
 			var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
 			map.openInfoWindow(infoWindow,point);
