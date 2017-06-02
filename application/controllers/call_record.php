@@ -18,6 +18,7 @@ class call_record extends CI_Controller {
     {
         $name = $this->input->post('name');
         if(!empty($name)){
+            $id = $this->input->post('id');
             $lxdx = $this->input->post('lxdx');
             $address = $this->input->post('address');
             $phone = $this->input->post('phone');
@@ -33,7 +34,7 @@ class call_record extends CI_Controller {
             $lxrrybs = $_SESSION['user_rybs'];
             $aj_type = $this->input->post('aj_type');
             $ajbs = $this->input->post('ajbs');
-            $data = $this->call->insert_call_record($name,$lxdx,$address,$phone,$date,$time,$lywj,$note,$result,$sfjt,$lxrxm,$lxryx,$lxrrybs,$aj_type,$ajbs);
+            $data = $this->call->insert_call_record($id,$name,$lxdx,$address,$phone,$date,$time,$lywj,$note,$result,$sfjt,$lxrxm,$lxryx,$lxrrybs,$aj_type,$ajbs);
             echo $data;
         }
     }
@@ -76,5 +77,12 @@ class call_record extends CI_Controller {
             $data = $this->call->get_record_data($id);
             echo json_encode($data);
         }
+    }
+
+    // 最小地址测试
+    public function zxdzcs()
+    {
+        $this->load->library('regionmatch');
+        $this->regionmatch->dsr_to_person();
     }
 }

@@ -20,7 +20,7 @@ function initMap(fjm, i) {
 //创建地图函数：
 function createMap(i) {
 	var map = new BMap.Map("dituContent" + i, {
-		minZoom: 9,
+		minZoom: 4,
 		maxZoom: 16
 	}); //在百度地图容器中创建一个地图
 

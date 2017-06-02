@@ -10,14 +10,19 @@ class call_record_model extends CI_Model {
         $this->load->library('regionmatch');
     }
     
-    public function insert_call_record($name,$lxdx,$address,$phone,$date,$time,$lywj,$note,$result,$sfjt,$lxrxm,$lxryx,$lxrrybs,$aj_type,$ajbs)
+    public function insert_call_record($id,$name,$lxdx,$address,$phone,$date,$time,$lywj,$note,$result,$sfjt,$lxrxm,$lxryx,$lxrrybs,$aj_type,$ajbs)
     {
         //    $note = base64_decode($note);
         //    $result = base64_decode($result);
         $time = (strlen($time)>11)?substr($time,0,-3):$time;
-        $sql = "INSERT INTO calling_history (lxdx,blxrxm,address,phone,call_date,call_time,lywj,lxrxm,lxryx,lxrrybs,sfjt,call_note,call_result,ajlx,ajbs)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        $query = $this->db->query($sql,array($lxdx,$name,$address,$phone,$date,$time,$lywj,$lxrxm,$lxryx,$lxrrybs,$sfjt,$note,$result,$aj_type,$ajbs));
+        if($id==''){
+            $sql = "INSERT INTO calling_history (lxdx,blxrxm,address,phone,call_date,call_time,lywj,lxrxm,lxryx,lxrrybs,sfjt,call_note,call_result,ajlx,ajbs)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            $query = $this->db->query($sql,array($lxdx,$name,$address,$phone,$date,$time,$lywj,$lxrxm,$lxryx,$lxrrybs,$sfjt,$note,$result,$aj_type,$ajbs));
+        }else{
+            $sql = "UPDATE calling_history SET lywj=?,call_note=?,call_result=?,sfjt=? WHERE id={$id}";
+            $query=$this->db->query($sql,array($lywj,$note,$result,$sfjt));
+        }
         return $this->db->affected_rows();
     }
     
@@ -49,6 +54,8 @@ class call_record_model extends CI_Model {
         $sql = "SELECT * from calling_history where id={$id}";
         $query = $this->db->query($sql);
         $res = $query->row();
+        // echo $sql;
+        // var_dump($res);die();
         return $res;
     }
 }

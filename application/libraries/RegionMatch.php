@@ -334,5 +334,162 @@ public function getPointById($gisId)
     }
     return $data;
 }
+
+// 插入当事人对应网格员和调解员的中间表
+public function dsr_to_person()
+{
+    $ajxq = $this->load->database('ajxq',true);
+    // 执行当事人
+    $sql = "SELECT dsr_id,xxdz FROM zx_dsr";
+    $query = $ajxq->query($sql);
+    $res=$query->result();
+    $data=array();
+    foreach ($res as $key => $value) {
+        $xxdz = (!empty($value->xxdz))?$value->xxdz:'';
+        $zxdz = $this->zxdz($xxdz,4);
+        $sql = "SELECT id,xxdz FROM person_add_lib where address = '{$zxdz}'";
+        $query = $this->db->query($sql);
+        $res = $query->result();
+        $data[]=array(
+        'xxdz'=>$xxdz,
+        'zxdz'=>$zxdz,
+        'p'=>$res
+        );
+    }
+    var_dump($data);
+}
+
+private function zxdz($xxdz,$l=2)
+{
+    $add=array();
+    if($l==2){//拿到乡镇
+        if(count(explode('市',$xxdz))>=2)
+        {
+            $add = explode('市',$xxdz);
+            if(strpos($add[0],'崇左')&&strpos($add[1],'市'))
+            {
+                $add = $add[1];
+            }
+        }elseif(count(explode('县',$xxdz))>=2){
+            $add = explode('县',$xxdz);
+        }elseif(count(explode('区',$xxdz))>=2){
+            $add = explode('区',$xxdz);
+        }else{
+            // echo $xxdz.' 2<br>';
+            return $this->zxdz($xxdz,1);
+        }
+        $add = $add[1];
+        if(count(explode('镇',$add))>=2)
+        {
+            $add = explode('镇',$add);
+            $add = $add[0].'镇';
+        }elseif(count(explode('乡',$add))>=2){
+            $add = explode('乡',$add);
+            $add = $add[0].'乡';
+        }elseif(count(explode('街道',$add))>=2){
+            $add = explode('街道',$add);
+            $add = $add[0].'街道';
+        }
+    }
+    if($l==3){//拿到镇一下的村或街或小区
+        
+        if(count(explode('镇',$xxdz))>=2)
+        {
+            $add = explode('镇',$xxdz);
+        }elseif(count(explode('乡',$xxdz))>=2){
+            $add = explode('乡',$xxdz);
+        }elseif(count(explode('街道',$xxdz))>=2){
+            $add = explode('街道',$xxdz);
+        }else{
+            // echo $xxdz.' 3<br>';
+            return $this->zxdz($xxdz,2);//没有到村级则返回查找乡镇
+        }
+        $add = $add[1];
+        if(count(explode('村',$add))>=2)//如果村字后包含组或者号数，只取村名
+        {
+            if(strpos($add,'村委会')&&count(explode('村',$add))==2){
+                $add = explode('村委会',$add);
+                $add = $add[0].'村委会';
+            }elseif(strpos($add,'村委会')&&count(explode('村',$add))>2){
+                $add = explode('村委会',$add);
+                $add = $add[count($add)-1];
+                $add = explode('村',$add);
+                $add = $add[count($add)-2].'村';
+            }
+            elseif(!strpos($add,'村委会')){
+                $add = explode('村',$add);
+                $add = $add[0].'村';
+            }
+        }elseif(count(explode('社区',$add))>=2){
+            $add = explode('社区',$add);
+            $add = $add[0].'社区';
+        }elseif(count(explode('街',$add))>=2){
+            $add = explode('街',$add);
+            $add = $add[0].'街';
+        }elseif(count(explode('路',$add))>=2){
+            $add = explode('路',$add);
+            $add = $add[0].'路';
+        }elseif(count(explode('小区',$add))>=2){
+            $add = explode('小区',$add);
+            $add = $add[0].'小区';
+        }elseif(count(explode('大道',$add))>=2){
+            $add = explode('大道',$add);
+            $add = $add[0].'大道';
+        }
+        
+    }elseif($l==4){//拿到村下面的屯
+        if(count(explode('村',$xxdz))>=2)
+        {
+            if(strpos($xxdz,'村委会')){
+                $add = explode('村委会',$xxdz);
+            }
+            elseif(!strpos($xxdz,'村委会')){
+                $add = explode('村',$xxdz);
+            }
+        }elseif(count(explode('社区',$xxdz))>=2){
+            $add = explode('社区',$xxdz);
+        }else{
+            // echo $xxdz.' 4<br>';
+            return $this->zxdz($xxdz,3);//没有到屯级则返回查找村级名称
+        }
+        $add = $add[count($add)-1];
+        if(count(explode('屯',$add))>=2&&!strpos($add,'组'))
+        {
+            $add = explode('屯',$add);
+            $add = $add[0].'屯';
+        }
+        // elseif(strpos($add,'组'))
+        // {
+        //     $add = explode('组',$add);
+        //     $add = $add[0].'组';
+        // }else{
+        //     return $this->zxdz($xxdz,3);//没有到屯级则返回查找村级名称
+        // }
+        
+        
+    }
+    // var_dump($s);
+    
+    return $add;
+}
+
+//通过中间表获取网格员和调解员
+public function get_wgy_tjy($dsr_id,$aj_type)
+{
+    $sql = "SELECT id,name,rybs from person where id in (SELECT person_id from dsr_to_person where dsr_id='{$dsr_id}' and aj_type='{$aj_type}')";
+    $query = $this->db->query($sql);
+    $res = $query->result();
+    $data = array();
+    foreach ($res as $key => $value) {
+        if($value->rybs=='网格员'){
+            $data['wgy']['name'][]=$value->name;
+            $data['wgy']['id'][]=$value->id;
+        }elseif($value->rybs=='法律顾问'){
+            $data['tjy']['name'][]=$value->name;
+            $data['tjy']['id'][]=$value->id;
+        }
+    }
+    return $data;
+}
 }
 ?>

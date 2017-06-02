@@ -389,16 +389,17 @@ function getNowFormatDate() {
 }
 
 // 通话笔记记录面板
-function notePanel(phone, name, address, rybs,aj_type,ajbs) {
+function notePanel(phone, name, address, rybs, aj_type, ajbs) {
 	var date = new Date();
 	var timestamp = date.getTime();
-	var time = date.getFullYear() + '年' + date.getMonth() + '月' + date.getDay() + '日';
+	var time = date.getFullYear() + '年' + date.getMonth() +1+ '月' + date.getDate() + '日';
 	time += date.getHours() + '时' + date.getMinutes() + '分' + date.getSeconds() + '秒';
-	noteLayer(phone, name, address, rybs,aj_type,ajbs,time,timestamp);
+	noteLayer(phone, name, address, rybs, aj_type, ajbs, time, timestamp);
 
 }
-function noteLayer(phone, name, address, rybs,aj_type,ajbs,time,timestamp)
-{
+
+function noteLayer(phone, name, address, rybs, aj_type, ajbs, time, timestamp, id) {
+	var id = id || '';
 	layer.open({
 		type: 1,
 		title: '通话笔记',
@@ -420,13 +421,17 @@ function noteLayer(phone, name, address, rybs,aj_type,ajbs,time,timestamp)
 			'<option value="0">未接听</option>' +
 			'<option value="1">已接听</option>' +
 			'</select>' +
-			'<button class="button bg-dot button-small " onclick="TV_HangUpCtrl(0)" style="display:inline-block;margin:4px 0;width:80px;">挂断</button></li></ul></div><script>upload_record_file(' + timestamp + ',\''+address+'\',\''+aj_type+'\',\''+ajbs+'\')</script>',
+			'<button class="button bg-dot button-small " id="note-panel-endcall" onclick="TV_HangUpCtrl(0)" style="display:inline-block;margin:4px 0;width:80px;">挂断</button></li></ul></div><script>upload_record_file(' + timestamp + ',\'' + address + '\',\'' + aj_type + '\',\'' + ajbs + '\')</script>',
 		yes: function (i) {
-			if ($('.delete_file_btn').length == 0&&$('#call-sfjt').val() == 1) {
+			if ($('.delete_file_btn').length == 0 && $('#call-sfjt').val() == 1) {
 				layer.alert('请务必上传录音文件');
-			}else{
+			} else if ($('#call-sfjt').val() == 0 && $('.delete_file_btn').length == 0||id!='') {
+				insert_call_record(id, address, timestamp, files_arr, aj_type, ajbs);
 				layer.close(i);
+			} else if($('#call-sfjt').val() == 0 && $('.delete_file_btn').length == 1){
+				layer.alert('未接听时请不要随意上传录音文件');
 			}
+
 			note_layer_i = i;
 		},
 		end: function () {}
@@ -438,7 +443,8 @@ var need_del_files = [];
 var files_num = 0; //文件总数
 var files_arr = [];
 
-function upload_record_file(timestamp,address,aj_type,ajbs) {
+function upload_record_file(timestamp, address, aj_type, ajbs, id) {
+	var id = id || '';
 	$('#record-file').fileupload({
 		url: weburl + "index.php/call_record/upload_record_file",
 		dataType: 'json',
@@ -463,7 +469,6 @@ function upload_record_file(timestamp,address,aj_type,ajbs) {
 			$('#record-files-list').append(file_d);
 			files_arr.push(data.files[0].name);
 			$('.layui-layer-btn0').on('click', function () {
-				// console.log($("input[name^='files']"));
 				data.submit();
 			});
 		},
@@ -473,36 +478,17 @@ function upload_record_file(timestamp,address,aj_type,ajbs) {
 				files_num--;
 				if (files_num == 0) { //所有文件上传后再进行数据插入
 					delete_record_file();
-					var note = $('#call-note').val();
-					var result = $('#call-result').val();
-					$.base64.utf8encode = true;
-					note = $.base64.encode(note);
-					result = $.base64.encode(result);
-					$.ajax({
-						type: 'post',
-						url: weburl + 'index.php/call_record/insert_call_record',
-						data: {
-							name: $('#call-blxr-name').html(),
-							lxdx: $('#call-blxr-type').html(),
-							phone: $('#call-blxr-phone').html(),
-							address:address,
-							date: $('#call-date').html(),
-							time: timestamp,
-							lywj: files_arr,
-							note: note,
-							result: result,
-							sfjt: $('#call-sfjt').val(),
-							aj_type:aj_type,
-							ajbs:ajbs
-						},
-						success: function (data) {
-							layer.close(note_layer_i);
-						}
-					});
+					if($('#call-sfjt').val() == 0)
+					{
+						layer.alert('请将接听结果改为已接听');
+						files_num++;
+					}else{
+						insert_call_record(id, address, timestamp, files_arr, aj_type, ajbs);
+					}
 				}
 
 			} else {
-				
+
 			}
 		},
 		progressall: function (e, data) {
@@ -510,7 +496,36 @@ function upload_record_file(timestamp,address,aj_type,ajbs) {
 			// console.log(progress + '%', data.loaded, data.total);
 		},
 	});
-
+}
+//记录数据到数据库
+function insert_call_record(id, address, timestamp, files_arr, aj_type, ajbs) {
+	var note = $('#call-note').val();
+	var result = $('#call-result').val();
+	$.base64.utf8encode = true;
+	note = $.base64.encode(note);
+	result = $.base64.encode(result);
+	$.ajax({
+		type: 'post',
+		url: weburl + 'index.php/call_record/insert_call_record',
+		data: {
+			id: id,
+			name: $('#call-blxr-name').html(),
+			lxdx: $('#call-blxr-type').html(),
+			phone: $('#call-blxr-phone').html(),
+			address: address,
+			date: $('#call-date').html(),
+			time: timestamp,
+			lywj: files_arr,
+			note: note,
+			result: result,
+			sfjt: $('#call-sfjt').val(),
+			aj_type: aj_type,
+			ajbs: ajbs
+		},
+		success: function (data) {
+			layer.close(note_layer_i);
+		}
+	});
 }
 // 删除录音文件
 function delete_record_file() {

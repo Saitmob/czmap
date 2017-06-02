@@ -114,13 +114,7 @@
 .btn-2:active {
 	background: #2896a3;
 }
-.inline-list{
-    display: inline-block;
-    padding: 0;
-}
-.inline-list >li,.ajs-num>li {
-	display: inline-block;
-}
+
  .ajs-num>li{
 	margin: 0 10px;
 }

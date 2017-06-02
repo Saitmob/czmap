@@ -356,10 +356,11 @@ class map_case_model extends CI_Model {
         }
         
         $person_arr=array();
-        if($row->gis_id!=0)
-        {
-            $person_arr = $this->regionmatch->getTWByGis($row->gis_id);
-        }
+        // if($row->gis_id!=0)
+        // {
+            // $person_arr = $this->regionmatch->getTWByGis($row->gis_id);
+            $person_arr = $this->regionmatch->get_wgy_tjy($dsr_id,$aj_type);
+        // }
         if(empty($person_arr['tjy'])||!isset($person_arr['tjy']))
         {
             $tjy='无';

@@ -14,21 +14,7 @@
 </head>
 <body>
 <div class="header">
-    <span class="title"></span>
-    <!--用户登录-->
-    <div class="user-box" style="display:inline-block;">
-      <div>欢迎：<span class="user-name">...</span></div>
-      <div class="logout"><a href="<?=base_url()?>index.php/welcome/logout">退出</a></div>
-    </div>
-    <!--导航-->
-    <div class="manager-entrance">
-      <ul>
-        <li class="header-nav"><a href="<?=base_url()?>index.php/welcome/personManage">人员管理</a> </li>
-        <li class="nav-fgx"></li>
-        <li class="header-nav"><a href="<?=base_url()?>index.php/welcome/addNDelData">案件数据管理</a></li>
-        <!--<li class="header-nav"><a href="<?=base_url()?>index.php/pointManage/">坐标管理</a></li>-->
-      </ul>
-    </div>
+    
   </div>
 <div class="o-m">
   <div class="ul-o blue_bg">

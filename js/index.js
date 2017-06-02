@@ -505,7 +505,9 @@ function show_tips_content(r_id) {
 function init_aj_list_panel(fjm) {
 	if (userObj.user_qx_level == 1) {
 		$('#aj-box-court-name').html(fjmToName(fjm));
-
+		$.each($('.aj-box-court-name-select'),function(k,v){
+			$(v).val(fjm);
+		})
 	} else {
 		$('#aj-box-court-name').parent().html('我的案件');
 		$('.aj-box-court-name-select').css('display', 'none');

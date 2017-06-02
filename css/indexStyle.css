@@ -129,8 +129,14 @@ A:active {
     background: url(../images/cz/title.png) no-repeat;
     background-position: center;
 }
-
-
+/*列表*/
+.inline-list{
+    display: inline-block;
+    padding: 0;
+}
+.inline-list >li,.ajs-num>li {
+	display: inline-block;
+}
 /*用户*/
 
 .header .user-box {

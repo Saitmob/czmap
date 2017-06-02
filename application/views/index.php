@@ -30,9 +30,9 @@
   <script src="<?=base_url()?>js/call_phone/mycall.js"></script>
   <script src="<?=base_url()?>js/getDataGraph.js"></script>
   <script src="<?=base_url()?>js/czmapPath.js"></script>
-  <script src="<?=base_url()?>js/apiv1.3.min.js"></script>
+  <!--<script src="<?=base_url()?>js/apiv1.3.min.js"></script>-->
   <!--<script src="<?=base_url()?>js/baidumapv2/baidumap_offline_v2_load.js"></script>-->
-  <!--<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=FUX2busrEP5BeSgTmMPnkXPtLhfsLftM"></script>-->
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=FUX2busrEP5BeSgTmMPnkXPtLhfsLftM"></script>
   <script src="<?=base_url()?>js/subMapdata.js"></script>
   <script src="<?=base_url()?>js/common/tabs.js"></script>
   <script src="<?=base_url()?>js/index.js"></script>

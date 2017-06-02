@@ -63,10 +63,24 @@ function editorRecord(id) {
 		},
 		dataType: 'json',
 		success: function (data) {
+			console.log(data);
             $.base64.utf8decode=true;
-            $note = $.base64.decode(data.call_note);
-            $result = $.base64.decode(data.call_result);
-            
+            var note = $.base64.decode(data.call_note);
+            var result = $.base64.decode(data.call_result);
+            var files = (data.lywj!=undefined&&data.lywj!=null)?data.lywj.split(','):'';
+            console.log(data.lywj);
+            console.log(files);
+            noteLayer(data.phone,data.blxrxm,data.address,data.lxdx,data.ajlx,data.ajbs,data.call_date,data.call_time,data.id);
+            $('#note-panel-endcall').css('display','none');
+            var file_d='';
+            $.each(files,function(k,v){
+                file_d += '<li>' + v + '<i class="delete_file_btn" onclick="push_del_file(this,\'' + v + '\');">删除</i></li>';
+                files_arr.push(v);
+            });
+			$('#record-files-list').append(file_d);
+            $('#call-note').val(note);
+            $('#call-result').val(result);
+            $('#call-sfjt').val(data.sfjt);
 		},
 		complete: function () {
 		},

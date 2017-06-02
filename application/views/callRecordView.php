@@ -34,6 +34,22 @@
     margin: 0 10px;
     display: inline-block;
   }
+  
+  .map-person-info-no-border ul li {
+    padding: 4px 0;
+  }
+  /*通话面板*/
+.delete_file_btn{
+	display: inline-block;
+	padding: 3px 6px;
+	font-size: 12px;
+	color: #fff;
+	background-color: #F24646;
+	border-radius: 4px;
+	font-style: normal;
+	margin:0 3px;
+	cursor: pointer;
+}
 </style>
 
 <body id="text">
@@ -55,19 +71,19 @@
       <!--展示类型选择-->
       <div style="margin:10px">
         <!--<select class="input input-small" style="width:90px;display:inline-block" id="person-region-select">
-          <option value="all" selected="selected">全部</option>
-          <option value="cz_jz">江州区</option>
-          <option value="cz_td">天等县</option>
-        </select>-->
+<option value="all" selected="selected">全部</option>
+<option value="cz_jz">江州区</option>
+<option value="cz_td">天等县</option>
+</select>-->
         <!--人员数展示-->
         <!--<div class="person-num" style="display:inline-block">
-          <div>
-            法律顾问 <span class="badge bg-sub" id="flgw-num">0</span>
-          </div>
-          <div>
-            网格员 <span class="badge bg-sub" id="wgy-num">0</span>
-          </div>
-        </div>-->
+<div>
+法律顾问 <span class="badge bg-sub" id="flgw-num">0</span>
+</div>
+<div>
+网格员 <span class="badge bg-sub" id="wgy-num">0</span>
+</div>
+</div>-->
       </div>
 
 
@@ -103,7 +119,7 @@
         <div id="my_list_page" style="height:30px;width:100%;"></div>
       </div>
       <!--通话信息录入及修改-->
-      
+
     </div>
     <!--cz-container end-->
   </div>
