@@ -47,8 +47,7 @@
       </ul>
     </div>
   </div>
-  <div class="cz-container" style="margin-top:20px;background: rgba(255, 255, 255, 0.7);
-border-radius: 5px;">
+  <div class="cz-container" >
     <ul class="cz-nav">
       <a href="<?=base_url()?>">
         <li>首页</li>
