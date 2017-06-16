@@ -174,7 +174,7 @@ class map_case_model extends CI_Model {
         return $data;
     }
     // 拿到address的各种坐标以及当事人信息和案件信息
-    private function getAddress($type,$showType='ALL',$showTypeVal='',$currPage=0,$perPageNum=0)//分级码，案件类型,展示类型（全部展示，按照id展示），类型值，分页当前页码，分页每页行数
+    private function getAddress($type,$showType='ALL',$showTypeVal='',$currPage=0,$perPageNum=0)//案件类型,展示类型（全部展示，按照id展示），类型值，分页当前页码，分页每页行数
     {
         $qx = true;
         $rybs = $_SESSION['user_rybs'];
@@ -212,7 +212,8 @@ class map_case_model extends CI_Model {
             $start = ($currPage-1)*$perPageNum;
             $sql="SELECT * FROM  {$type}_ajxx  where fjm = '{$showTypeVal}' LIMIT {$start} {$perPageNum}";
         }elseif($showType=='AJBS'){
-            $sql=" SELECT * from {$type}_dsr p left join  (SELECT ajbs,larq,ah,fjm FROM  {$type}_ajxx  where ajbs = '{$showTypeVal}' ORDER BY s DESC) aj on aj.ajbs=p.ajbs where aj.ajbs='{$showTypeVal}'";
+            $sql=" SELECT * from {$type}_dsr p left join  (SELECT ajbs,larq,ah,fjm FROM  {$type}_ajxx  where ajbs = 
+             '{$showTypeVal}' ORDER BY s DESC) aj on aj.ajbs=p.ajbs where aj.ajbs='{$showTypeVal}'";
             // $sql="SELECT * FROM  {$type}_ajxx  where ajbs='{$showTypeVal}'";
             // 拿到该案件的人员标识，更改权限
             // $sql_rybs = "SELECT rybs FROM  {$type}_hytcy  where  ajbs='{$showTypeVal}'";
@@ -230,15 +231,6 @@ class map_case_model extends CI_Model {
         $res = $query->result();
         $aj_num = count($res);//案件数
         $ADDRESS=array();
-        // 所有坐标数组，用于判断是否存在相同坐标，存在则内容显示在同一个坐标上
-        // $points = array();
-        // $reduce_num = 0;
-        // foreach ($res as $key => $dsr) {
-        // $ajbs = $value->ajbs;
-        // // 当事人
-        // $sql = "SELECT * FROM {$type}_dsr WHERE ajbs={$ajbs}";
-        // $query = $this->ajxq->query($sql);
-        // $dsr = $query->result();
         if(!empty($res)){
             $i=1;
             foreach ($res as $k => $val) {
@@ -286,7 +278,11 @@ class map_case_model extends CI_Model {
                 $i++;
             }
         }
-        $aj_p_num=count($ADDRESS);//坐标数
+        $aj_p_num=0;
+        foreach ($ADDRESS as $key => $value) {
+            $aj_p_num+=count($value);
+        }
+        count($ADDRESS);//坐标数
         $data = array(
         'AJ_NUM'=>$aj_num,
         'AJ_P_NUM'=>$aj_p_num,

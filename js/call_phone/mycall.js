@@ -29,11 +29,11 @@ function dial_up(no, name, address, rybs, aj_type, ajbs) {
 	//检测盒子是否开机，如果未开机则自动开机
 	var canInit = TV_Initialize();
 	if (canInit) {
+		// 弹出通话笔记记录面板
 		notePanel(no, name, address, rybs, aj_type, ajbs);
 		change_status_img('up');
 		//打开耳机
 		TV_EnableLine2Spk(0, TRUE);
-		// 弹出通话笔记记录面板
 		//开始拨号
 		var is_dial = TV_StartDial(0, phone_number);
 	}

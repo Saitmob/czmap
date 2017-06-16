@@ -170,7 +170,7 @@ class call_record_model extends CI_Model {
     public function get_person_by_phone($phone)//呼入时获取信息
     {
         $data = array();
-        $sql = "SELECT id,name,rybs,address FROM person where phone='{$phone}'";
+        $sql = "SELECT a.id,a.name,a.rybs,b.xxdz FROM (SELECT id,name,rybs,phone FROM person) a LEFT JOIN (SELECT person_id,xxdz FROM person_add_lib) b ON a.id=b.person_id where a.phone='{$phone}'";
         $person_q = $this->db->query($sql);
         $person_data = $person_q->row();
         if(empty($person_data))

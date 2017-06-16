@@ -90,27 +90,6 @@ function getRdataById(fjm, aj_type, aj_bs) {
 	});
 	return deferred.promise();
 }
-//获取非崇左区域案件信息
-// var unthis_area_data = {};
-
-// function getunthis_area_data(argument) {
-// 	$.ajax({
-// 		type: 'post',
-// 		url: weburl + 'index.php/welcome/getUnthisArea',
-// 		data: {
-// 			'gettype': 'getunthis_area'
-// 		},
-// 		dataType: 'json',
-// 		async: false,
-// 		success: function (data) {
-// 			unthis_area_data = data;
-// 		},
-// 		error: function (XMLHttpRequest, textStatus, errorThrown) {
-// 			console.log(XMLHttpRequest + ';' + errorThrown);
-// 		}
-// 	});
-
-// }
 // 各个法院的诉讼案件数好执行案件数
 var sp_zx_obj = {};
 

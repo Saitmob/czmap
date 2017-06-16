@@ -5,6 +5,9 @@ $(function () {
 	$('#aj-fjm-select').change(function () {
 		show_case_list(1, $(this).val());
 	});
+	$("#show_search_button").click(function () {
+		show_case_list(1, $('#aj-fjm-select').val(), 'ah', $("#show_search").val());
+	});
 });
 
 

@@ -44,13 +44,13 @@ function selectRegion(multiple, callbackFun, callbackFun2) {
 	};
 	layer.open({
 		type: 1,
-		title: false,
+		title: '区域选择',
 		skin: 'layui-layer-rim', //加上边框
 		area: ['540px', '460px'], //宽高
 		btn: ['确定'],
 		closeBtn: 0,
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div class="panel" style="height:374px;overflow:hidden;"><div class="panel-head">区域选择</div><div class="panel-body" style="height:330px;box-sizing:border-box;overflow:hidden;"><div id="treeDemo" style="width:200px;height:315px;overflow:auto;border-right:1px solid gray;display:inline-block;" class="ztree"></div><div style="width:56%;height:100%;display:inline-block;vertical-align:top;padding:0 10px"><p style="padding-left:10px;border-bottom:gray 1px solid;font-size:12px;color:gray;">单击选择</p><div class="select-list" style="height:64px;"></div><p style="padding-left:10px;border-bottom:gray 1px solid;font-size:12px;color:gray;">已选择</p><div id="region-selected-list" class="list-link" style="height:155px;overflow:auto;"></div></div> </div></div>',
+		content: '<div class="panel" style="height:374px;overflow:hidden;"><div class="panel-body" style="height:330px;box-sizing:border-box;overflow:hidden;"><div id="treeDemo" style="width:200px;height:315px;overflow:auto;border-right:1px solid gray;display:inline-block;" class="ztree"></div><div style="width:56%;height:100%;display:inline-block;vertical-align:top;padding:0 10px"><p style="padding-left:10px;border-bottom:gray 1px solid;font-size:12px;color:gray;">单击选择</p><div class="select-list" style="height:64px;"></div><p style="padding-left:10px;border-bottom:gray 1px solid;font-size:12px;color:gray;">已选择</p><div id="region-selected-list" class="list-link" style="height:155px;overflow:auto;"></div></div> </div></div>',
 		yes: function (i) {
 			var idObjArr = $('#region-selected-list').find('a[id^="region_"]');
 			var idArr = [];
@@ -176,7 +176,7 @@ function bd_point_get(x, y, callback) {
 	}
 	layer.open({
 		type: 1,
-		title: false,
+		title: '坐标拾取',
 		skin: 'layui-layer-rim', //加上边框
 		area: ['620px', '490px'], //宽高
 		btn: ['确定'],
@@ -325,14 +325,13 @@ function select_wgy_tjy(p_type, multiple, callbackFun, callbackFun2) { //点击�
 	};
 	layer.open({
 		type: 1,
-		title: false,
+		title: '人员选择',
 		skin: 'layui-layer-rim', //加上边框
 		area: ['640px', '560px'], //宽高
 		btn: ['确定'],
 		closeBtn: 0,
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
 		content: '<div class="panel" style="height:474px;overflow:hidden;">' +
-			'<div class="panel-head">区域选择</div>' +
 			'<div class="panel-body" style="height:430px;box-sizing:border-box;overflow:hidden;">' +
 			'<div id="treeDemo" style="width:200px;height:100%;overflow:auto;border-right:1px solid gray;display:inline-block;" class="ztree"></div>' +
 			'<div style="width:56%;height:100%;display:inline-block;vertical-align:top;padding:0 10px">' +

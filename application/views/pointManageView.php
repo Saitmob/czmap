@@ -51,9 +51,8 @@
     <div class="data_list">
       <div class="ry-search-box">
         法院：
-        <select class="input input-small" style="width:90px;display:inline-block" id="aj-fjm-select">
-          <option value="all" selected="selected">全部</option>
-          <option value="K60">崇左市中级人民法院</option>
+        <select class="input input-small input-auto" style="" id="aj-fjm-select">
+          <option value="K60" selected="selected">崇左市中级人民法院</option>
           <option value="K67">江州区人民法院</option>
           <option value="K68">大新县人民法院</option>
           <option value="K69">天等县人民法院</option>
@@ -62,8 +61,8 @@
           <option value="K6B">龙州县人民法院</option>
           <option value="K6C">扶绥县人民法院</option>
         </select>
-        <input type="text" class="input input-small" id="search-person-text" style="width:160px;display:inline-block;margin-right:10px;">
-        <button class="button bg-sub button-small" id="search-person-btn">查询</button>
+        <input type="text" class="input input-small" id="show_search" style="width:160px;display:inline-block;margin-right:10px;">
+        <button class="button bg-sub button-small" id="show_search_button">查询</button>
       </div>
       <!--人员信息查询-->
       <div class="person-list">

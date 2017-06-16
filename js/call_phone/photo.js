@@ -615,7 +615,7 @@ function jtdh(phone_num) {
 			var name, address, rybs;
 			if (data.person != undefined) {
 				name = (data.person.name != null) ? data.person.name : '无';
-				address = (data.person.address != null) ? data.person.address : '无';
+				address = (data.person.xxdz != null) ? data.person.xxdz : '无';
 				rybs = (data.person.rybs != null) ? data.person.rybs : '无';
 			} else {
 				name = address = rybs = '无';

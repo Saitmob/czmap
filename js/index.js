@@ -619,7 +619,7 @@ function call_one_person(ele,p, name, address, rybs, aj_type, ajbs) {
 		return false;
 	}
 	var phone = $('#p_'+p).html();
-	phone = $(ele).parent().find('select').val()+18172328353;
+	phone = $(ele).parent().find('select').val()+18377775127;
 	dial_up(phone, name, address, rybs, aj_type, ajbs);
 }
 // 首页获取审理案件数，地点数以及网格员数等
