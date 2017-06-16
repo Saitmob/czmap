@@ -191,6 +191,10 @@
 								</span>
 							</div>
 							<div class="line-div">
+								<span class='ry-option'>详细地址：</span>
+								<span class='ry-option-data'><input type="text" class="input input-small editor-address input-auto" ></span>
+							</div>
+							<div class="line-div">
 								<span class='ry-option'>联系号码：</span>
 								<span class='ry-option-data'><input type="text" class="input input-small editor-phone input-auto" ></span>
 							</div>

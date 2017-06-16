@@ -102,6 +102,7 @@ function creatDataInfo() {
 	var points = [];
 	var points_str = [];
 	var noPoint = '';
+	console.log(new Date().getTime()/1000);
 	if (region_arr.length > 0) { //如果地点大于0
 		$.each(region_arr, function (k, v) {
 			if (v.POINT.x != undefined && v.POINT.x != 0 && v.POINT.x != '' && v.POINT.y != undefined && v.POINT.y != 0 && v.POINT.y != '') {
@@ -117,7 +118,7 @@ function creatDataInfo() {
 				points.push(point);
 				points_str.push(point_str);
 				var content = "地址：" + v.ADD_NAME + "<br>" + v.BZ_INFO;
-				var iconUrl = '';
+				var iconUrl = 'images/bg_bz.png';
 				var size = new BMap.Size(20, 24);
 				if (v.ADD_TYPE == '原告') {
 					iconUrl = 'images/yg_bz.png';
@@ -136,8 +137,8 @@ function creatDataInfo() {
 					iconUrl = 'images/bzxr_bz.png';
 				} else if (v.ADD_TYPE == '第三人') {
 					iconUrl = 'images/dsr_bz.png';
-				} else {
-					iconUrl = 'images/bg_bz.png';
+				} else if(v.ADD_TYPE=='利害关系人'){
+					iconUrl = 'images/lhgx_bz.png';
 				}
 				// var myIcon = new BMap.Icon(iconUrl, new BMap.Size(40,40),{imageOffset:new BMap.Size(100, 40) });
 				var myIcon = new BMap.Icon(iconUrl, size);
@@ -146,14 +147,14 @@ function creatDataInfo() {
 				});
 				marker.setShadow(shadow);
 				map.addOverlay(marker); // 将标注添加到地图中
-				marker.addEventListener('click',function(e){
+				marker.addEventListener('click', function (e) {
 					// content = 'hello';
-					var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
-					get_dsr_info(v.AJBS,v.AJ_TYPE,v.DATA_ID,content,point);
+					var infoWindow = new BMap.InfoWindow(content, opts); // 创建信息窗口对象
+					get_dsr_info(v.AJBS, v.AJ_TYPE, v.DATA_ID, content, point);
 					// map.openInfoWindow(infoWindow,point);
 					// addClickHandler(content, marker, point);
 				});
-				
+
 				// 创建标注
 				if (region_arr.length < 14) {
 					var ssdw = v.ADD_TYPE;
@@ -175,7 +176,8 @@ function creatDataInfo() {
 			var view = map.getViewport(eval(points));
 			var mapZoom = view.zoom;
 			var centerPoint = view.center;
-			mapZoom = (mapZoom > 16) ? 15 : mapZoom;
+			mapZoom = (mapZoom >= 16) ? 15 : mapZoom;
+			console.log(mapZoom);
 			map.centerAndZoom(centerPoint, mapZoom);
 		}
 		if (noPoint.length > 0) {
@@ -187,24 +189,31 @@ function creatDataInfo() {
 
 }
 // 获取信息窗口底部内容
-function get_dsr_info(ajbs,aj_type,dsr_id,content,point)
-{
+function get_dsr_info(ajbs, aj_type, dsr_id, content, point) {
+	var i;
 	$.ajax({
-		type:'post',
-		url:weburl+'index.php/welcome/get_dsr_info',
-		data:{
-			ajbs:ajbs,
-			dsr_id:dsr_id,
-			aj_type:aj_type
+		type: 'post',
+		url: weburl + 'index.php/welcome/get_dsr_info',
+		data: {
+			ajbs: ajbs,
+			dsr_id: dsr_id,
+			aj_type: aj_type
 		},
 		// dataType:'json',
-		success:function(data){
-			content+=data;
-			var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
-			map.openInfoWindow(infoWindow,point);
+		beforeSend: function () {
+			i = layer.load(1, {
+				shade: [0.5, '#000'] //0.1透明度的白色背景
+			});
+		},
+		success: function (data) {
+			layer.close(i);
+			content += data;
+			var infoWindow = new BMap.InfoWindow(content, opts); // 创建信息窗口对象
+			map.openInfoWindow(infoWindow, point);
 		}
 	})
 }
+
 function addClickHandler(content, marker, point) {
 	marker.addEventListener("click", function () {
 		openInfo(content, point)
@@ -226,65 +235,7 @@ function map_box_aj_num() {
 }
 //当事人以及财产地址数
 function set_map_box_dsrnum() {
-	// var yg_num = 0;
-	// var bg_num = 0;
-	// var cc_num = 0;
-	// var ssr_num = 0;
-	// var bssr_num = 0;
-	// var dsr_num = 0;
-	// var sqzxr_num = 0;
-	// var bzxr_num = 0;
-	// $.each(region_address.SP.ADDRESS, function (k, v) {
-	// 	if (v.ADD_TYPE == '原告') {
-	// 		yg_num++;
-	// 	} else if (v.ADD_TYPE == '被告') {
-	// 		bg_num++;
-	// 	} else if (v.ADD_TYPE == '财产') {
-	// 		cc_num++;
-	// 	} else if (v.ADD_TYPE == '上诉人') {
-	// 		ssr_num++;
-	// 	} else if (v.ADD_TYPE == '被上诉人') {
-	// 		bssr_num++;
-	// 	} else if (v.ADD_TYPE == '第三人') {
-	// 		dsr_num++;
-	// 	} else if (v.ADD_TYPE == '申请执行人') {
-	// 		sqzxr_num++;
-	// 	} else if (v.ADD_TYPE == '被执行人') {
-	// 		bzxr_num++;
-	// 	}
-	// });
-	// $.each(region_address.ZX.ADDRESS, function (k, v) {
-	// 	if (v.ADD_TYPE == '原告') {
-	// 		yg_num++;
-	// 	} else if (v.ADD_TYPE == '被告') {
-	// 		bg_num++;
-	// 	} else if (v.ADD_TYPE == '财产') {
-	// 		cc_num++;
-	// 	} else if (v.ADD_TYPE == '上诉人') {
-	// 		ssr_num++;
-	// 	} else if (v.ADD_TYPE == '被上诉人') {
-	// 		bssr_num++;
-	// 	} else if (v.ADD_TYPE == '第三人') {
-	// 		dsr_num++;
-	// 	} else if (v.ADD_TYPE == '申请执行人') {
-	// 		sqzxr_num++;
-	// 	} else if (v.ADD_TYPE == '被执行人') {
-	// 		bzxr_num++;
-	// 	}
-	// });
-	// $('#map-box-yg-num').html(yg_num);
-	// $('#map-box-bg-num').html(bg_num);
-	// $('#map-box-cc-num').html(cc_num);
-	// $('#map-box-ssr-num').html(ssr_num);
-	// $('#map-box-bssr-num').html(bssr_num);
-	// $('#map-box-dsr-num').html(dsr_num);
-	// $('#map-box-sqzxr-num').html(sqzxr_num);
-	// $('#map-box-bzxr-num').html(bzxr_num);
-	// if (aj_type == 'sp') {
-	// 	type = 'SP';
-	// } else {
-	// 	type = 'ZX';
-	// }
+	console.log(new Date().getTime()/1000);
 	var add_num_str = '';
 	var add_str = '';
 	$.each(region_address.SP.ADDRESS, function (k, v) {
@@ -302,4 +253,5 @@ function set_map_box_dsrnum() {
 		}
 	});
 	$('#map_box_ssdw_num').html(add_num_str);
+	console.log(new Date().getTime()/1000);
 }

@@ -28,8 +28,6 @@ a,area{blr:expression(this.onFocus=this.blur())}
 .o-m .ul-o .li-mask{background:#ff6800;position:absolute;left:0;top:0;width:335px;height:68px;background:url(../images/n-qyjz-52.png) no-repeat;z-index: 1000;cursor: pointer;}
 .fl_l:hover{font-size: 18px;}
 .fl_r li{margin: 30px;padding: 5px;}
-.ysxx{height: 200px}
-.jcxx{height: 600px}
 .fl_r li div{width: 100%;height: 100%;display: inline-block;}
 .fl_r .two-line{width: 100%;height: 100%;}
 .fl_r .l{

@@ -14,18 +14,19 @@ class call_record extends CI_Controller {
     {
         $this->load->view('callRecordView');
     }
-    public function insert_call_record()
+    public function insert_call_record()//插入或更新通话记录
     {
         $name = $this->input->post('name');
         if(!empty($name)){
             $id = $this->input->post('id');
+            // var_dump($id);die();
             $lxdx = $this->input->post('lxdx');
             $address = $this->input->post('address');
             $phone = $this->input->post('phone');
             $date=$this->input->post('date');
             $time=$this->input->post('time');
             $lywj=$this->input->post('lywj');
-            $lywj = implode(',',$lywj);
+            $lywj = (!empty($lywj))?(implode(',',$lywj)):'';
             $note=$this->input->post('note');
             $result=$this->input->post('result');
             $sfjt=$this->input->post('sfjt');
@@ -34,7 +35,8 @@ class call_record extends CI_Controller {
             $lxrrybs = $_SESSION['user_rybs'];
             $aj_type = $this->input->post('aj_type');
             $ajbs = $this->input->post('ajbs');
-            $data = $this->call->insert_call_record($id,$name,$lxdx,$address,$phone,$date,$time,$lywj,$note,$result,$sfjt,$lxrxm,$lxryx,$lxrrybs,$aj_type,$ajbs);
+            $in_or_out = $this->input->post('in_or_out');
+            $data = $this->call->insert_call_record($id,$name,$lxdx,$address,$phone,$date,$time,$lywj,$note,$result,$sfjt,$lxrxm,$lxryx,$lxrrybs,$aj_type,$ajbs,$in_or_out);
             echo $data;
         }
     }
@@ -49,6 +51,7 @@ class call_record extends CI_Controller {
         $res = move_uploaded_file($_FILES["files"]["tmp_name"][0],"record/" .$file_name);
         echo $res;
     }
+    //删除录音文件
     public function delete_record_file()
     {
         $file_arr = $this->input->post('file_arr');
@@ -58,14 +61,37 @@ class call_record extends CI_Controller {
             }
         }
     }
+    //删除通话记录
+    public function delete_record_data()
+    {
+        $id = $this->input->post('id');
+        if(!empty($id))
+        {
+            $data = $this->call->delete_record_data($id);
+            echo $data;
+        }
+    }
     // 录音列表
     public function show_call_record_list()
+    {
+        $ajbs=$this->input->post('ajbs');
+        if(!empty($ajbs)){
+            $page = $this->input->post('page');
+            $perPageNum = $this->input->post('perPageNum');
+        }
+        $data = $this->call->show_call_record_list($page,$perPageNum,$ajbs);
+        echo json_encode($data);
+    }
+    //存在录音的案件列表
+    public function show_aj_call_list()
     {
         $page = $this->input->post('page');
         if(!empty($page)){
             $perPageNum = $this->input->post('perPageNum');
+            $show_type = $this->input->post('show_type');
+            $type_val = $this->input->post('type_val');
         }
-        $data = $this->call->show_call_record_list($page,$perPageNum);
+        $data = $this->call->show_aj_call_list($page,$perPageNum,$show_type,$type_val);
         echo json_encode($data);
     }
     // 获取通话数据
@@ -78,7 +104,16 @@ class call_record extends CI_Controller {
             echo json_encode($data);
         }
     }
-
+    
+    public function get_person_by_phone()
+    {
+        $phone = $this->input->post('phone');
+        if(!empty($phone))
+        {
+            $data = $this->call->get_person_by_phone($phone);
+            echo json_encode($data);
+        }
+    }
     // 最小地址测试
     public function zxdzcs()
     {

@@ -19,7 +19,7 @@ li {
 
 body {
 	background: url(../images/cz/bg.jpg) !important;
-	background-size: 100%;
+	background-size: cover!important;
 }
 
 A:link {
@@ -63,7 +63,19 @@ A:active {
 	/*transition: all 0.1s;*/
 	color: #fff;
 }
-
+/*颜色*/
+.c_b01{
+	color: #B5FAFF;
+}
+.c_b02{
+	color:#A1F9FF;
+}
+.c_b03{
+	color:#4DF3FF;
+}
+.c_bd01{
+	color: #3D7EB8;
+}
 
 /*头部*/
 
@@ -113,7 +125,7 @@ A:active {
 	background-position: center;
 	width: 10px;
 	height: 90px;
-	vertical-align: middle;
+	vertical-align: top;
 }
 
 .header-nav {
@@ -201,15 +213,24 @@ A:active {
 
 .cz_or_unthis {
 	margin: 0 auto;
-	width: 80%;
-	min-width: 840px;
+	width: 85%;
+	min-width: 940px;
 	height: 68px;
-	background: url(../images/cz/bg_kuang.png) no-repeat;
+	background: url(../images/cz/bg_kuang_m.png) repeat-x;
 	background-size: 100% 68px;
 	color: #fff;
 	text-align: center;
 }
-
+.cz_or_unthis::before{
+	width:20px;
+	height: 100%;
+	background: url(../images/cz/bg_kuang_l.png);
+}
+.cz_or_unthis::after{
+	width:20px;
+	height: 100%;
+	background: url(../images/cz/bg_kuang_r.png);
+}
 .cz_or_unthis h3 {
 	display: inline-block;
 	margin: 0 20px;
@@ -291,8 +312,9 @@ A:active {
 	clear: both;
 }
 
-.cz-nav li {
+.cz-nav li,.cz-nav a {
 	display: inline-block;
+	margin-right:10px;
 	width: auto !important;
 }
 
@@ -496,4 +518,27 @@ b {
 	margin-right: 10px;
 	border-right: 1px dashed #fff;
 	padding-right: 10px;
+}
+/*通话面板*/
+.delete_file_btn,.download_file_btn{
+	display: inline-block;
+	padding: 3px 6px;
+	font-size: 12px;
+	color: #fff;
+	border-radius: 4px;
+	font-style: normal;
+	margin:0 3px;
+	cursor: pointer;
+}
+.delete_file_btn{
+	background-color: #F24646;
+}
+.delete_file_btn:hover{
+	background-color: #FA6464;
+}
+.download_file_btn{
+	background-color: #38ABD1;
+}
+.download_file_btn:hover{
+	background-color: #5EC8EB;
 }

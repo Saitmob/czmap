@@ -864,31 +864,6 @@ public function indexShowCaseList($currpage,$perPageNum,$fjm,$case_type='ALL'){
     }
     return $res;
 }
-public function indexShowPageNum($type,$val,$fjm='')
-{
-    $num=0;
-    if($type=='CASE'&&$fjm!=''){
-        if($val=='ALL'){
-            $sql = "(SELECT aj_id FROM sp_ajxx WHERE fjm='{$fjm}' ) union all (SELECT aj_id FROM zx_ajxx WHERE fjm='{$fjm}' ) ";
-            $query = $this->ajxq->query($sql);
-            $res = $query->result();
-            $num = count($res);
-        }
-        elseif($val=='SP'){
-            $sql = "SELECT aj_id FROM sp_ajxx WHERE fjm='{$fjm}'";
-            $query = $this->ajxq->query($sql);
-            $res = $query->result();
-            $num = count($res);
-        }elseif($val=='ZX'){
-            $sql = "SELECT aj_id FROM zx_ajxx WHERE fjm='{$fjm}'";
-            $query = $this->ajxq->query($sql);
-            $res = $query->result();
-            $num = count($res);
-        }
-        
-    }
-    return $num;
-}
 
 //首页法院数，法官人数以及 立案数和陪审员数等
 public function getBaseData($type='all')

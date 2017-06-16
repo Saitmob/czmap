@@ -1,4 +1,4 @@
-var weburl = 'http://147.1.7.45/czmapgit/';
+var weburl = 'http://localhost/czmapgit/';
 // var weburl = 'http://qxp.tunnel.2bdata.com/czmapn/';
 // var weburl = 'http://192.168.118.68/czmapn/';
 var CONNECT_ERROR = 0;
@@ -14,7 +14,7 @@ $(function () {
 		// }
 		// return false;
 	});
-	
+
 
 	//头部
 	var header_str = '<span class="title"></span>' +
@@ -26,7 +26,7 @@ $(function () {
 		'<ul>' +
 		'<li class="header-nav"><a href="' + weburl + 'index.php/welcome/personManage">人员管理</a> </li>' +
 		'<li class="nav-fgx"></li>' +
-		'<li class="header-nav"><a href="' + weburl + 'index.php/welcome/addNDelData">案件数据管理</a></li>' +
+		'<li class="header-nav"><a href="' + weburl + 'index.php/pointManage">坐标管理</a></li>' +
 		'<li class="nav-fgx"></li>' +
 		'<li class="header-nav"><a href="' + weburl + 'index.php/call_record/">通话记录</a></li>' +
 		'</ul>' +
@@ -144,6 +144,9 @@ function fjmToRid(fjm) {
 		case 'K60':
 			fjm = 'cz_jz';
 			break;
+		case 'K67':
+			fjm = 'cz_jz';
+			break;
 		case 'K6C':
 			fjm = 'cz_fs';
 			break;
@@ -199,6 +202,7 @@ var ryType = {
 	'申请人': 'sqr',
 	'被执行人': 'bzxr',
 	'被执行第三人': 'bzxdsr',
+	'利害关系人': 'lhgx',
 	'yg': '原告',
 	'bg': '被告',
 	'bgr': '被告人',
@@ -209,7 +213,8 @@ var ryType = {
 	'sqzxr': '申请执行人',
 	'sqr': '申请人',
 	'bzxr': '被执行人',
-	'bzxdsr': '被执行第三人'
+	'bzxdsr': '被执行第三人',
+	'lhgx': '利害关系人'
 };
 
 
@@ -239,7 +244,6 @@ function getUserInfo() {
 		async: false,
 		success: function (data) {
 			userObj = data;
-			console.log(data);
 			$('.user-name').html(data.user_name);
 		}
 	});
@@ -262,4 +266,25 @@ function validatorNum() {
 		});
 	})
 
+}
+
+function getAjType(ah) {
+	if (ah.indexOf('执') != -1) {
+		return 'zx';
+	} else {
+		return 'sp';
+	}
+}
+
+function isNull(str) {
+	if (str != null&&str!=undefined) {
+		var reg = new RegExp(' ', 'g');
+		str = str.replace(reg, '');
+		if(str=='')
+		return true;
+		else
+		return false;
+	}else{
+		return true;
+	}
 }

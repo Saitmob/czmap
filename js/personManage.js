@@ -67,6 +67,7 @@ $(function () {
 
 function show_list(range, persontype, name, cur_page, per_page_num)//区域，人员类型，人员名称，第几页，一页几行
 {
+	var load;
 	$.ajax({
 		type: 'post',
 		url: weburl + 'index.php/personManage/show_list',
@@ -78,7 +79,11 @@ function show_list(range, persontype, name, cur_page, per_page_num)//区域，�
 			'per_page_num': per_page_num
 		},
 		dataType: "json",
+		beforeSend:function(){
+			load = layer.load();
+		},
 		success: function (data) {
+			layer.close(load);
 			$("#person-list-data").html("");
 			if (data.result.length > 0) {
 				$.each(data.result, function (k, v) {
@@ -240,6 +245,7 @@ function getPersonOtherInfo(pId){
 				$('.layui-layer-content .icon-map-marker').html(name);
 				$('.layui-layer-content .icon-map-marker').data('id', data.gis_id);
 				$('.layui-layer-content .icon-map-marker').data('name', data.gis_name);
+				$('.layui-layer-content .editor-address').val(data.gis_name);
 				$('.layui-layer-content .editor-select-region').unbind();
 				// $('.editor-select-region').on('click', function () {
 				// 	$('.layui-layer-content .editor-select-region').unbind();

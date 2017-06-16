@@ -30,98 +30,98 @@ class map_case_model extends CI_Model {
         );
         return $data;
     }
-    public function getRegionData()
-    {
-        $sql="SELECT R_ID,R_TC FROM region";
-        $query = $this->db->query($sql);
-        $res = $query->result();
-        $data=array();
-        foreach ($res as $key => $value) {
-            $data[$value->R_ID] = $value->R_TC;
-        }
-        return $data;
-    }
-    public function getOneRegionData($r_id)
-    {
-        $sql = "SELECT * FROM map_case WHERE THIS_AREA=1 AND R_ID='{$r_id}'";
-        $query = $this->db->query($sql);
-        $res = $query->result();//该地区所有案件信息
-        $sql = "SELECT R_POINT_X,R_POINT_Y,R_NAME FROM region WHERE R_ID='{$r_id}'";
-        $query = $this->db->query($sql);
-        $res2 = $query->row();//该地区坐标及名称
-        $sql = "SELECT * FROM address WHERE R_ID = '{$r_id}'";
-        $query = $this->db->query($sql);
-        $res3 = $query->result_array();//该地区所有已录案件的地区信息
-        foreach ($res3 as $key => $value) {
-            $address = $value['ADDRESS'];
-            $sql = "SELECT * FROM map_case WHERE THIS_AREA=1 AND ADDRESS='{$address}'";
-            $query = $this->db->query($sql);
-            $res4 = $query->result_array();//该地区的案件信息
-            $detail_info='地址：'.$address.'<br>';
-            $case_num = 0;//该地点案件数
-            foreach ($res4 as $k => $val) {
-                //获取该区域的陪审员和执行员以及网格员
-                $pzwArr = $this->regionmatch->addressmatchpzwstr($val['GIS_ID']);
-                $psy = (empty($pzwArr['psy']))?'无':$pzwArr['psy'];
-                $zxy = (empty($pzwArr['zxy']))?'无':$pzwArr['zxy'];
-                $wgy = (empty($pzwArr['wgy']))?'无':$pzwArr['wgy'];
-                $an_hao = urlencode($val['DO_AH']);
-                $case_type = $val['CASE_TYPE'];
-                //案件详情权限
-                // $rybs = $_SESSION['user_rybs'];
-                $rybs = '00';
-                $qx = false;//权限
-                if($rybs==180225133)
-                {
-                    $qx=true;
-                }
-                if($case_type==1)
-                {
-                    $sql = "SELECT RX_HYTCRBS,RX_SJYBS,RX_CBRBS FROM sp_case_detail WHERE AH='".$val['DO_AH']."'";
-                    $query = $this->db->query($sql);
-                    $sp_res = $query->result();
-                    if(!empty($sp_res))
-                    {
-                        foreach ($sp_res as $sp_k => $sp_v) {
-                            // $hytbs = ();
-                            if($sp_v->RX_HYTCRBS==$rybs||$sp_v->RX_SJYBS==$rybs||$sp_v->RX_CBRBS==$rybs)
-                            {
-                                $qx=true;
-                            }
-                            // var_dump($sp_v->RX_SJYBS);
-                            // var_dump($sp_v->RX->CBRBS);
-                            
-                        }
-                        
-                    }
-                    $ah_str = (($qx)?('；<a href="'.base_url().'index.php/caseDetail/spcaseDetail?AH='.$an_hao.'&CASE_TYPE='.$val['CASE_TYPE'].'" >'.$val['DO_AH'].'</a>；'):('；'.$val['DO_AH'].'；'));
-                }else{
-                    $sql = "SELECT CBR,AJXQURL FROM zx_case_detail WHERE AH = '".$val['DO_AH']."'";
-                    $query = $this->db->query($sql);
-                    $zx_res = $query->row();
-                    if(!empty($zx_res))
-                    {
-                        if($zx_res->CBR==$rybs)
-                        {
-                            $qx=true;
-                        }
-                        $URL=$zx_res->AJXQURL;
-                    }
-                    $ah_str = (($qx)?('；<a href="'.$URL.'" target="_blank" >'.$val['DO_AH'].'</a>；'):('；'.$val['DO_AH'].'；'));
-                }
-                
-                $detail_info .= ($k+1)."、".$val['COURT_NAME'].$ah_str.(($val['LA_DATE']==NULL)?'无立案时间':$val['LA_DATE']).'；'.$val['AN_REASON'].'；'.(($val['BZXR_NAME']==NULL)?'无被执行人':$val['BZXR_NAME']).'；标的：'.$val['BD'].'万元；备注：'.$val['NOTE']."<br><div style='position:absolute;bottom:0px;height：30px;width:90%;padding-top:10px;border-top:1px solid;'>陪审员：".$psy."；执行员：".$zxy."；网格员：".$wgy."</div>";
-                $case_num+=1;
-            }
-            $res3[$key]['detail_info'] = $detail_info;
-            $res3[$key]['case_num'] = '未结：'.$case_num.' 件';
-        }
-        $data = array();
-        $data['point']=$res2;
-        $data['region_data'] = $res;
-        $data['address'] = $res3;
-        return $data;
-    }
+    // public function getRegionData()
+    // {
+    //     $sql="SELECT R_ID,R_TC FROM region";
+    //     $query = $this->db->query($sql);
+    //     $res = $query->result();
+    //     $data=array();
+    //     foreach ($res as $key => $value) {
+    //         $data[$value->R_ID] = $value->R_TC;
+    //     }
+    //     return $data;
+    // }
+    // public function getOneRegionData($r_id)
+    // {
+    //     $sql = "SELECT * FROM map_case WHERE THIS_AREA=1 AND R_ID='{$r_id}'";
+    //     $query = $this->db->query($sql);
+    //     $res = $query->result();//该地区所有案件信息
+    //     $sql = "SELECT R_POINT_X,R_POINT_Y,R_NAME FROM region WHERE R_ID='{$r_id}'";
+    //     $query = $this->db->query($sql);
+    //     $res2 = $query->row();//该地区坐标及名称
+    //     $sql = "SELECT * FROM address WHERE R_ID = '{$r_id}'";
+    //     $query = $this->db->query($sql);
+    //     $res3 = $query->result_array();//该地区所有已录案件的地区信息
+    //     foreach ($res3 as $key => $value) {
+    //         $address = $value['ADDRESS'];
+    //         $sql = "SELECT * FROM map_case WHERE THIS_AREA=1 AND ADDRESS='{$address}'";
+    //         $query = $this->db->query($sql);
+    //         $res4 = $query->result_array();//该地区的案件信息
+    //         $detail_info='地址：'.$address.'<br>';
+    //         $case_num = 0;//该地点案件数
+    //         foreach ($res4 as $k => $val) {
+    //             //获取该区域的陪审员和执行员以及网格员
+    //             $pzwArr = $this->regionmatch->addressmatchpzwstr($val['GIS_ID']);
+    //             $psy = (empty($pzwArr['psy']))?'无':$pzwArr['psy'];
+    //             $zxy = (empty($pzwArr['zxy']))?'无':$pzwArr['zxy'];
+    //             $wgy = (empty($pzwArr['wgy']))?'无':$pzwArr['wgy'];
+    //             $an_hao = urlencode($val['DO_AH']);
+    //             $case_type = $val['CASE_TYPE'];
+    //             //案件详情权限
+    //             // $rybs = $_SESSION['user_rybs'];
+    //             $rybs = '00';
+    //             $qx = false;//权限
+    //             if($rybs==180225133)
+    //             {
+    //                 $qx=true;
+    //             }
+    //             if($case_type==1)
+    //             {
+    //                 $sql = "SELECT RX_HYTCRBS,RX_SJYBS,RX_CBRBS FROM sp_case_detail WHERE AH='".$val['DO_AH']."'";
+    //                 $query = $this->db->query($sql);
+    //                 $sp_res = $query->result();
+    //                 if(!empty($sp_res))
+    //                 {
+    //                     foreach ($sp_res as $sp_k => $sp_v) {
+    //                         // $hytbs = ();
+    //                         if($sp_v->RX_HYTCRBS==$rybs||$sp_v->RX_SJYBS==$rybs||$sp_v->RX_CBRBS==$rybs)
+    //                         {
+    //                             $qx=true;
+    //                         }
+    //                         // var_dump($sp_v->RX_SJYBS);
+    //                         // var_dump($sp_v->RX->CBRBS);
+    
+    //                     }
+    
+    //                 }
+    //                 $ah_str = (($qx)?('；<a href="'.base_url().'index.php/caseDetail/spcaseDetail?AH='.$an_hao.'&CASE_TYPE='.$val['CASE_TYPE'].'" >'.$val['DO_AH'].'</a>；'):('；'.$val['DO_AH'].'；'));
+    //             }else{
+    //                 $sql = "SELECT CBR,AJXQURL FROM zx_case_detail WHERE AH = '".$val['DO_AH']."'";
+    //                 $query = $this->db->query($sql);
+    //                 $zx_res = $query->row();
+    //                 if(!empty($zx_res))
+    //                 {
+    //                     if($zx_res->CBR==$rybs)
+    //                     {
+    //                         $qx=true;
+    //                     }
+    //                     $URL=$zx_res->AJXQURL;
+    //                 }
+    //                 $ah_str = (($qx)?('；<a href="'.$URL.'" target="_blank" >'.$val['DO_AH'].'</a>；'):('；'.$val['DO_AH'].'；'));
+    //             }
+    
+    //             $detail_info .= ($k+1)."、".$val['COURT_NAME'].$ah_str.(($val['LA_DATE']==NULL)?'无立案时间':$val['LA_DATE']).'；'.$val['AN_REASON'].'；'.(($val['BZXR_NAME']==NULL)?'无被执行人':$val['BZXR_NAME']).'；标的：'.$val['BD'].'万元；备注：'.$val['NOTE']."<br><div style='position:absolute;bottom:0px;height：30px;width:90%;padding-top:10px;border-top:1px solid;'>陪审员：".$psy."；执行员：".$zxy."；网格员：".$wgy."</div>";
+    //             $case_num+=1;
+    //         }
+    //         $res3[$key]['detail_info'] = $detail_info;
+    //         $res3[$key]['case_num'] = '未结：'.$case_num.' 件';
+    //     }
+    //     $data = array();
+    //     $data['point']=$res2;
+    //     $data['region_data'] = $res;
+    //     $data['address'] = $res3;
+    //     return $data;
+    // }
     public function getOneRData($fjm,$showType='ALL',$currPage=0,$perPageNum=0)//废弃旧的getOneRegionData
     {
         $ADDRESS=array();
@@ -184,7 +184,29 @@ class map_case_model extends CI_Model {
         }
         if($showType=='ALL'){
             // $sql="SELECT * FROM  {$type}_ajxx  where fjm = '{$showTypeVal}' ORDER BY s DESC ";
-            $sql=" SELECT * from {$type}_dsr p left join  (SELECT ajbs,larq,ah,fjm FROM  {$type}_ajxx  where fjm = '{$showTypeVal}' ORDER BY s DESC) aj on aj.ajbs=p.ajbs where aj.fjm='{$showTypeVal}'";
+            // $sql=" SELECT * from {$type}_dsr p left join  (SELECT ajbs,larq,ah,fjm FROM  {$type}_ajxx  where fjm = '{$showTypeVal}' ORDER BY s DESC) aj on aj.ajbs=p.ajbs where aj.fjm='{$showTypeVal}'";
+            $sql="SELECT
+            *
+            FROM
+            (
+            SELECT
+            *
+            FROM
+            {$type}_ajxx
+            WHERE
+            ajzt != '已经归档'
+            AND ajzt != '已经结案'
+            AND fjm='{$showTypeVal}'
+            ) a
+            LEFT JOIN (
+            SELECT
+            *
+            FROM
+            {$type}_dsr
+            ) b ON a.ajbs = b.ajbs
+            WHERE
+            a.ajzt != '已经归档'
+            AND a.ajzt != '已经结案' AND b.dsr_id IS NOT NULL";
         }elseif($showType=='AJ_TYPE'){
             $currPage = (int)$currPage;
             $start = ($currPage-1)*$perPageNum;
@@ -223,28 +245,19 @@ class map_case_model extends CI_Model {
                 $ajbs = (!empty($val->ajbs)?$val->ajbs:'');
                 // $point = $this->get_point();//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
                 $bz_info='';
-                if((int)$val->gis_id!=0)
-                {
-                    $point = $this->regionmatch->getPointById($val->gis_id);
-                }else{
-                    $point = array();
-                }
-                
-                // $point = array('x'=>1,'y'=>1,'gisId'=>1);//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
-                // 通过gis_id查询网格员以及调解员
-                // $sql = "(SELECT gis_id,person_id from person_add_lib WHERE gis_id=".$val->gis_id.") ad LEFT JOIN (SELECT id,name from person) p ON ad.person_id=p.id";
-                // $query = $this->db->query($sql);
-                // $person_arr = $query->result();
-                
+                $point = array();
+                $point = array(
+                'x'=>(!empty($val->POINT_X))?$val->POINT_X:'',
+                'y'=>(!empty($val->POINT_Y))?$val->POINT_Y:''
+                );
                 // if((int)$val->gis_id!=0)
                 // {
-                    // var_dump((int)$val->gis_id);
-                    // $person_arr = $this->regionmatch->getTWByGis($val->gis_id);
+                //     $point = $this->regionmatch->getPointById($val->gis_id);
+                // }else{
+                //     $point = array();
                 // }
                 
                 
-                // $tjy = (empty($person_arr['tjy']))?'无':$person_arr['tjystr'];
-                // $wgy = (empty($person_arr['wgy']))?'无':$person_arr['wgystr'];
                 if(!empty($val->larq))
                 {
                     $larq = explode('-',$val->larq);
@@ -257,32 +270,12 @@ class map_case_model extends CI_Model {
                 $mz = (isset($val->mz)&&!empty($val->mz))?$val->mz:'民族：无';
                 $sfzh = (isset($val->sfzh))?$val->sfzh:'无';
                 $lxdh = (isset($val->lxdh))?$val->lxdh:'无';
-                // 当事人类型
-                // $frdb='';
-                // $res_jgdm='';
-                // if($val->dsr_type=='法人'){
-                //     $frdb = (!empty($val->frdb))?($val->dsr_type.'：'.$val->frdb):'法人名称：无 ';
-                //     // 法人机构代码
-                //     if(!empty($ajbs)){
-                //         $sql = "SELECT ZZJGDM FROM `ajdsrxx` where LXMC='法人' and ajbs={$ajbs} and DSRMC='".$val->xm."'";
-                //         $query_fr = $this->sjzx->query($sql);
-                //         $res_jgdm_o = $query_fr->row();
-                //         if(!empty($res_jgdm_o))
-                //         {
-                //             $res_jgdm = $res_jgdm_o->ZZJGDM;
-                //             $res_jgdm = ' &nbsp;&nbsp;法人机构代码：'.$res_jgdm;
-                //         }else{
-                //             $res_jgdm = ' &nbsp;&nbsp;机构代码：无';
-                //         }
-                //     }
-                    
-                // }
                 $bz_info .= $i.'、'.$val->ah.'<br>立案日期：'.$larq.'<br>当事人：'.$val->xm.'('.$ssdw.')、'.$xb.'、'.$mz.'、身份证号：'.$sfzh.'、联系电话：'.$lxdh."<br>";
                 $ADDRESS[$ssdw][]=array(
-                    'AJ_TYPE'=>$type,
-                    'AJBS'=>$ajbs,
-                    'DATA_TYPE'=>'DSR',
-                    'DATA_ID'=>$val->dsr_id,
+                'AJ_TYPE'=>$type,
+                'AJBS'=>$ajbs,
+                'DATA_TYPE'=>'DSR',
+                'DATA_ID'=>$val->dsr_id,
                 'ADD_TYPE'=>$ssdw,
                 'POINT'=>$point,
                 'NAME'=>$val->xm,
@@ -293,28 +286,6 @@ class map_case_model extends CI_Model {
                 $i++;
             }
         }
-        // // 财产地址
-        // $sql = "SELECT * FROM {$type}_ccszd WHERE ajbs='{$ajbs}'";
-        // $query = $this->ajxq->query($sql);
-        // $ccszd = $query->result();
-        // if(!empty($ccszd)){
-        //     $i=1;
-        //     foreach ($ccszd as $k => $val) {
-        //         // $point = array('x'=>1,'y'=>1,'gisId'=>1);//通过地址得到坐标,返回一个数组array('x'=>232,'y'=>123);
-        //         $point = $this->regionmatch->getPointById($val->gis_id);
-        //         $ADDRESS['财产'][]=array(
-        //         'ADD_TYPE'=>'财产',//财产
-        //         'POINT'=>$point,
-        //         'NAME'=>$val->ccdz,
-        //         'ADD_NAME'=>$val->ccdz,
-        //         'BZ_BOTTOM'=>'',
-        //         'BZ_INFO'=>$i.'、'.$value->ah.'<br>立案日期：'.$value->larq.'<br>财产类型：'.$val->cclx
-        //         );
-        //         $i++;
-        //     }
-        // }
-        
-        // }
         $aj_p_num=count($ADDRESS);//坐标数
         $data = array(
         'AJ_NUM'=>$aj_num,
@@ -358,8 +329,8 @@ class map_case_model extends CI_Model {
         $person_arr=array();
         // if($row->gis_id!=0)
         // {
-            // $person_arr = $this->regionmatch->getTWByGis($row->gis_id);
-            $person_arr = $this->regionmatch->get_wgy_tjy($dsr_id,$aj_type);
+        // $person_arr = $this->regionmatch->getTWByGis($row->gis_id);
+        $person_arr = $this->regionmatch->get_wgy_tjy($dsr_id,$aj_type);
         // }
         if(empty($person_arr['tjy'])||!isset($person_arr['tjy']))
         {
@@ -388,7 +359,7 @@ class map_case_model extends CI_Model {
                     // {
                     //     $wgy ='<span style="cursor:pointer;" onclick="get_person_info(1234,\''.$row->xxdz.'\')">唐上辉、</span>';
                     // }else{
-                        $wgy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['wgy']['id'][$kt].',\''.$row->xxdz.'\',\''.$aj_type.'\',\''.$ajbs.'\')">'.$valt.'、</span>';
+                    $wgy.='<span style="cursor:pointer;" onclick="get_person_info('.$person_arr['wgy']['id'][$kt].',\''.$row->xxdz.'\',\''.$aj_type.'\',\''.$ajbs.'\')">'.$valt.'、</span>';
                     // }
                 }else{
                     $wgy.='<span style="cursor:pointer;" onclick="layer.alert(\'您没有权限查看该人员信息\')">'.$valt.'、</span>';
@@ -407,14 +378,14 @@ class map_case_model extends CI_Model {
     //     $res=$query->row();
     //     var_dump($res);
     // }
-    public function getUnthisArea()
-    {
-        $sql = 'SELECT * FROM map_case WHERE THIS_AREA=0';
-        $query = $this->db->query($sql);
-        $res = $query->result_array();
-        // var_dump($res);die();
-        return $res;
-    }
+    // public function getUnthisArea()
+    // {
+    //     $sql = 'SELECT * FROM map_case WHERE THIS_AREA=0';
+    //     $query = $this->db->query($sql);
+    //     $res = $query->result_array();
+    //     // var_dump($res);die();
+    //     return $res;
+    // }
     //搜索
     public function searchCase($val,$type)
     {
@@ -575,7 +546,7 @@ class map_case_model extends CI_Model {
             return '删除失败，没有该案号';
         }
     }
-    ///获取个人其他信息
+        ///获取个人其他信息
     public function getPersonOtherInfo($pId)
     {
         if(!empty($pId)){
@@ -588,18 +559,19 @@ class map_case_model extends CI_Model {
             $query = $this->db->query($sql);
             $nationoption = $query->result_array();
             if(!empty($res)){
-                $sql = "SELECT a.gis_id, b.xian, b.village, b.cun FROM person_add_lib AS a LEFT JOIN cz_gis_library AS b ON a.gis_id = b.id WHERE person_id = ? AND b.xian IS NOT NULL ";
+                $sql = "SELECT gis_id, county, town, village FROM person_add_lib  WHERE person_id = ? AND county IS NOT NULL limit 1";
                 $query = $this->db->query($sql, array($pId));
                 $result = $query->result_array();
                 if (!empty($result))
                 {
                     foreach ($result as $key => $value) {
                         $gis_id .= $value['gis_id'].",";
-                        $gis_name .= $value['xian'].$value['village'].$value['cun'].",";
+                        $gis_name .= $value['county'].$value['town'].$value['village'].",";
                     }
                 }
+                $photo_url = (empty($res->photo_url))?"photo.jpg":$res->photo_url;
                 $data = array(
-                'photo'=>$res->photo_url,
+                'photo'=>$photo_url,
                 'photo_type'=>$res->photo_type,
                 'gis_id'=>$gis_id,
                 'gis_name'=>$gis_name,
@@ -665,12 +637,12 @@ class map_case_model extends CI_Model {
                     $gis_id_arr = explode(",", $gis_id);
                     foreach ($gis_id_arr as $key => $value)
                     {
-                        $this->insertlib($value, $result);
+                        //$this->insertlib($value, $result);
                     }
                 }
                 else
                 {
-                    $this->insertlib($gis_id, $result);
+                    //$this->insertlib($gis_id, $result);
                 }
             }
         }
@@ -685,12 +657,12 @@ class map_case_model extends CI_Model {
                     $gis_id_arr = explode(",", $gis_id);
                     foreach ($gis_id_arr as $key => $value)
                     {
-                        $this->insertlib($value, $pId);
+                        //$this->insertlib($value, $pId);
                     }
                 }
                 else
                 {
-                    $this->insertlib($gis_id, $pId);
+                   // $this->insertlib($gis_id, $pId);
                 }
             }
         }
@@ -709,15 +681,16 @@ class map_case_model extends CI_Model {
     public function insertlib($gis_id, $pId)
     {
         $sql = "SELECT COUNT(0) AS total FROM person_add_lib WHERE gis_id = ? AND person_id = ?";
+        //echo $sql;die();
         $query = $this->db->query($sql, array($gis_id, $pId));
         $row = $query->row_array();
         if ($row['total'] == 0) {
-            $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID = ?";
+            $sql = "SELECT ADDRESS,xian,village,cun,tun FROM cz_gis_library WHERE ID = ?";
             $query = $this->db->query($sql,array($gis_id));
             $row = $query->row_array();
-            $sql = "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES(?,?,?)";
+            $sql = "INSERT INTO person_add_lib (gis_id, address, person_id, county, town, village, tun) VALUES(?,?,?,?,?,?,?)";
             //echo "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES({$gis_id},'{$row['ADDRESS']}',{$pId})";die();
-            $query = $this->db->query($sql, array($gis_id,$row['ADDRESS'],$pId));
+            $query = $this->db->query($sql, array($gis_id,$row['ADDRESS'],$pId,$row['xian'],$row['village'],$row['cun'],$row['tun']));
         }
     }
     //删除人员
@@ -727,74 +700,74 @@ class map_case_model extends CI_Model {
         $query = $this->db->query($sql);
         return $query;
     }
-    //人员信息分页
-    public function showPersonList($page,$perPageNum,$searchType,$typeVal)
-    {
-        $page = (int)$page;
-        $start = ($page-1)*$perPageNum;
-        if($searchType=='ALL')
-        {
-            $sql = "SELECT * FROM cz_person LIMIT $start,$perPageNum";
-        }elseif($searchType=='R_ID'){
-            $sql = "SELECT * FROM cz_person WHERE {$searchType} = '{$typeVal}' LIMIT $start,$perPageNum";
-        }elseif($searchType=='USER_NAME')
-        {
-            $sql = "SELECT * FROM cz_person WHERE {$searchType} LIKE '%{$typeVal}%' LIMIT $start,$perPageNum";
-        }
-        $query=$this->db->query($sql);
-        $res = $query->result();
-        $data = array();
-        foreach ($res as $key => $value) {
-            if(!empty($value->GIS_ID)){
-                $add =$this->regionmatch->idtoregionname($value->GIS_ID);
-            }else{
-                $add = '无';
-            }
+    // //人员信息分页
+    // public function showPersonList($page,$perPageNum,$searchType,$typeVal)
+    // {
+    //     $page = (int)$page;
+    //     $start = ($page-1)*$perPageNum;
+    //     if($searchType=='ALL')
+    //     {
+    //         $sql = "SELECT * FROM cz_person LIMIT $start,$perPageNum";
+    //     }elseif($searchType=='R_ID'){
+    //         $sql = "SELECT * FROM cz_person WHERE {$searchType} = '{$typeVal}' LIMIT $start,$perPageNum";
+    //     }elseif($searchType=='USER_NAME')
+    //     {
+    //         $sql = "SELECT * FROM cz_person WHERE {$searchType} LIKE '%{$typeVal}%' LIMIT $start,$perPageNum";
+    //     }
+    //     $query=$this->db->query($sql);
+    //     $res = $query->result();
+    //     $data = array();
+    //     foreach ($res as $key => $value) {
+    //         if(!empty($value->GIS_ID)){
+    //             $add =$this->regionmatch->idtoregionname($value->GIS_ID);
+    //         }else{
+    //             $add = '无';
+    //         }
             
-            $sex = ($value->USER_SEX=='male')?'男':'女';
-            $gisId = ($value->GIS_ID==NULL)?'无':$value->GIS_ID;
-            $phone = ($value->USER_PHONE==0)?'':$value->USER_PHONE;
-            $age = ($value->USER_AGE==0)?'':$value->USER_AGE;
-            $data[] = array(
-            'ID'=>$value->ID,
-            'ADDRESS'=>$add,
-            'GIS_ID'=>$value->GIS_ID,
-            'USER_EMAIL'=>$value->USER_EMAIL,
-            'USER_NAME'=>$value->USER_NAME,
-            'USER_SEX'=>$sex,
-            'USER_AGE'=>$age,
-            'USER_DUTY'=>$value->USER_DUTY,
-            'USER_PHONE'=>$phone,
-            'PHOTO_ID'=>$value->PHOTO_ID
-            );
-        }
-        return $data;
-    }
-    //展示总页数
-    public function showPageNum($type='ALL',$val='ALL')
-    {
-        if($type=='ALL')
-        {
-            $sql = "SELECT id FROM cz_person";
-        }elseif($type=='USER_NAME'){
-            $sql = "SELECT id FROM cz_person WHERE USER_NAME='{$val}'";
-        }elseif($type=='CASE')
-        {
-            $sql = "SELECT id FROM map_case";
-        }
-        $query=$this->db->query($sql);
-        $res = count($query->result());
-        return $res;
-    }
-    //执行导入人员表
-    public function sqlTabl($sql)
-    {
-        $query = $this->db->query($sql);
-        if($this->db->affected_rows()==0)
-        return '插入失败，请按照模板文件格式插入';
-        else
-            return $query;
-    }
+    //         $sex = ($value->USER_SEX=='male')?'男':'女';
+    //         $gisId = ($value->GIS_ID==NULL)?'无':$value->GIS_ID;
+    //         $phone = ($value->USER_PHONE==0)?'':$value->USER_PHONE;
+    //         $age = ($value->USER_AGE==0)?'':$value->USER_AGE;
+    //         $data[] = array(
+    //         'ID'=>$value->ID,
+    //         'ADDRESS'=>$add,
+    //         'GIS_ID'=>$value->GIS_ID,
+    //         'USER_EMAIL'=>$value->USER_EMAIL,
+    //         'USER_NAME'=>$value->USER_NAME,
+    //         'USER_SEX'=>$sex,
+    //         'USER_AGE'=>$age,
+    //         'USER_DUTY'=>$value->USER_DUTY,
+    //         'USER_PHONE'=>$phone,
+    //         'PHOTO_ID'=>$value->PHOTO_ID
+    //         );
+    //     }
+    //     return $data;
+    // }
+    // //展示总页数
+    // public function showPageNum($type='ALL',$val='ALL')
+    // {
+    //     if($type=='ALL')
+    //     {
+    //         $sql = "SELECT id FROM cz_person";
+    //     }elseif($type=='USER_NAME'){
+    //         $sql = "SELECT id FROM cz_person WHERE USER_NAME='{$val}'";
+    //     }elseif($type=='CASE')
+    //     {
+    //         $sql = "SELECT id FROM map_case";
+    //     }
+    //     $query=$this->db->query($sql);
+    //     $res = count($query->result());
+    //     return $res;
+    // }
+    // //执行导入人员表
+    // public function sqlTabl($sql)
+    // {
+    //     $query = $this->db->query($sql);
+    //     if($this->db->affected_rows()==0)
+    //     return '插入失败，请按照模板文件格式插入';
+    //     else
+    //         return $query;
+    // }
     //查询人员
     public function searchPerson($user_name)
     {
@@ -929,53 +902,110 @@ public function showCaseList($page,$perPageNum,$searchType,$typeVal)
     }
     return $data;
 }
-public function indexShowCaseList($currpage,$perPageNum,$fjm,$case_type='ALL'){
+public function indexShowCaseList($currpage,$perPageNum,$fjm,$case_type,$show_type,$show_search = ""){
+    $perPageNum = (int)$perPageNum;
     $currpage = (int)$currpage;
     $start = ($currpage-1)*$perPageNum;
-    if($case_type=='ALL'){
-        $perPageNum = (int)$perPageNum;
-        if ($_SESSION['user_qx_level'] != 1) {
-            $sql = "(SELECT a.ah, a.ajzt, a.larq,a.s, a.ajbs FROM sp_ajxx AS a LEFT JOIN sp_hytcy AS b ON a.ajbs = b.ajbs WHERE b.rybs = ?   ) union all (SELECT c.ah, c.ajzt, c.larq, c.ajbs,c.s FROM zx_ajxx AS c LEFT JOIN zx_hytcy AS d ON c.ajbs = d.ajbs  WHERE d.rybs = ?  )  ORDER BY s DESC,larq DESC LIMIT ?,?";
-            $query = $this->ajxq->query($sql, array($_SESSION['user_rybs'],  $_SESSION['user_rybs'],  $start, $perPageNum));
-            $sql = "select sum(total) as count from ((SELECT count(0) as total FROM sp_ajxx AS a LEFT JOIN sp_hytcy AS b ON a.ajbs = b.ajbs WHERE b.rybs = ?  ) union all (SELECT count(0) as total FROM zx_ajxx AS c LEFT JOIN zx_hytcy AS d ON c.ajbs = d.ajbs  WHERE d.rybs = ?  ))t";
-            $query_count = $this->ajxq->query($sql, array($_SESSION['user_rybs'],  $_SESSION['user_rybs']));
+    $sp_sql_status = " 1 = 1 ";
+    $zx_sql_status = " 1 = 1 ";
+    $rybs = $_SESSION['user_rybs'];
+    if($_SESSION['user_qx_level'] == 1){
+        if($case_type == "ALL"){
+            $sp_sql_status .= " AND sp_ajxx.fjm = '{$fjm}' ";
+            $zx_sql_status .= " AND zx_ajxx.fjm = '{$fjm}' ";
+        }
+        elseif($case_type == "sp"){
+            $sp_sql_status .= " AND sp_ajxx.fjm = '{$fjm}' ";
         }
         else{
-            $sql = "(SELECT ah, ajzt,s, larq, ajbs FROM sp_ajxx WHERE  fjm=? ) union all (SELECT ah, ajzt,s, larq, ajbs FROM zx_ajxx  WHERE  fjm=? )  ORDER BY s DESC,larq DESC LIMIT ?,?";
-            $query = $this->ajxq->query($sql, array($fjm, $fjm, $start, $perPageNum));
-            $sql = "select sum(total) as count from ((SELECT count(0) as total FROM sp_ajxx WHERE  fjm=? ) union all (SELECT count(0) as total FROM zx_ajxx  WHERE  fjm=? ))t";
-            $query_count = $this->ajxq->query($sql, array($fjm, $fjm));
+            $zx_sql_status .= " AND zx_ajxx.fjm = '{$fjm}' ";
         }
-        
-        $res['result'] = $query->result();
-        $res['pagecount'] = $query_count->row();
     }
-    return $res;
+    else{
+        if($case_type == "ALL"){
+            $sp_sql_status .= " AND sp_hytcy.rybs = '{$rybs}' ";
+            $zx_sql_status .= " AND zx_hytcy.rybs = '{$rybs}' ";
+        }
+        elseif($case_type == "sp"){
+            $sp_sql_status .= " AND sp_hytcy.rybs = '{$rybs}' ";
+        }
+        else{
+            $zx_sql_status .= " AND zx_hytcy.rybs = '{$rybs}' ";
+        }
+    }
+    if($show_search != ""){
+        switch($show_type){
+            case "ah":
+                if($case_type == "ALL"){
+                $sp_sql_status .= " AND sp_ajxx.ah like '%{$show_search}%' ";
+                $zx_sql_status .= " AND zx_ajxx.ah like '%{$show_search}%' ";
+            }
+            elseif($case_type == "sp"){
+                $sp_sql_status .= " AND sp_ajxx.ah  like '%{$show_search}%' ";
+            }
+            else{
+                $zx_sql_status .= " AND zx_ajxx.ah like '%{$show_search}%' ";
+            }
+            break;
+        case "dsr":
+            if($case_type == "ALL"){
+            $sp_dsr = "(SELECT ajbs FROM sp_dsr WHERE xm = '{$show_search}')";
+            $zx_dsr = "(SELECT ajbs FROM sp_dsr WHERE xm = '{$show_search}')";
+            $sp_sql_status .= " AND sp_ajxx.ajbs in {$sp_dsr} ";
+            $zx_sql_status .= " AND zx_ajxx.ajbs in {$zx_dsr} ";
+        }
+        elseif($case_type == "sp"){
+            $sp_dsr = "(SELECT ajbs FROM sp_dsr WHERE xm = '{$show_search}')";
+            $sp_sql_status .= " AND sp_ajxx.ajbs in '{$sp_dsr}' ";
+        }
+        else{
+            $zx_dsr = "(SELECT ajbs FROM sp_dsr WHERE xm = '{$show_search}')";
+            $zx_sql_status .= " AND sp_ajxx.ajbs in '{$sp_dsr}' ";
+        }
+        break;
+    case "larq":
+        if($case_type == "ALL"){
+        $sp_sql_status .= " AND sp_ajxx.larq = '{$show_search}' ";
+        $zx_sql_status .= " AND zx_ajxx.larq = '{$show_search}' ";
+    }
+    elseif($case_type == "sp"){
+        $sp_sql_status .= " AND sp_ajxx.larq  = '{$show_search}' ";
+    }
+    else{
+        $zx_sql_status .= " AND zx_ajxx.larq = '{$show_search}' ";
+    }
+    break;
 }
-public function indexShowPageNum($type,$val,$fjm='')
-{
-    $num=0;
-    if($type=='CASE'&&$fjm!=''){
-        if($val=='ALL'){
-            $sql = "(SELECT aj_id FROM sp_ajxx WHERE fjm='{$fjm}' ORDER BY s DESC ) union all (SELECT aj_id FROM zx_ajxx WHERE fjm='{$fjm}' ORDER BY s DESC ) ";
-            $query = $this->ajxq->query($sql);
-            $res = $query->result();
-            $num = count($res);
-        }
-        elseif($val=='SP'){
-            $sql = "SELECT aj_id FROM sp_ajxx WHERE fjm='{$fjm}'";
-            $query = $this->ajxq->query($sql);
-            $res = $query->result();
-            $num = count($res);
-        }elseif($val=='ZX'){
-            $sql = "SELECT aj_id FROM zx_ajxx WHERE fjm='{$fjm}'";
-            $query = $this->ajxq->query($sql);
-            $res = $query->result();
-            $num = count($res);
-        }
-        
-    }
-    return $num;
+}
+
+if($case_type == "ALL"){
+    $sql = "(SELECT sp_ajxx.ah, sp_ajxx.ajzt, sp_ajxx.larq,sp_ajxx.ajbs,sp_ajxx.s FROM sp_ajxx LEFT JOIN sp_hytcy ON sp_ajxx.ajbs = sp_hytcy.ajbs WHERE {$sp_sql_status} AND ajzt !='已经结案' AND ajzt !='已经归档' AND ajzt !='' GROUP BY sp_ajxx.ajbs ) union all (SELECT zx_ajxx.ah, zx_ajxx.ajzt, zx_ajxx.larq, zx_ajxx.ajbs,zx_ajxx.s FROM zx_ajxx LEFT JOIN zx_hytcy ON zx_ajxx.ajbs = zx_hytcy.ajbs  WHERE {$zx_sql_status} AND ajzt = '正在执行' GROUP BY zx_ajxx.ajbs )   ORDER BY s DESC,larq DESC LIMIT ?,?";
+    //echo $sql;die();
+    $query = $this->ajxq->query($sql, array($start, $perPageNum));
+    $sql = "select sum(total) as count from ((SELECT count(DISTINCT(sp_ajxx.ajbs)) as total FROM sp_ajxx LEFT JOIN sp_hytcy ON sp_ajxx.ajbs = sp_hytcy.ajbs WHERE {$sp_sql_status}  AND ajzt !='已经结案' AND ajzt!='已经归档' AND ajzt !='' ) union all (SELECT count(DISTINCT(zx_ajxx.ajbs)) as total FROM zx_ajxx LEFT JOIN zx_hytcy ON zx_ajxx.ajbs = zx_hytcy.ajbs  WHERE {$zx_sql_status} AND ajzt = '正在执行' ))t";
+    //echo $sql;die();
+    $query_count = $this->ajxq->query($sql);
+}
+elseif($case_type == "sp"){
+    $sql = "SELECT sp_ajxx.ah, sp_ajxx.ajzt, sp_ajxx.larq,sp_ajxx.ajbs,sp_ajxx.s FROM sp_ajxx LEFT JOIN sp_hytcy ON sp_ajxx.ajbs = sp_hytcy.ajbs WHERE {$sp_sql_status} AND ajzt !='已经结案' AND ajzt !='已经归档' AND ajzt !='' GROUP BY sp_ajxx.ajbs  ORDER BY s DESC,larq DESC LIMIT ?,?";
+    //echo $sql;die();
+    $query = $this->ajxq->query($sql, array($start, $perPageNum));
+    $sql = "SELECT count(distinct(sp_hytcy.ajbs)) as count FROM sp_ajxx LEFT JOIN sp_hytcy ON sp_ajxx.ajbs = sp_hytcy.ajbs WHERE {$sp_sql_status}  AND ajzt !='已经结案' AND ajzt!='已经归档' AND ajzt !=''";
+    $query_count = $this->ajxq->query($sql);
+}
+else{
+    $sql = "SELECT zx_ajxx.ah, zx_ajxx.ajzt, zx_ajxx.larq, zx_ajxx.ajbs,zx_ajxx.s FROM zx_ajxx LEFT JOIN zx_hytcy ON zx_ajxx.ajbs = zx_hytcy.ajbs  WHERE {$zx_sql_status} AND ajzt = '正在执行' AND ajzt !='' GROUP BY zx_hytcy.ajbs  ORDER BY s DESC,larq DESC LIMIT ?,?";
+    
+    $query = $this->ajxq->query($sql, array($start, $perPageNum));
+    $sql = "SELECT count(distinct(zx_hytcy.ajbs)) as count FROM zx_ajxx LEFT JOIN zx_hytcy ON zx_ajxx.ajbs = zx_hytcy.ajbs  WHERE {$zx_sql_status} AND ajzt = '正在执行'";
+    //echo $sql;die();
+    $query_count = $this->ajxq->query($sql);
+}
+
+$res['result'] = $query->result();
+$res['pagecount'] = $query_count->row();
+
+return $res;
 }
 
 //首页法院数，法官人数以及 立案数和陪审员数等
@@ -1015,13 +1045,21 @@ public function getBaseData($type='all')
 }
 public function getAjNumAndPNum($type)//获取案件数和地点数
 {
-    $sql = "SELECT aj_id from {$type}_ajxx";
+    if($type=='zx'){
+        $sql = "SELECT ajbs from {$type}_ajxx where ajzt ='正在执行'";
+    }else{
+        $sql = "SELECT ajbs from {$type}_ajxx where ajzt !='已经归档' AND ajzt !='已经结案' AND ajzt !=''";
+    }
     $query = $this->ajxq->query($sql);
     $aj_res = $query->result();
     $aj_num = count($aj_res);
     $aj_p_num = 0;
     //dsr
-    $sql = "SELECT dsr_id from {$type}_dsr";
+    if($type=='zx'){
+        $sql = "SELECT dsr_id from {$type}_dsr where ajbs in (SELECT ajbs from {$type}_ajxx where ajzt ='正在执行')";
+    }else{
+        $sql = "SELECT dsr_id from {$type}_dsr where ajbs in (SELECT ajbs from {$type}_ajxx where ajzt !='已经归档' AND ajzt !='已经结案'  AND ajzt !='')";
+    }
     $query = $this->ajxq->query($sql);
     $aj_dsr = $query->result();
     $aj_p_num += count($aj_dsr);
@@ -1047,25 +1085,46 @@ public function getSpZxNum()
 }
 private function getAjNum($fjm,$type)
 {
-    $sql = "SELECT aj_id from {$type}_ajxx where fjm='{$fjm}'";
+    if($type=='zx'){
+        $sql = "SELECT aj_id from {$type}_ajxx where fjm='{$fjm}' AND ajzt ='正在执行'";
+    }else if($type=='sp'){
+        $sql = "SELECT aj_id from {$type}_ajxx where fjm='{$fjm}' AND ajzt !='已经结案' AND ajzt !='已经归档' AND ajzt !='' ";
+    }
     $query = $this->ajxq->query($sql);
     $aj_res = $query->result();
-    $aj_num = count($aj_res);
+    $aj_num = (!empty($aj_res))?count($aj_res):0;
     return $aj_num;
 }
 public function getPersonInfo($id)
 {
-    $sql = "SELECT * from person where id='{$id}'";
+    $sql = "SELECT
+    a.id,
+    a.`name`,
+    a.sex,
+    a.csny,
+    a.duty,
+    a.phone,
+    a.zzet,
+    a.rybs,
+    a.photo_url,
+    concat(b.county, b.town, b.village) AS address
+    FROM
+    person AS a
+    LEFT JOIN person_add_lib AS b ON a.ID = b.person_id
+    WHERE
+    a.id ={$id}
+    GROUP BY
+    a.id";
     $query = $this->db->query($sql);
     $res = $query->row();
-    $img = $res->photo;
+    // $img = $res->photo;
     // if($res->rybs=='法律顾问')
     // {
     //     $res->address = $this->regionmatch->idToRegionName($res->gis_id);
     // }
     // $res->photo_name = time();
     // $a = file_put_contents('./'.$res->photo_name.'.jpg', $img);
-    $res->photo = '';
+    // $res->photo = '';
     return $res;
 }
 

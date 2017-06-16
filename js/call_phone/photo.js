@@ -1,4 +1,4 @@
-var photo_number = "";
+var phone_number = "";
 var uMaxID = 64;
 var uPlayFileID = new Array(64);
 var uRecordID = new Array(64);
@@ -8,11 +8,15 @@ var g_interval = 0; //定时器全局变量
 var isFirefox = navigator.userAgent.toUpperCase().indexOf("FIREFOX") ? true : false;
 var isIE = navigator.userAgent.toUpperCase().indexOf("MSIE") ? true : false;
 var isChrome = navigator.userAgent.toUpperCase().indexOf("CHROME") ? true : false;
-
+// 全局拨号对象
+var Ole;
 // 状态层
 var start_i;
 var calling_i;
 var end_i;
+var note_i; //通话笔记面板
+var _r_c; //1为呼入，2为呼出
+var jt_i; //呼入时接听提示
 
 function AppendStatusEx(uID, szStatus) {
 	uID = uID + 1;
@@ -25,21 +29,29 @@ function T_GetEvent(uID, uEventType, uHandle, uResult, szdata) {
 	switch (uEventType) {
 		case BriEvent_PhoneHook: // 本地电话机摘机事件
 			AppendStatusEx(uID, "本地电话机摘机" + vValue);
+			phone_number = szdata
+			TV_EnableMic(0, TRUE);
+			TV_StartRecordFile(0, 0, phone_number);
 			break;
 		case BriEvent_PhoneDial: // 只有在本地话机摘机，没有调用软摘机时，检测到DTMF拨号
 			AppendStatusEx(uID, "本地话机拨号" + vValue);
 			break;
 		case BriEvent_PhoneHang: // 本地电话机挂机事件
 			AppendStatusEx(uID, "本地电话机挂机" + vValue);
+			TV_HangUpCtrl(0);
 			break;
 		case BriEvent_CallIn: // 外线通道来电响铃事件
 			AppendStatusEx(uID, "外线通道来电响铃事件" + vValue);
 			break;
 		case BriEvent_GetCallID: //得到来电号码
 			AppendStatusEx(uID, "得到来电号码" + vValue);
+			_r_c = 1;
+			jtdh(szdata);
 			break;
 		case BriEvent_StopCallIn: // 对方停止呼叫(产生一个未接电话)
 			AppendStatusEx(uID, "对方停止呼叫(产生一个未接电话)" + vValue);
+			layer.closeAll();
+			layer.alert('您有一个未接电话，号码：' + phone_number);
 			TV_HangUpCtrl(0);
 			break;
 		case BriEvent_DialEnd: // 调用开始拨号后，全部号码拨号结束
@@ -76,9 +88,8 @@ function T_GetEvent(uID, uEventType, uHandle, uResult, szdata) {
 			AppendStatusEx(uID, "拨号后,被叫方摘机事件" + vValue);
 			layer.close(start_i);
 			// calling_i = layer.alert('通话中...');
-
 			TV_EnableMic(0, TRUE);
-			TV_StartRecordFile(0, 0, photo_number);
+			TV_StartRecordFile(0, 0, phone_number);
 			break;
 		case BriEvent_RemoteHang: //对方挂机事件
 			AppendStatusEx(uID, "对方挂机事件" + vValue);
@@ -192,24 +203,29 @@ function I_CheckActiveX() {
 }
 
 function TV_Initialize() {
+	var canInit = false;
 	if (window.ActiveXObject) {
 		try {
-			var Ole = new ActiveXObject("qnviccub.qnviccub");
+			Ole = new ActiveXObject("qnviccub.qnviccub");
 		} catch (e) {
 			AppendStatus("未安装ACTIVEX,请使用regsvr32 qnviccub.dll先注册/或者开发包bin目录'组件注册'");
 		}
 	} else {
-		g_interval = setInterval(TV_GetEvent, "200");
+		if (Ole) {
+			g_interval = setInterval(TV_GetEvent, "200");
+		} else {
+			layer.alert('浏览器无法打开ActiveX，这将导致无法使用通话功能。请更换为IE浏览器或者用360兼容模式打开');
+		}
 	}
 	//var qnv = document.getElementById('qnviccub');
 	//	qnv.attachEvent("OnQnvEvent", T_GetEvent);   	
-
 
 	if (qnviccub.QNV_DevInfo(0, QNV_DEVINFO_GETCHANNELS) <= 0) {
 		qnviccub.QNV_OpenDevice(0, 0, 0);
 		//初始化状态控制
 		var channels = qnviccub.QNV_DevInfo(0, QNV_DEVINFO_GETCHANNELS);
 		if (channels > 0) {
+			canInit = true;
 			for (j = 0; j < channels; j++) {
 				TV_SetParam(j, QNV_PARAM_AM_LINEIN, 5); //把输入能量增益调为5
 			}
@@ -218,6 +234,7 @@ function TV_Initialize() {
 			AppendStatus("打开设备成功 通道数:" + channels + " 序列号:" + qnviccub.QNV_DevInfo(0, QNV_DEVINFO_GETSERIAL) + " 设备类型:" + qnviccub.QNV_DevInfo(0, QNV_DEVINFO_GETTYPE) + " ver:" + qnviccub.QNV_DevInfo(0, QNV_DEVINFO_FILEVERSION));
 		} else {
 			AppendStatus("打开设备失败,请检查设备是否已经插入并安装了驱动,并且没有其它程序已经打开设备");
+			layer.alert('打开设备失败,请检查设备是否已经插入并安装了驱动,并且没有其它程序已经打开设备');
 		}
 		//初始化变量
 		for (i = 0; i < uMaxID; i = i + 1) {
@@ -225,8 +242,10 @@ function TV_Initialize() {
 			uRecordID[i] = -1;
 		}
 	} else {
+		canInit = true;
 		AppendStatus("设备已经被打开，不需要重复打开");
 	}
+	return canInit;
 }
 
 function TV_GetEvent() {
@@ -300,6 +319,7 @@ function TV_StartDial(uID, szCode) { //正常拨号必须使用 DIALTYPE_DTMF
 		AppendStatusEx(uID, "开始拨号:" + szCode);
 
 		start_i = layer.alert('开始拨号...');
+		_r_c = 2;
 		callIsEnd = 0;
 		return true;
 	}
@@ -322,14 +342,14 @@ function TV_HangUpCtrl(uID) {
 	TV_EnableMic(0, FALSE);
 	TV_EnableLine2Spk(0, FALSE);
 	TV_EnableHook(uID, FALSE);
-	photo_number = "";
+	// phone_number = "";
 	if (callIsEnd == 0) {
 		callIsEnd = 1;
 		layer.alert('通话结束');
 	}
-	console.log(callIsEnd);
+
 	//关闭设备
-	TV_Disable();
+	// TV_Disable();
 	//挂断电话回调方法
 	end_dial();
 }
@@ -387,52 +407,68 @@ function getNowFormatDate() {
 	var currentdate = seperator1 + date.getFullYear() + seperator1 + month + seperator1 + strDate + seperator1 + date.getHours() + seperator2 + date.getMinutes() + seperator2 + date.getSeconds();
 	return currentdate;
 }
+// 主动挂机事件
+function endCalling() {
 
+}
 // 通话笔记记录面板
 function notePanel(phone, name, address, rybs, aj_type, ajbs) {
 	var date = new Date();
 	var timestamp = date.getTime();
-	var time = date.getFullYear() + '年' + date.getMonth() +1+ '月' + date.getDate() + '日';
+	var time = date.getFullYear() + '年' + (parseInt(date.getMonth()) + 1) + '月' + date.getDate() + '日';
 	time += date.getHours() + '时' + date.getMinutes() + '分' + date.getSeconds() + '秒';
 	noteLayer(phone, name, address, rybs, aj_type, ajbs, time, timestamp);
 
 }
 
 function noteLayer(phone, name, address, rybs, aj_type, ajbs, time, timestamp, id) {
-	var id = id || '';
-	layer.open({
+	phone_number = phone; //查看通话记录
+	//初始化文件数据
+	need_del_files = [];
+	files_num = 0; //文件总数
+	files_arr = [];
+	var id = id || 0;
+	note_i = layer.open({
 		type: 1,
 		title: '通话笔记',
 		skin: 'layui-layer-rim', //加上边框
-		area: ['420px', '580px'], //宽高
+		area: ['460px', '580px'], //宽高
 		closeBtn: 0,
-		btn: ['确定'],
+		btn: ['保存', '取消'],
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div style="padding:10px;" class="map-person-info-no-border">' +
-			'<ul><li>姓名：<span id="call-blxr-name">' + name + '</span>（<span id="call-blxr-type">' + rybs + '</span>）</li>' +
+		content: '<div style="padding:10px;position:relative;" class="map-person-info-no-border">' +
+			'<img id="call_status_img" style="position:absolute;right:0;top:0;width:80px;box-shadow:-5px 5px 8px #eee" src="' + weburl + 'images/cz/on_phone.gif"/>' +
+			'<ul id="record_ul"><li>姓名：<span id="call-blxr-name">' + name + '</span>（<span id="call-blxr-type">' + rybs + '</span>）</li>' +
 			'<li>电话：<span id="call-blxr-phone">' + phone + '</span></li>' +
 			'<li>地址：<span id="call-blxr-address">' + address + '</span></li>' +
 			'<li>联系时间：<span id="call-date">' + time + '</span></li>' +
 			'<li>通话笔记：<textarea type="text" class="input" style="height:80px;" id="call-note"></textarea></li>' +
 			'<li>通话结果：<textarea type="text" class="input" style="height:80px;" id="call-result"></textarea>' +
-			'<li><span class="button bg-sub button-small" style="position: relative;cursor:pointer;"><span>选择录音文件</span>' + '<input type="file" id="record-file" class="file-upload-btn" name="files[]" ></span>' +
-			'<ul id="record-files-list" class="inline-list" style="margin-left:20px;"></ul></li>' +
-			'<li><select class="input input-small " id="call-sfjt" style="display:inline-block;width:239px;margin-right:42px;height:32px;"></li>' +
+			'<li><span class="button bg-sub button-small" style="position: relative;cursor:pointer;"><span>选择录音文件</span>' + '<input type="file" id="record-file" class="file-upload-btn" name="files[]" ></span><span style="margin-left:10px;font-size:12px;color:#3D7EB8;">录音文件位于“D:\\电话录音”下</span><br>' +
+			'<ul id="record-files-list" class="inline-list" style="font-size:12px;color:#3D7EB8"></ul></li>' +
+			'<li><select class="input input-auto input-small " id="call-sfjt" style="width:239px;margin-right:32px;height:32px;">' +
 			'<option value="0">未接听</option>' +
 			'<option value="1">已接听</option>' +
 			'</select>' +
-			'<button class="button bg-dot button-small " id="note-panel-endcall" onclick="TV_HangUpCtrl(0)" style="display:inline-block;margin:4px 0;width:80px;">挂断</button></li></ul></div><script>upload_record_file(' + timestamp + ',\'' + address + '\',\'' + aj_type + '\',\'' + ajbs + '\')</script>',
+			'<input type="hidden" id="record_aj_type" />' +
+			'<input type="hidden" id="record_ajbs" />' +
+			'<input type="hidden" id="record_timestamp" />' +
+			'<input type="hidden" id="record_in_or_out" value="2" />' +
+			'<button class="button bg-dot button-small " id="note-panel-endcall" onclick="TV_HangUpCtrl(0)" style="display:inline-block;margin:4px 0;width:80px;">挂断</button></li></ul></div><script>upload_record_file(' + timestamp + ',\'' + address + '\',\'' + aj_type + '\',\'' + ajbs + '\',' + id + ')</script>',
 		yes: function (i) {
 			if ($('.delete_file_btn').length == 0 && $('#call-sfjt').val() == 1) {
 				layer.alert('请务必上传录音文件');
-			} else if ($('#call-sfjt').val() == 0 && $('.delete_file_btn').length == 0||id!='') {
+			} else if ($('#call-sfjt').val() == 0 && $('.delete_file_btn').length == 0 || id != '') {
 				insert_call_record(id, address, timestamp, files_arr, aj_type, ajbs);
 				layer.close(i);
-			} else if($('#call-sfjt').val() == 0 && $('.delete_file_btn').length == 1){
+			} else if ($('#call-sfjt').val() == 0 && $('.delete_file_btn').length == 1) {
 				layer.alert('未接听时请不要随意上传录音文件');
 			}
 
 			note_layer_i = i;
+		},
+		btn2: function (i) {
+			layer.close(i);
 		},
 		end: function () {}
 	});
@@ -444,14 +480,15 @@ var files_num = 0; //文件总数
 var files_arr = [];
 
 function upload_record_file(timestamp, address, aj_type, ajbs, id) {
-	var id = id || '';
+	var id = id || 0;
+	//如果id不为空则表示查看，此时去除通话图标
+	if (id != 0) {
+		$('#call_status_img').remove();
+	}
 	$('#record-file').fileupload({
 		url: weburl + "index.php/call_record/upload_record_file",
 		dataType: 'json',
 		autoUpload: false,
-		// singleFileUploads: false,
-		// limitMultiFileUploads: 3,
-		// maxNumberOfFiles:2,
 		drop: function (e, data) {
 			$.each(data.files, function (index, file) {　　
 				alert('Dropped file: ' + file.name);　　
@@ -478,11 +515,10 @@ function upload_record_file(timestamp, address, aj_type, ajbs, id) {
 				files_num--;
 				if (files_num == 0) { //所有文件上传后再进行数据插入
 					delete_record_file();
-					if($('#call-sfjt').val() == 0)
-					{
+					if ($('#call-sfjt').val() == 0) {
 						layer.alert('请将接听结果改为已接听');
 						files_num++;
-					}else{
+					} else {
 						insert_call_record(id, address, timestamp, files_arr, aj_type, ajbs);
 					}
 				}
@@ -501,6 +537,10 @@ function upload_record_file(timestamp, address, aj_type, ajbs, id) {
 function insert_call_record(id, address, timestamp, files_arr, aj_type, ajbs) {
 	var note = $('#call-note').val();
 	var result = $('#call-result').val();
+	var timestamp = (timestamp == undefined || timestamp == 'undefined') ? $('#record_timestamp').val() : timestamp;
+	var aj_type = (aj_type == undefined || aj_type == 'undefined') ? $('#record_aj_type').val() : aj_type; //接听时取隐藏域的值
+	var ajbs = (ajbs == undefined || ajbs == 'undefined') ? $('#record_ajbs').val() : ajbs;
+	var in_or_out = $('#record_in_or_out').val();
 	$.base64.utf8encode = true;
 	note = $.base64.encode(note);
 	result = $.base64.encode(result);
@@ -511,7 +551,7 @@ function insert_call_record(id, address, timestamp, files_arr, aj_type, ajbs) {
 			id: id,
 			name: $('#call-blxr-name').html(),
 			lxdx: $('#call-blxr-type').html(),
-			phone: $('#call-blxr-phone').html(),
+			phone: phone_number,
 			address: address,
 			date: $('#call-date').html(),
 			time: timestamp,
@@ -520,9 +560,15 @@ function insert_call_record(id, address, timestamp, files_arr, aj_type, ajbs) {
 			result: result,
 			sfjt: $('#call-sfjt').val(),
 			aj_type: aj_type,
-			ajbs: ajbs
+			ajbs: ajbs,
+			in_or_out: in_or_out
 		},
 		success: function (data) {
+			if (data == '1') {
+				layer.alert('通话记录保存成功');
+			} else {
+
+			}
 			layer.close(note_layer_i);
 		}
 	});
@@ -536,15 +582,103 @@ function delete_record_file() {
 			file_arr: need_del_files
 		},
 		success: function (data) {
+			if (data == '1') {
+				layer.alert('删除成功');
+			}
+		}
+	});
+}
 
+function push_del_file(ele, file_name) {
+	layer.confirm('是否确认删除该文件？', function (index) {
+		files_num--;
+		need_del_files.push(file_name);
+		var i = $.inArray(file_name, files_arr);
+		files_arr.splice(i, 1);
+		$(ele).parent().remove();
+		// delete_record_file();
+		layer.close(index);
+	}, function (i) {
+		layer.close(i);
+	});
+}
+//接听电话
+function jtdh(phone_num) {
+	$.ajax({
+		type: 'post',
+		url: weburl + 'index.php/call_record/get_person_by_phone',
+		data: {
+			phone: phone_num
+		},
+		dataType: 'json',
+		success: function (data) {
+			var name, address, rybs;
+			if (data.person != undefined) {
+				name = (data.person.name != null) ? data.person.name : '无';
+				address = (data.person.address != null) ? data.person.address : '无';
+				rybs = (data.person.rybs != null) ? data.person.rybs : '无';
+			} else {
+				name = address = rybs = '无';
+			}
+
+			notePanel(phone_num, name, address, rybs);
+			// 修改面板dom
+			$('#record_in_or_out').val('1');
+			var aj_select_str = '<li>相关案件：<select class="input input-small input-auto" id="record_ah" style="min-width:160px;">';
+			var aj_select_item = '';
+			$.each(data.aj, function (k, v) {
+				if (v != null) {
+					$.each(v, function (k2, v2) {
+						aj_select_item += '<option value="' + v2.ajbs + '" aj_type="' + k + '">' + v2.ah + '</option>';
+					});
+				}
+			});
+			if (aj_select_item.length == 0) {
+				aj_select_item = '<option value="" aj_type="">无</option>';
+			}
+			aj_select_str += aj_select_item + '</select></li>';
+			$('#call-note').parent().before(aj_select_str);
+			pick_up_status();
+			var ah_s = $('#record_ah');
+			$('#record_aj_type').val(ah_s.find('option').eq(0).attr('aj_type'));
+			$('#record_ajbs').val(ah_s.find('option').eq(0).val());
+			ah_s.change(function () {
+				var aj_type = $(this).find(':selected').attr('aj_type');
+				$('#record_aj_type').val(aj_type);
+				$('#record_ajbs').val($(this).val());
+			});
+			if (data.has == 0) {
+				jt_i = layer.alert(phone_num + '请求向您通话，该人员号码不在系统记录内', {
+					closeBtn: 0,
+					btn: ['接听'],
+					yes: function (index) {
+						pick_up();
+						layer.close(index);
+					}
+				});
+			} else {
+				jt_i = layer.alert(name + '（人员类型：' + rybs + '）请求向您通话', {
+					closeBtn: 0,
+					btn: ['接听'],
+					yes: function (index) {
+						pick_up();
+						layer.close(index);
+					}
+				});
+			}
 		}
 	})
 }
 
-function push_del_file(ele, file_name) {
-	files_num--;
-	need_del_files.push(file_name);
-	var i = $.inArray(file_name, files_arr);
-	files_arr.splice(i, 1);
-	$(ele).parent().remove();
+function pick_up_status() //本机已接听时，修改为已接听
+{
+	$('#call-sfjt').val('1').attr('disabled', 'disabled');
+}
+
+function pick_up() {
+	//打开耳机
+	TV_EnableLine2Spk(0, TRUE);
+	TV_EnableHook(0, TRUE);
+	TV_EnableMic(0, TRUE);
+	TV_StartRecordFile(0, 0, phone_number);
 }

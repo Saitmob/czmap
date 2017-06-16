@@ -230,6 +230,32 @@ class case_detail_model extends CI_Model {
             )";
             $query = $sjzx->query($sql,array($an_hao,$an_hao,$an_hao,$an_hao,$an_hao,$an_hao));
             $result['ajjbxx'] = $query->row_array();
+            $sql = "SELECT
+                    a.xm AS xingming,
+                    a.xb AS xingbie,
+                    a.mz AS minzu,
+                    a.ssdw AS susongdiwei,
+                    a.sfzh AS shenfengzheng,
+                    a.lxdh AS shouji,
+                    a.dsr_type AS dangshirenleixing,
+                    a.frdb AS farenmingcheng,
+                    a.ajbs,
+                    b.zzjgdm as farenjigou
+                FROM
+                    inputaj.sp_dsr AS a
+                LEFT JOIN (
+                    SELECT
+                        *
+                    FROM
+                        sjzx.ajdsrxx
+                    WHERE
+                        ajbs = ?
+                ) AS b ON a.xm = b.DSRMC
+                WHERE
+                    a.ajbs = ?
+                group by xingming";
+            $query = $sjzx->query($sql,array($an_hao, $an_hao));
+            $result['dsr'] = $query->result_array();            
         }
         else{
             $table = $type."ajjbxx";
@@ -269,6 +295,32 @@ class case_detail_model extends CI_Model {
             FROM `ysqkxx` a where a.AJBS=?";
             $query = $sjzx->query($sql,array($an_hao));
             $result['ysxx'] = $query->row_array();
+            $sql = "SELECT
+                    a.xm AS xingming,
+                    a.xb AS xingbie,
+                    a.mz AS minzu,
+                    a.ssdw AS susongdiwei,
+                    a.sfzh AS shenfengzheng,
+                    a.lxdh AS shouji,
+                    a.dsr_type AS dangshirenleixing,
+                    a.frdb AS farenmingcheng,
+                    a.ajbs,
+                    b.zzjgdm as farenjigou
+                FROM
+                    inputaj.zx_dsr AS a
+                LEFT JOIN (
+                    SELECT
+                        *
+                    FROM
+                        sjzx.ajdsrxx
+                    WHERE
+                        ajbs = ?
+                ) AS b ON a.xm = b.DSRMC
+                WHERE
+                    a.ajbs = ?
+                group by xingming";
+            $query = $sjzx->query($sql,array($an_hao, $an_hao));
+            $result['dsr'] = $query->result_array();  
         }
         return $result;
     }

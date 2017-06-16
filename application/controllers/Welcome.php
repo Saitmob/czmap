@@ -292,20 +292,13 @@ class Welcome extends CI_Controller {
         $page = $this->input->post('page');
         if(!empty($page)){
             $perPageNum = $this->input->post('perPageNum');
-            $searchType = $this->input->post('case_type');
+            $show_type = $this->input->post('show_type');
+            $show_search = $this->input->post('show_search');
+            $case_type = $this->input->post('case_type');
             $fjm = $this->input->post('fjm');
-            $res = $this->mapcase->indexShowCaseList($page,$perPageNum,$fjm,'ALL');
+            $res = $this->mapcase->indexShowCaseList($page,$perPageNum,$fjm,$case_type,$show_type,$show_search);
             echo json_encode($res);
         }
-    }
-    // 分页页数方法，废弃旧的
-    public function indexShowPageNum()
-    {
-        $type = $this->input->post('type');
-        $val = $this->input->post('val');
-        $fjm = $this->input->post('fjm');
-        $pageNum = $this->mapcase->indexShowPageNum($type,$val,$fjm);
-        echo $pageNum;
     }
     //通过案件id获取地点信息
     public function getRdataById()

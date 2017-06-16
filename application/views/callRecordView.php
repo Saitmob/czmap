@@ -38,18 +38,7 @@
   .map-person-info-no-border ul li {
     padding: 4px 0;
   }
-  /*通话面板*/
-.delete_file_btn{
-	display: inline-block;
-	padding: 3px 6px;
-	font-size: 12px;
-	color: #fff;
-	background-color: #F24646;
-	border-radius: 4px;
-	font-style: normal;
-	margin:0 3px;
-	cursor: pointer;
-}
+
 </style>
 
 <body id="text">
@@ -57,16 +46,16 @@
   </div>
   <div class="cz-container">
     <ul class="cz-nav">
-      <a href="<?=base_url()?>">
+      <a href="">
         <li>首页</li>
       </a>
       <li> > </li>
-      <li class="cur-nav">通话记录</li>
+      <li class="cur-nav">通话案件列表</li>
     </ul>
     <div class="data_list">
       <div class="ry-search-box">
-        <input type="text" class="input input-small" id="search-person-text" style="width:160px;display:inline-block;margin-right:10px;">
-        <button class="button bg-sub button-small" id="search-person-btn">查询</button>
+        <input type="text" class="input input-small" id="search-record-text" placeholder="请输入案号查询" style="width:160px;display:inline-block;margin-right:10px;">
+        <button class="button bg-sub button-small" id="search-record-btn">查询</button>
       </div>
       <!--展示类型选择-->
       <div style="margin:10px">
@@ -93,11 +82,11 @@
           <thead>
             <tr>
               <th>序号</th>
-              <th>联系人姓名</th>
-              <th>人员类型</th>
-              <th>联系号码</th>
-              <th>是否接听</th>
-              <th>联系时间</th>
+              <th>案号</th>
+              <th>立案状态</th>
+              <th>立案日期</th>
+              <th>通话记录数</th>
+              <th>操作</th>
             </tr>
           </thead>
           <tbody id="record-list-data">
