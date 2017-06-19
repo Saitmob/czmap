@@ -212,8 +212,8 @@ class map_case_model extends CI_Model {
             $start = ($currPage-1)*$perPageNum;
             $sql="SELECT * FROM  {$type}_ajxx  where fjm = '{$showTypeVal}' LIMIT {$start} {$perPageNum}";
         }elseif($showType=='AJBS'){
-            $sql=" SELECT * from {$type}_dsr p left join  (SELECT ajbs,larq,ah,fjm FROM  {$type}_ajxx  where ajbs = 
-             '{$showTypeVal}' ORDER BY s DESC) aj on aj.ajbs=p.ajbs where aj.ajbs='{$showTypeVal}'";
+            $sql=" SELECT * from {$type}_dsr p left join  (SELECT ajbs,larq,ah,fjm FROM  {$type}_ajxx  where ajbs =
+            '{$showTypeVal}' ORDER BY s DESC) aj on aj.ajbs=p.ajbs where aj.ajbs='{$showTypeVal}'";
             // $sql="SELECT * FROM  {$type}_ajxx  where ajbs='{$showTypeVal}'";
             // 拿到该案件的人员标识，更改权限
             // $sql_rybs = "SELECT rybs FROM  {$type}_hytcy  where  ajbs='{$showTypeVal}'";
@@ -386,136 +386,136 @@ class map_case_model extends CI_Model {
     //搜索
     public function searchCase($val,$type)
     {
-        if($type=='AH'){
-            $sql = "SELECT * FROM map_case WHERE DO_AH ='{$val}'";
-        }elseif($type=='ID'){
-            $sql = "SELECT * FROM map_case WHERE ID ='{$val}'";
-        }
-        $query = $this->db->query($sql);
-        $res = $query->row_array();
-        if(count($res)==0){
-            $sql = "SELECT * FROM map_case WHERE DO_AH LIKE'%{$val}%'";
-            $query = $this->db->query($sql);
-            $res = $query->row_array();
-        }
-        return $res;
+    if($type=='AH'){
+    $sql = "SELECT * FROM map_case WHERE DO_AH ='{$val}'";
+    }elseif($type=='ID'){
+    $sql = "SELECT * FROM map_case WHERE ID ='{$val}'";
+    }
+    $query = $this->db->query($sql);
+    $res = $query->row_array();
+    if(count($res)==0){
+    $sql = "SELECT * FROM map_case WHERE DO_AH LIKE'%{$val}%'";
+    $query = $this->db->query($sql);
+    $res = $query->row_array();
+    }
+    return $res;
     }
     //更新
     public function addOrUpdate($GIS_ID,$R_NAME,$ADDRESS,$POINT_X,$POINT_Y,$COURT_NAME,$DO_AH,$CASE_TYPE,$LA_DATE,$AN_REASON,$BZXR_NAME,$BD,$THIS_AREA,$NOTE)
     {
-        $result='';
-        $sql = "SELECT DO_AH FROM map_case WHERE DO_AH='{$DO_AH}'";
-        $query = $this->db->query($sql);
-        $res = $query->row();
-        if($THIS_AREA==0)
-        {
-            $GIS_ID=0;
-            $POINT_X=0;
-            $POINT_Y=0;
-            $R_ID='';
-            $R_NAME='';
-        }else{
-            $regionData = $this->regionmatch->gistorid($GIS_ID);
-            $R_ID = $regionData['R_ID'];
-            $R_NAME = $regionData['R_NAME'];
-        }
-        $this->db->trans_start();
-        if(empty($res))
-        {
-            $sql = "INSERT INTO map_case (
-            R_ID,
-            GIS_ID,
-            R_NAME,
-            ADDRESS,
-            POINT_X,
-            POINT_Y,
-            COURT_NAME,
-            DO_AH,
-            CASE_TYPE,
-            LA_DATE,
-            AN_REASON,
-            BZXR_NAME,
-            BD,
-            THIS_AREA,
-            NOTE) VALUES (
-            '{$R_ID}',
-            {$GIS_ID},
-            '{$R_NAME}',
-            '{$ADDRESS}',
-            $POINT_X,
-            $POINT_Y,
-            '{$COURT_NAME}',
-            '{$DO_AH}',
-            {$CASE_TYPE},
-            '{$LA_DATE}',
-            '{$AN_REASON}',
-            '{$BZXR_NAME}',
-            $BD,
-            $THIS_AREA,
-            '{$NOTE}'
-            )";
-            $query = $this->db->query($sql);
-            if($query)
-            {
-                $result= "插入成功";
-            }else{
-                $result= "插入失败";
-            }
-        }else{
-            $sql = "UPDATE map_case SET
-            R_ID='{$R_ID}',
-            GIS_ID={$GIS_ID},
-            R_NAME='{$R_NAME}',
-            ADDRESS='{$ADDRESS}',
-            POINT_X=$POINT_X,
-            POINT_Y=$POINT_Y,
-            COURT_NAME='{$COURT_NAME}',
-            DO_AH='{$DO_AH}',
-            LA_DATE='{$LA_DATE}',
-            AN_REASON='{$AN_REASON}',
-            BZXR_NAME='{$BZXR_NAME}',
-            BD=$BD,
-            THIS_AREA=$THIS_AREA,
-            NOTE='$NOTE' WHERE DO_AH='{$DO_AH}'";
-            if($query = $this->db->query($sql))
-            {
-                $result= "更新成功";
-            }else{
-                $result= "更新失败";
-            }
-        }
-        $sql = "select R_ID from map_case where R_ID = '{$R_ID}'";
-        $query = $this->db->query($sql);
-        $num = count($query->result_array());
-        $sql = "UPDATE region set R_TC={$num} where R_ID='{$R_ID}'";
-        $query = $this->db->query($sql);
-        //更新address表
-        $sql = "SELECT ADDRESS FROM address WHERE ADDRESS='{$ADDRESS}'";
-        $query = $this->db->query($sql);
-        $res = $query->row();
-        if(empty($res))
-        {
-            $sql = "INSERT INTO address (
-            ADDRESS,
-            POINT_X,
-            POINT_Y,
-            R_ID
-            ) VALUES (
-            '{$ADDRESS}',
-            {$POINT_X},
-            {$POINT_Y},
-            '{$R_ID}'
-            )";
-            $query = $this->db->query($sql);
-        }else{
-            $sql = "UPDATE address SET
-            POINT_X='{$POINT_X}',
-            POINT_Y='{$POINT_Y}'
-            WHERE ADDRESS='{$ADDRESS}'";
-            $query = $this->db->query($sql);
-        }
-        $this->db->trans_complete();
-        return $result;
+    $result='';
+    $sql = "SELECT DO_AH FROM map_case WHERE DO_AH='{$DO_AH}'";
+    $query = $this->db->query($sql);
+    $res = $query->row();
+    if($THIS_AREA==0)
+    {
+    $GIS_ID=0;
+    $POINT_X=0;
+    $POINT_Y=0;
+    $R_ID='';
+    $R_NAME='';
+    }else{
+    $regionData = $this->regionmatch->gistorid($GIS_ID);
+    $R_ID = $regionData['R_ID'];
+    $R_NAME = $regionData['R_NAME'];
+    }
+    $this->db->trans_start();
+    if(empty($res))
+    {
+    $sql = "INSERT INTO map_case (
+    R_ID,
+    GIS_ID,
+    R_NAME,
+    ADDRESS,
+    POINT_X,
+    POINT_Y,
+    COURT_NAME,
+    DO_AH,
+    CASE_TYPE,
+    LA_DATE,
+    AN_REASON,
+    BZXR_NAME,
+    BD,
+    THIS_AREA,
+    NOTE) VALUES (
+    '{$R_ID}',
+    {$GIS_ID},
+    '{$R_NAME}',
+    '{$ADDRESS}',
+    $POINT_X,
+    $POINT_Y,
+    '{$COURT_NAME}',
+    '{$DO_AH}',
+    {$CASE_TYPE},
+    '{$LA_DATE}',
+    '{$AN_REASON}',
+    '{$BZXR_NAME}',
+    $BD,
+    $THIS_AREA,
+    '{$NOTE}'
+    )";
+    $query = $this->db->query($sql);
+    if($query)
+    {
+    $result= "插入成功";
+    }else{
+    $result= "插入失败";
+    }
+    }else{
+    $sql = "UPDATE map_case SET
+    R_ID='{$R_ID}',
+    GIS_ID={$GIS_ID},
+    R_NAME='{$R_NAME}',
+    ADDRESS='{$ADDRESS}',
+    POINT_X=$POINT_X,
+    POINT_Y=$POINT_Y,
+    COURT_NAME='{$COURT_NAME}',
+    DO_AH='{$DO_AH}',
+    LA_DATE='{$LA_DATE}',
+    AN_REASON='{$AN_REASON}',
+    BZXR_NAME='{$BZXR_NAME}',
+    BD=$BD,
+    THIS_AREA=$THIS_AREA,
+    NOTE='$NOTE' WHERE DO_AH='{$DO_AH}'";
+    if($query = $this->db->query($sql))
+    {
+    $result= "更新成功";
+    }else{
+    $result= "更新失败";
+    }
+    }
+    $sql = "select R_ID from map_case where R_ID = '{$R_ID}'";
+    $query = $this->db->query($sql);
+    $num = count($query->result_array());
+    $sql = "UPDATE region set R_TC={$num} where R_ID='{$R_ID}'";
+    $query = $this->db->query($sql);
+    //更新address表
+    $sql = "SELECT ADDRESS FROM address WHERE ADDRESS='{$ADDRESS}'";
+    $query = $this->db->query($sql);
+    $res = $query->row();
+    if(empty($res))
+    {
+    $sql = "INSERT INTO address (
+    ADDRESS,
+    POINT_X,
+    POINT_Y,
+    R_ID
+    ) VALUES (
+    '{$ADDRESS}',
+    {$POINT_X},
+    {$POINT_Y},
+    '{$R_ID}'
+    )";
+    $query = $this->db->query($sql);
+    }else{
+    $sql = "UPDATE address SET
+    POINT_X='{$POINT_X}',
+    POINT_Y='{$POINT_Y}'
+    WHERE ADDRESS='{$ADDRESS}'";
+    $query = $this->db->query($sql);
+    }
+    $this->db->trans_complete();
+    return $result;
     }*/
     // //删除
     // public function deleteCase($an_hao)
@@ -543,7 +543,7 @@ class map_case_model extends CI_Model {
     //         return '删除失败，没有该案号';
     //     }
     // }
-        ///获取个人其他信息
+    ///获取个人其他信息
     public function getPersonOtherInfo($pId)
     {
         if(!empty($pId)){
@@ -556,14 +556,25 @@ class map_case_model extends CI_Model {
             $query = $this->db->query($sql);
             $nationoption = $query->result_array();
             if(!empty($res)){
-                $sql = "SELECT gis_id, county, town, village FROM person_add_lib  WHERE person_id = ? AND county IS NOT NULL limit 1";
+                $sql = "SELECT gis_id, xxdz,county, town, village,tun FROM person_add_lib  WHERE person_id = ? AND county IS NOT NULL limit 1";
                 $query = $this->db->query($sql, array($pId));
                 $result = $query->result_array();
                 if (!empty($result))
                 {
                     foreach ($result as $key => $value) {
-                        $gis_id .= $value['gis_id'].",";
-                        $gis_name .= $value['county'].$value['town'].$value['village'].",";
+                        //通过最小区域拿到gis_id
+                        if(empty($value['tun'])&&!empty($value['village']))
+                        {
+                            $add_name = $value['village'];
+                        }
+                        elseif(!empty($value['tun'])){
+                            $add_name = $value['tun'];
+                        }
+                        $sql_gsid = "SELECT ID,xian,village,cun,tun FROM cz_gis_library where ADDRESS=?";
+                        $query_g = $this->db->query($sql_gsid,array($add_name));
+                        $gsid_res = $query_g->row();
+                        $gis_id .= (!empty($gsid_res))?($gsid_res->ID.","):'';
+                        $gis_name .= (!empty($value['xxdz']))?($value['xxdz'].","):($gsid_res->xian.$gsid_res->village.$gsid_res->cun.$gsid_res->tun);
                     }
                 }
                 $photo_url = (empty($res->photo_url))?"photo.jpg":$res->photo_url;
@@ -628,18 +639,19 @@ class map_case_model extends CI_Model {
             $query = $this->db->query($sql, array($name,$sex,$csny,$nation,$education,$company,$ndsfd,$zzmm,$rybs,$zzet,$photo,$phototype,$phone,$duty,$gis_name));
             $result = $this->db->insert_id();
             if(!empty($gis_id)){
+                $gis_id_arr = substr($gis_id_arr,0,-1);
                 if (stripos($gis_id, ",") != "")
                 {
                     $gis_id_arr = explode(",", $gis_id);
                     $gis_id_arr = explode(",", $gis_id);
                     foreach ($gis_id_arr as $key => $value)
                     {
-                        //$this->insertlib($value, $result);
+                        $this->insertlib($value, $result);
                     }
                 }
                 else
                 {
-                    //$this->insertlib($gis_id, $result);
+                    $this->insertlib($gis_id, $result);
                 }
             }
         }
@@ -648,18 +660,23 @@ class map_case_model extends CI_Model {
             $sql = "UPDATE person SET name=?,sex=?,csny=?,nation=?,education=?,company=?,ndsfd=?,zzmm=?,rybs=?,zzet=?, photo_url = ?, photo_type = ?, phone = ?, duty = ?, address = ? WHERE ID = ?";
             $query = $this->db->query($sql,array($name, $sex, $csny, $nation, $education, $company, $ndsfd, $zzmm, $rybs, $zzet, $photo, $phototype, $phone, $duty, $gis_name, $pId));
             if(!empty($gis_id)){
+                $gis_id_arr = substr($gis_id_arr,0,-1);
                 if (stripos($gis_id, ",") != "")
                 {
+                    $gis_id_arr = substr($gis_id_arr,0,-1);
                     $gis_id_arr = explode(",", $gis_id);
                     $gis_id_arr = explode(",", $gis_id);
+                    //先删除地址表该人员的数据，再插入
+                    $sql = "DELETE FROM person_add_lib WHERE person_id=?";
+                    $query = $this->db->query($sql,array($pId));
                     foreach ($gis_id_arr as $key => $value)
                     {
-                        //$this->insertlib($value, $pId);
+                        $this->insertlib($value, $pId);
                     }
                 }
                 else
                 {
-                   // $this->insertlib($gis_id, $pId);
+                    $this->insertlib($gis_id, $pId);
                 }
             }
         }
@@ -685,9 +702,13 @@ class map_case_model extends CI_Model {
             $sql = "SELECT ADDRESS,xian,village,cun,tun FROM cz_gis_library WHERE ID = ?";
             $query = $this->db->query($sql,array($gis_id));
             $row = $query->row_array();
-            $sql = "INSERT INTO person_add_lib (gis_id, address, person_id, county, town, village, tun) VALUES(?,?,?,?,?,?,?)";
+            $xxdz = $row['xian'].$row['village'].$row['cun'].$row['tun'];
+            $sql = "INSERT INTO person_add_lib (gis_id, address, person_id,xxdz, county, town, village, tun) VALUES(?,?,?,?,?,?,?,?)";
             //echo "INSERT INTO person_add_lib (gis_id, address, person_id) VALUES({$gis_id},'{$row['ADDRESS']}',{$pId})";die();
-            $query = $this->db->query($sql, array($gis_id,$row['ADDRESS'],$pId,$row['xian'],$row['village'],$row['cun'],$row['tun']));
+            $query = $this->db->query($sql, array($gis_id,$row['ADDRESS'],$pId,$xxdz,$row['xian'],$row['village'],$row['cun'],$row['tun']));
+        }
+        else{
+            
         }
     }
     //删除人员
@@ -695,6 +716,8 @@ class map_case_model extends CI_Model {
     {
         $sql = "DELETE FROM person WHERE ID={$id}";
         $query = $this->db->query($sql);
+        $sql = "DELETE FROM person_add_lib WHERE person_id=?";
+        $query = $this->db->query($sql,array($id));
         return $query;
     }
     // //人员信息分页
@@ -720,7 +743,7 @@ class map_case_model extends CI_Model {
     //         }else{
     //             $add = '无';
     //         }
-            
+    
     //         $sex = ($value->USER_SEX=='male')?'男':'女';
     //         $gisId = ($value->GIS_ID==NULL)?'无':$value->GIS_ID;
     //         $phone = ($value->USER_PHONE==0)?'':$value->USER_PHONE;
@@ -880,7 +903,7 @@ class map_case_model extends CI_Model {
 //         // }else{
 //         //     $add = '无';
 //         // }
-        
+
 //         // $sex = ($value->USER_SEX=='male')?'男':'女';
 //         // $gisId = ($value->GIS_ID==NULL)?'无':$value->GIS_ID;
 //         // $phone = ($value->USER_PHONE==0)?'':$value->USER_PHONE;

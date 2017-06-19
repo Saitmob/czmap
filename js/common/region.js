@@ -1,7 +1,7 @@
 //选择人员所属区域
 var regionSelectMultiple;
 
-function selectRegion(multiple, callbackFun, callbackFun2) {
+function selectRegion(multiple,callbackFun, callbackFun2) {//是否多选，点击节点回调，确认回调；已选选择列表在selected_gis_id_str中，自行生产
 	var zTree;
 	var demoIframe;
 	regionSelectMultiple = multiple || false; //默认不多选
@@ -90,11 +90,23 @@ function selectRegion(multiple, callbackFun, callbackFun2) {
 			console.log(c);
 		}
 	});
-
+	//将隐藏域的gis_id添加到已选择列表
+	var gis_id_arr = ($('#selected_gis_id_str').val()!='')?$('#selected_gis_id_str').val().split(','):'';
+	if(gis_id_arr!='')
+	{
+		var gis_name_arr = $('#selected_gis_name_str').val().split(',');
+		$.each(gis_id_arr,function(k,v){
+			if(v!='')
+			{
+				addSelect(v,gis_name_arr[k],callbackFun);
+			}
+		});
+	}
 }
 
 //添加区域事件
 function addSelect(id, name, callback) {
+	
 	var callback = callback || function () {};
 	if (id == '无') {
 		return false;
@@ -138,6 +150,11 @@ function deleteRegion(ele, id, callback) {
 	if ($('#editor_region_' + id).length > 0) {
 		$('#editor_region_' + id).remove();
 	}
+	var id_arr = $('#selected_gis_id_str').val().split(',');
+	var name_arr = $('#selected_gis_name_str').val().split(',');
+	var k = $.inArray(id,id_arr);
+	id_arr.splice(k,1);
+	name_arr.splice(k,1);
 }
 //删除人员
 function deleteP(ele, p_type, id, name, add) {
@@ -331,7 +348,7 @@ function select_wgy_tjy(p_type, multiple, callbackFun, callbackFun2) { //点击�
 		btn: ['确定'],
 		closeBtn: 0,
 		// content: '<div style="text-align:center;padding:10px 0;"><img src="' + weburl + '/images/baidu_map_getPointCode.png" alt=""></div>',
-		content: '<div class="panel" style="height:474px;overflow:hidden;">' +
+		content: '<div class="panel" style="height:450px;overflow:hidden;">' +
 			'<div class="panel-body" style="height:430px;box-sizing:border-box;overflow:hidden;">' +
 			'<div id="treeDemo" style="width:200px;height:100%;overflow:auto;border-right:1px solid gray;display:inline-block;" class="ztree"></div>' +
 			'<div style="width:56%;height:100%;display:inline-block;vertical-align:top;padding:0 10px">' +

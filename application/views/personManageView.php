@@ -89,7 +89,7 @@
         人员类型：
 				<select class="input input-small"   style="width:90px;display:inline-block" id="person-type-select">
           <option value="all" selected="selected">全部</option>
-          <option value="执行员">执行员</option>
+          <!--<option value="执行员">执行员</option>-->
           <option value="网格员">网格员</option>
           <option value="法律顾问">法律顾问</option>
         </select>

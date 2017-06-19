@@ -2,7 +2,7 @@
 session_start();
 $CI =& get_instance();
 $CI->load->library('phpcas');
-$CI->phpcas->client(CAS_VERSION_2_0, '192.168.1.199', 8050, '/cas');
+$CI->phpcas->client(CAS_VERSION_2_0, '147.1.6.16', 8080, '/cas');
 $CI->phpcas->setNoCasServerValidation();
 $CI->phpcas->forceAuthentication();
 if (!isset($_SESSION['isLoginProjectManage']))

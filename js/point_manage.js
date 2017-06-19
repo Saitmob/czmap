@@ -12,6 +12,7 @@ $(function () {
 
 
 function show_aj_list_panel(page, fjm) {
+	$('.ry-search-box').css('display','block');
 	$('#aj-list-data').parent().find('thead tr').html('<th>序号</th>' +
 		'<th>案号</th>' +
 		'<th>立案状态</th>' +
@@ -26,6 +27,7 @@ function show_aj_list_panel(page, fjm) {
 }
 
 function show_dsr_list_panel(ajbs, aj_type, page) {
+	$('.ry-search-box').css('display','none');
 	$('#aj-list-data').parent().find('thead tr').html('<th>序号</th>' +
 		'<th>当事人姓名</th>' +
 		'<th>诉讼地位</th>' +

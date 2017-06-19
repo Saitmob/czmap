@@ -1,4 +1,4 @@
-var weburl = 'http://localhost/czmapgit/';
+var weburl = 'http://147.1.7.45/czmapgit/';
 // var weburl = 'http://qxp.tunnel.2bdata.com/czmapn/';
 // var weburl = 'http://192.168.118.68/czmapn/';
 var CONNECT_ERROR = 0;

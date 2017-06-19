@@ -7,13 +7,14 @@ $(function () {
 			id: "#excelFile",
 			singleFileUploads: true,
 			postfix: 'xlsx,xls',
-			myData: { folder: 'project', 's_id': 0 }
-		}, function (data) {
-		}, function (data) {
+			myData: {
+				folder: 'project',
+				's_id': 0
+			}
+		}, function (data) {}, function (data) {
 			if (data.result != 1) {
 				layer.msg("上传exl失败");
-			}
-			else {
+			} else {
 				layer.msg("上传exl成功");
 			}
 		});
@@ -48,7 +49,7 @@ $(function () {
 
 	//区域查询
 	$("#person-region-select").change(function () {
-		$("#search-person-text").val(""); 
+		$("#search-person-text").val("");
 		var range = regionChange($("#person-region-select option:selected").val());
 		var persontype = $("#person-type-select option:selected").val();
 		var name = $("#search-person-text").val();
@@ -65,7 +66,7 @@ $(function () {
 	});
 });
 
-function show_list(range, persontype, name, cur_page, per_page_num)//区域，人员类型，人员名称，第几页，一页几行
+function show_list(range, persontype, name, cur_page, per_page_num) //区域，人员类型，人员名称，第几页，一页几行
 {
 	var load;
 	$.ajax({
@@ -79,7 +80,7 @@ function show_list(range, persontype, name, cur_page, per_page_num)//区域，�
 			'per_page_num': per_page_num
 		},
 		dataType: "json",
-		beforeSend:function(){
+		beforeSend: function () {
 			load = layer.load();
 		},
 		success: function (data) {
@@ -88,14 +89,14 @@ function show_list(range, persontype, name, cur_page, per_page_num)//区域，�
 			if (data.result.length > 0) {
 				$.each(data.result, function (k, v) {
 					$("#person-list-data").append(person_list_data_model);
-					$(".list-tr:last").find(".ry-option-list-btn").data("id",v.id);
+					$(".list-tr:last").find(".ry-option-list-btn").data("id", v.id);
 					$(".list-tr:last").find(".list-item-name").html(v.name);
 					$(".list-tr:last").find(".list-item-sex").html(v.sex);
 					$(".list-tr:last").find(".list-item-age").html(v.csny);
 					$(".list-tr:last").find(".list-item-duty").html(v.rybs);
 					$(".list-tr:last").find(".list-item-region").html(v.address);
 					$(".list-tr:last").find(".list-item-phone").html(v.phone);
-					$(".list-tr:last").find(".bg-red").attr("onClick","deletePerson("+v.id+")");
+					$(".list-tr:last").find(".bg-red").attr("onClick", "deletePerson(" + v.id + ")");
 				});
 				var page_num = parseInt(data.page_num);
 				laypage({
@@ -112,15 +113,14 @@ function show_list(range, persontype, name, cur_page, per_page_num)//区域，�
 						}
 					}
 				});
-			}
-			else {
+			} else {
 				layer.msg("查不到相关内容");
 			}
 		}
 	});
 }
 
-function chooseregion(){
+function chooseregion() {
 	$('.layui-layer-content .icon-map-marker').data('id', '');
 	$('.layui-layer-content .icon-map-marker').data('name', '');
 	selectRegion(true, "", changeRangeText);
@@ -198,7 +198,7 @@ function editorPerson(ele) {
 	getPersonOtherInfo(pId);
 }
 
-function getPersonOtherInfo(pId){
+function getPersonOtherInfo(pId) {
 	$.ajax({
 		type: 'post',
 		url: weburl + 'index.php/welcome/getPersonOtherInfo',
@@ -207,16 +207,16 @@ function getPersonOtherInfo(pId){
 		},
 		dataType: 'json',
 		success: function (data) {
+			$('#selected_gis_id_str').val('');
+			$('#selected_gis_name_str').val('');
 			var nation = "";
-			$.each(data.nationoption,function(k,v){
-				if(v.nation_name == "汉族" && data.nation == ""){
-					nation += "<option value='"+v.nation_name+"' selected='selected'>"+v.nation_name+"</option>";
-				}
-				else if(v.nation_name != "汉族" && v.nation_name == data.nation){
-					nation += "<option value='"+v.nation_name+"' selected='selected'>"+v.nation_name+"</option>";
-				}
-				else{
-					nation += "<option value='"+v.nation_name+"'>"+v.nation_name+"</option>";
+			$.each(data.nationoption, function (k, v) {
+				if (v.nation_name == "汉族" && data.nation == "") {
+					nation += "<option value='" + v.nation_name + "' selected='selected'>" + v.nation_name + "</option>";
+				} else if (v.nation_name != "汉族" && v.nation_name == data.nation) {
+					nation += "<option value='" + v.nation_name + "' selected='selected'>" + v.nation_name + "</option>";
+				} else {
+					nation += "<option value='" + v.nation_name + "'>" + v.nation_name + "</option>";
 				}
 			});
 			$(".layui-layer-content .editor-nation").html(nation);
@@ -234,7 +234,7 @@ function getPersonOtherInfo(pId){
 			//$('.layui-layer-content .editor-nation').val(data.nation);
 			$('.layui-layer-content .editor-education').val(data.education);
 			$('.layui-layer-content .editor-company').val(data.company);
-			var zzmm = (data.zzmm == "")?"未知":data.zzmm;
+			var zzmm = (data.zzmm == "") ? "未知" : data.zzmm;
 			$('.layui-layer-content .editor-zzmm').val(zzmm);
 			$('.layui-layer-content .editor-rybs').val(data.rybs);
 			$('.layui-layer-content .editor-duty').val(data.duty);
@@ -247,6 +247,14 @@ function getPersonOtherInfo(pId){
 				$('.layui-layer-content .icon-map-marker').data('name', data.gis_name);
 				$('.layui-layer-content .editor-address').val(data.gis_name);
 				$('.layui-layer-content .editor-select-region').unbind();
+				//存储已选择区域的gis_id
+				if ($('#selected_gis_id_str').length == 0) {
+					$('body').append('<input type="hidden" id="selected_gis_id_str" />');
+					$('body').append('<input type="hidden" id="selected_gis_name_str" />');
+				}
+
+				$('#selected_gis_id_str').val(data.gis_id);
+				$('#selected_gis_name_str').val(data.gis_name);
 				// $('.editor-select-region').on('click', function () {
 				// 	$('.layui-layer-content .editor-select-region').unbind();
 				// 	$('.layui-layer-content .icon-map-marker').data('id', "");
@@ -286,10 +294,10 @@ function savePersonInfo() {
 	var idstring = $('.layui-layer-content .icon-map-marker').data('id');
 	var namestring = $('.layui-layer-content .icon-map-marker').data('name');
 	var namearr = namestring.split(',');
-/*	if (idstring.length > 0) {
-		idstring = idstring.substring(0, idstring.length - 1);
-		var regionArr = idstring.split(',');
-	}*/
+	/*	if (idstring.length > 0) {
+			idstring = idstring.substring(0, idstring.length - 1);
+			var regionArr = idstring.split(',');
+		}*/
 	regionStr = idstring;
 	if (name == '') {
 		layer.alert('请填写姓名');
@@ -305,7 +313,7 @@ function savePersonInfo() {
 		data: {
 			'email': email,
 			'gis_id': regionStr,
-			'gis_name': namearr[namearr.length-1],
+			'gis_name': namearr[namearr.length - 1],
 			'name': name,
 			'pId': $(".layui-layer-content .ry-save-btn").data('pId'),
 			'photoId': $('.layui-layer-content .ry-photoId').val(),
@@ -315,23 +323,29 @@ function savePersonInfo() {
 			'age': age,
 			'duty': duty,
 			'phone': phone,
-			'rybs':rybs,
-			'nation':$('.layui-layer-content .editor-nation').val(),
-			'education':$('.layui-layer-content .editor-education').val(),
-			'company':$('.layui-layer-content .editor-company').val(),
-			'zzmm':$('.layui-layer-content .editor-zzmm').val(),
-			'duty':$('.layui-layer-content .editor-duty').val(),
+			'rybs': rybs,
+			'nation': $('.layui-layer-content .editor-nation').val(),
+			'education': $('.layui-layer-content .editor-education').val(),
+			'company': $('.layui-layer-content .editor-company').val(),
+			'zzmm': $('.layui-layer-content .editor-zzmm').val(),
+			'duty': $('.layui-layer-content .editor-duty').val(),
 			'intro': $('.layui-layer-content .editor-intro').val()
 		},
 		success: function (data) {
 			if (data != 2 && data != 0) {
-				layer.msg('插入成功',{time:1500,shift:-1},function(){
+				layer.msg('插入成功', {
+					time: 1500,
+					shift: -1
+				}, function () {
 					$('#ry-id').val(data),
-					show_list("all", "all", "", 1, 8);
+						show_list("all", "all", "", 1, 8);
 					layer.closeAll();
 				});
 			} else if (data == 2) {
-				layer.msg('修改成功',{time:1500,shift:-1},function(){
+				layer.msg('修改成功', {
+					time: 1500,
+					shift: -1
+				}, function () {
 					show_list("all", "all", "", 1, 8);
 					layer.closeAll();
 				});
@@ -358,16 +372,16 @@ function showPersonInfoPanel(pId) {
 				return false; //防止提交表单
 			});
 			$("body").off('click', '#layui-layer1 .editor-age');
-			setTimeout(function() {
-			laydate({
-				elem: '#text .editor-age',
-				format: 'YYYY-MM-DD', // 分隔符可以任意定义，该例子表示只显示年月
-				max: laydate.now(), 
-				festival: true,
-				istoday: true,
-				start: laydate.now(0, "YYYY-MM-DD"),
-				isdate: true       
-			});				
+			setTimeout(function () {
+				laydate({
+					elem: '#text .editor-age',
+					format: 'YYYY-MM-DD', // 分隔符可以任意定义，该例子表示只显示年月
+					max: laydate.now(),
+					festival: true,
+					istoday: true,
+					start: laydate.now(0, "YYYY-MM-DD"),
+					isdate: true
+				});
 			}, 500);
 			//$("body").off('click', '.editor-select-region');
 			// $(".editor-select-region").click(function () {
@@ -378,13 +392,14 @@ function showPersonInfoPanel(pId) {
 					class: ".layui-layer-content .file-upload-btn",
 					singleFileUploads: true,
 					postfix: 'png,jpg,jpeg,gif',
-					myData: { folder: 'project', 's_id': $(".layui-layer-content .ry-save-btn").val() }
-				}, function (data) {
-				}, function (data) {
+					myData: {
+						folder: 'project',
+						's_id': $(".layui-layer-content .ry-save-btn").val()
+					}
+				}, function (data) {}, function (data) {
 					if (data.result != 1) {
 						layer.msg("上传修改图片失败");
-					}
-					else {
+					} else {
 						$('.layui-layer-content .editor-photo').css('background-image', 'url(' + weburl + data.filedir + ')');
 						$('.layui-layer-content .editor-photo').css('background-size', '100% 100%');
 						//$('.layui-layer-content .editor-photo').html('<img src=\"\"/>');
@@ -410,9 +425,9 @@ function changeRangeText(idarr, namearr, name) {
 	$('.layui-layer-content .icon-map-marker').data('name', namestring);
 	$('.icon-map-marker').css('font-size', '12px');
 	$('.layui-layer-content .editor-select-region t').html('修改区域');
-    if (GetLength(name) > 5) { 
-       name = cutstr(name, 5)+'...';
-    }
+	if (GetLength(name) > 5) {
+		name = cutstr(name, 5) + '...';
+	}
 	$('.layui-layer-content .icon-map-marker').html(name);
 	$('.layui-layer-content .icon-map-marker').data('id', idstring);
 	$('.layui-layer-content .icon-map-marker').data('name', namestring);
@@ -580,47 +595,49 @@ function show_person_list(cur_page, per_page_num, show_type, type_val) {
 }
 
 
-    var GetLength = function (str) {
-        ///<summary>获得字符串实际长度，中文2，英文1</summary>
-        ///<param name="str">要获得长度的字符串</param>
-        var realLength = 0, len = str.length, charCode = -1;
-        for (var i = 0; i < len; i++) {
-            charCode = str.charCodeAt(i);
-            if (charCode >= 0 && charCode <= 128) realLength += 1;
-            else realLength += 2;
-        }
-        return realLength;
-    };
+var GetLength = function (str) {
+	///<summary>获得字符串实际长度，中文2，英文1</summary>
+	///<param name="str">要获得长度的字符串</param>
+	var realLength = 0,
+		len = str.length,
+		charCode = -1;
+	for (var i = 0; i < len; i++) {
+		charCode = str.charCodeAt(i);
+		if (charCode >= 0 && charCode <= 128) realLength += 1;
+		else realLength += 2;
+	}
+	return realLength;
+};
 
-    //js截取字符串，中英文都能用  
-    //如果给定的字符串大于指定长度，截取指定长度返回，否者返回源字符串。  
-    //字符串，长度  
+//js截取字符串，中英文都能用  
+//如果给定的字符串大于指定长度，截取指定长度返回，否者返回源字符串。  
+//字符串，长度  
 
-    /** 
-     * js截取字符串，中英文都能用 
-     * @param str：需要截取的字符串 
-     * @param len: 需要截取的长度 
-     */
-    function cutstr(str, len) {
-        var str_length = 0;
-        var str_len = 0;
-        str_cut = new String();
-        str_len = str.length;
-        for (var i = 0; i < str_len; i++) {
-            a = str.charAt(i);
-            str_length++;
-            if (escape(a).length > 4) {
-                //中文字符的长度经编码之后大于4  
-                str_length++;
-            }
-            str_cut = str_cut.concat(a);
-            if (str_length >= len) {
-                str_cut = str_cut.concat("...");
-                return str_cut;
-            }
-        }
-        //如果给定字符串小于指定长度，则返回源字符串；  
-        if (str_length < len) {
-            return str;
-        }
-    }
+/** 
+ * js截取字符串，中英文都能用 
+ * @param str：需要截取的字符串 
+ * @param len: 需要截取的长度 
+ */
+function cutstr(str, len) {
+	var str_length = 0;
+	var str_len = 0;
+	str_cut = new String();
+	str_len = str.length;
+	for (var i = 0; i < str_len; i++) {
+		a = str.charAt(i);
+		str_length++;
+		if (escape(a).length > 4) {
+			//中文字符的长度经编码之后大于4  
+			str_length++;
+		}
+		str_cut = str_cut.concat(a);
+		if (str_length >= len) {
+			str_cut = str_cut.concat("...");
+			return str_cut;
+		}
+	}
+	//如果给定字符串小于指定长度，则返回源字符串；  
+	if (str_length < len) {
+		return str;
+	}
+}
