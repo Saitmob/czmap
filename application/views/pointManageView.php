@@ -61,7 +61,7 @@
           <option value="K6B">龙州县人民法院</option>
           <option value="K6C">扶绥县人民法院</option>
         </select>
-        <input type="text" class="input input-small" id="show_search" style="width:160px;display:inline-block;margin-right:10px;">
+        <input type="text" class="input input-small" id="show_search" placeholder="请输入案号" style="width:160px;display:inline-block;margin-right:10px;">
         <button class="button bg-sub button-small" id="show_search_button">查询</button>
       </div>
       <!--人员信息查询-->

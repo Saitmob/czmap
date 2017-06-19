@@ -25,6 +25,7 @@ class point_manage_model extends CI_Model {
         );
         return $data;
     }
+    //拿到当事人匹配的网格员和法律顾问
     public function get_wgy_tjy($dsr_id,$aj_type)
     {
         $sql = "SELECT a.person_id,b.name,b.rybs,c.xxdz FROM
@@ -37,6 +38,7 @@ class point_manage_model extends CI_Model {
         $res = $query->result();
         return $res;
     }
+    //通过gisid拿到其下的网格员、法律顾问
     public function get_wgy_tjy_by_gisid($gis_id,$p_type)
     {
         $lv_str = '';

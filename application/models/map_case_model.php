@@ -382,6 +382,7 @@ class map_case_model extends CI_Model {
     //     // var_dump($res);die();
     //     return $res;
     // }
+    /*
     //搜索
     public function searchCase($val,$type)
     {
@@ -515,33 +516,33 @@ class map_case_model extends CI_Model {
         }
         $this->db->trans_complete();
         return $result;
-    }
-    //删除
-    public function deleteCase($an_hao)
-    {
-        $sql="SELECT R_ID FROM map_case WHERE DO_AH='{$an_hao}'";
-        $query = $this->db->query($sql);
-        $res = $query->row();
-        $R_ID = $res->R_ID;
-        $this->db->trans_start();
-        $sql="DELETE FROM map_case WHERE DO_AH='{$an_hao}'";
-        $query = $this->db->query($sql);
-        $sql="SELECT R_TC FROM region WHERE R_ID='{$R_ID}'";
-        $query = $this->db->query($sql);
-        $res = $query->row();
-        $num = $res->R_TC;
-        $num = $num-1;
-        $sql="UPDATE region SET R_TC={$num} WHERE R_ID='{$R_ID}'";
-        $query = $this->db->query($sql);
-        $this->db->trans_complete();
-        $rows=$this->db->affected_rows();
-        if($rows>0)
-        {
-            return '删除成功';
-        }elseif($rows==0){
-            return '删除失败，没有该案号';
-        }
-    }
+    }*/
+    // //删除
+    // public function deleteCase($an_hao)
+    // {
+    //     $sql="SELECT R_ID FROM map_case WHERE DO_AH='{$an_hao}'";
+    //     $query = $this->db->query($sql);
+    //     $res = $query->row();
+    //     $R_ID = $res->R_ID;
+    //     $this->db->trans_start();
+    //     $sql="DELETE FROM map_case WHERE DO_AH='{$an_hao}'";
+    //     $query = $this->db->query($sql);
+    //     $sql="SELECT R_TC FROM region WHERE R_ID='{$R_ID}'";
+    //     $query = $this->db->query($sql);
+    //     $res = $query->row();
+    //     $num = $res->R_TC;
+    //     $num = $num-1;
+    //     $sql="UPDATE region SET R_TC={$num} WHERE R_ID='{$R_ID}'";
+    //     $query = $this->db->query($sql);
+    //     $this->db->trans_complete();
+    //     $rows=$this->db->affected_rows();
+    //     if($rows>0)
+    //     {
+    //         return '删除成功';
+    //     }elseif($rows==0){
+    //         return '删除失败，没有该案号';
+    //     }
+    // }
         ///获取个人其他信息
     public function getPersonOtherInfo($pId)
     {
@@ -765,12 +766,12 @@ class map_case_model extends CI_Model {
     //         return $query;
     // }
     //查询人员
-    public function searchPerson($user_name)
-    {
-        $sql = "SELECT * FROM cz_person WHERE USER_NAME LIKE '%{$user_name}%'";
-        $query = $this->db->query($sql);
-        return $query->result();
-    }
+    // public function searchPerson($user_name)
+    // {
+    //     $sql = "SELECT * FROM cz_person WHERE USER_NAME LIKE '%{$user_name}%'";
+    //     $query = $this->db->query($sql);
+    //     return $query->result();
+    // }
     //获取名称
     public function getAddName()
     {
@@ -793,28 +794,28 @@ class map_case_model extends CI_Model {
         }
         return $data;
     }
-    //插入坐标库脚本
-    public function insertPoint($id,$x,$y)
-    {
-        // $sql="SELECT P_ID FROM cz_gis_library WHERE ADDRESS='{$add}'";
-        // $query = $this->db->query($sql);
-        // $res = $query->row();
-        // $pid = $res->P_ID;
-        // if($pid!=0&&isset($pid))
-        // {
-        //     $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID={$pid}";
-        //     $query = $this->db->query($sql);
-        //     $res = $query->row();
-        //     $res = $res->ADDRESS;
-        //     $add =$res.$add;
-        // }
-        $sql = "UPDATE cz_gis_library SET POINT_X={$x},POINT_Y={$y} WHERE ID={$id}";
-        $query = $this->db->query($sql);
-        if($this->db->affected_rows()==0)
-        {
-            return $sql.'未插入成功';
-        }
-    }
+    // //插入坐标库脚本
+    // public function insertPoint($id,$x,$y)
+    // {
+    //     // $sql="SELECT P_ID FROM cz_gis_library WHERE ADDRESS='{$add}'";
+    //     // $query = $this->db->query($sql);
+    //     // $res = $query->row();
+    //     // $pid = $res->P_ID;
+    //     // if($pid!=0&&isset($pid))
+    //     // {
+    //     //     $sql = "SELECT ADDRESS FROM cz_gis_library WHERE ID={$pid}";
+    //     //     $query = $this->db->query($sql);
+    //     //     $res = $query->row();
+    //     //     $res = $res->ADDRESS;
+    //     //     $add =$res.$add;
+    //     // }
+    //     $sql = "UPDATE cz_gis_library SET POINT_X={$x},POINT_Y={$y} WHERE ID={$id}";
+    //     $query = $this->db->query($sql);
+    //     if($this->db->affected_rows()==0)
+    //     {
+    //         return $sql.'未插入成功';
+    //     }
+    // }
     //更新重复坐标
     
     //获得区域树形结构
@@ -855,49 +856,49 @@ class map_case_model extends CI_Model {
     }
     return $data;
 }
-//显示案件列表
-public function showCaseList($page,$perPageNum,$searchType,$typeVal)
-{
-    $page = (int)$page;
-    $start = ($page-1)*$perPageNum;
-    if($searchType=='ALL')
-    {
-        $sql = "SELECT * FROM map_case LIMIT $start,$perPageNum";
-    }elseif($searchType=='R_ID'){
-        $sql = "SELECT * FROM map_case WHERE {$searchType} = '{$typeVal}' LIMIT $start,$perPageNum";
-    }
-    // elseif($searchType=='USER_NAME')
-    // {
-    //     $sql = "SELECT * FROM cz_person WHERE {$searchType} LIKE '%{$typeVal}%' LIMIT $start,$perPageNum";
-    // }
-    $query=$this->db->query($sql);
-    $res = $query->result();
-    $data = array();
-    foreach ($res as $key => $value) {
-        // if(!empty($value->GIS_ID)){
-        //     $add =$this->regionmatch->idtoregionname($value->GIS_ID);
-        // }else{
-        //     $add = '无';
-        // }
+// //显示案件列表
+// public function showCaseList($page,$perPageNum,$searchType,$typeVal)
+// {
+//     $page = (int)$page;
+//     $start = ($page-1)*$perPageNum;
+//     if($searchType=='ALL')
+//     {
+//         $sql = "SELECT * FROM map_case LIMIT $start,$perPageNum";
+//     }elseif($searchType=='R_ID'){
+//         $sql = "SELECT * FROM map_case WHERE {$searchType} = '{$typeVal}' LIMIT $start,$perPageNum";
+//     }
+//     // elseif($searchType=='USER_NAME')
+//     // {
+//     //     $sql = "SELECT * FROM cz_person WHERE {$searchType} LIKE '%{$typeVal}%' LIMIT $start,$perPageNum";
+//     // }
+//     $query=$this->db->query($sql);
+//     $res = $query->result();
+//     $data = array();
+//     foreach ($res as $key => $value) {
+//         // if(!empty($value->GIS_ID)){
+//         //     $add =$this->regionmatch->idtoregionname($value->GIS_ID);
+//         // }else{
+//         //     $add = '无';
+//         // }
         
-        // $sex = ($value->USER_SEX=='male')?'男':'女';
-        // $gisId = ($value->GIS_ID==NULL)?'无':$value->GIS_ID;
-        // $phone = ($value->USER_PHONE==0)?'':$value->USER_PHONE;
-        // $age = ($value->USER_AGE==0)?'':$value->USER_AGE;
-        $data[] = array(
-        'DO_AH'=>$value->DO_AH,
-        'AN_REASON'=>$value->AN_REASON,
-        'COURT_NAME'=>$value->COURT_NAME,
-        'R_NAME'=>$value->R_NAME,
-        'BZXR_NAME'=>$value->BZXR_NAME,
-        'LA_DATE'=>$value->LA_DATE,
-        'ADDRESS'=>$value->ADDRESS,
-        'ID'=>$value->ID,
-        'GIS_ID'=>$value->GIS_ID
-        );
-    }
-    return $data;
-}
+//         // $sex = ($value->USER_SEX=='male')?'男':'女';
+//         // $gisId = ($value->GIS_ID==NULL)?'无':$value->GIS_ID;
+//         // $phone = ($value->USER_PHONE==0)?'':$value->USER_PHONE;
+//         // $age = ($value->USER_AGE==0)?'':$value->USER_AGE;
+//         $data[] = array(
+//         'DO_AH'=>$value->DO_AH,
+//         'AN_REASON'=>$value->AN_REASON,
+//         'COURT_NAME'=>$value->COURT_NAME,
+//         'R_NAME'=>$value->R_NAME,
+//         'BZXR_NAME'=>$value->BZXR_NAME,
+//         'LA_DATE'=>$value->LA_DATE,
+//         'ADDRESS'=>$value->ADDRESS,
+//         'ID'=>$value->ID,
+//         'GIS_ID'=>$value->GIS_ID
+//         );
+//     }
+//     return $data;
+// }
 public function indexShowCaseList($currpage,$perPageNum,$fjm,$case_type,$show_type,$show_search = ""){
     $perPageNum = (int)$perPageNum;
     $currpage = (int)$currpage;

@@ -114,44 +114,44 @@ class Welcome extends CI_Controller {
         $data = $this->mapcase->searchCase($val,$type);
         echo json_encode($data);
     }
-    //更改数据
-    public function addOrUpdate()
-    {
-        $GIS_ID = $this->input->post('GIS_ID');
-        $R_NAME = $this->input->post('R_NAME');
-        $ADDRESS = $this->input->post('ADDRESS');
-        $POINT_X = $this->input->post('POINT_X');
-        $POINT_Y = $this->input->post('POINT_Y');
-        $COURT_NAME = $this->input->post('COURT_NAME');
-        $DO_AH = $this->input->post('DO_AH');
-        $CASE_TYPE = $this->input->post('CASE_TYPE');
-        $LA_DATE = $this->input->post('LA_DATE');
-        $AN_REASON = $this->input->post('AN_REASON');
-        $BZXR_NAME = $this->input->post('BZXR_NAME');
-        $BD = $this->input->post('BD');
-        $THIS_AREA = $this->input->post('THIS_AREA');
-        $NOTE = $this->input->post('NOTE');
-        if(!empty($DO_AH)){
-            $data = $this->mapcase->addOrUpdate($GIS_ID,$R_NAME,$ADDRESS,$POINT_X,$POINT_Y,$COURT_NAME,$DO_AH,$CASE_TYPE,$LA_DATE,$AN_REASON,$BZXR_NAME,$BD,$THIS_AREA,$NOTE);
-            echo $data;
-        }else{
-            echo '请填写案号';
-        }
+    // //更改数据
+    // public function addOrUpdate()
+    // {
+    //     $GIS_ID = $this->input->post('GIS_ID');
+    //     $R_NAME = $this->input->post('R_NAME');
+    //     $ADDRESS = $this->input->post('ADDRESS');
+    //     $POINT_X = $this->input->post('POINT_X');
+    //     $POINT_Y = $this->input->post('POINT_Y');
+    //     $COURT_NAME = $this->input->post('COURT_NAME');
+    //     $DO_AH = $this->input->post('DO_AH');
+    //     $CASE_TYPE = $this->input->post('CASE_TYPE');
+    //     $LA_DATE = $this->input->post('LA_DATE');
+    //     $AN_REASON = $this->input->post('AN_REASON');
+    //     $BZXR_NAME = $this->input->post('BZXR_NAME');
+    //     $BD = $this->input->post('BD');
+    //     $THIS_AREA = $this->input->post('THIS_AREA');
+    //     $NOTE = $this->input->post('NOTE');
+    //     if(!empty($DO_AH)){
+    //         $data = $this->mapcase->addOrUpdate($GIS_ID,$R_NAME,$ADDRESS,$POINT_X,$POINT_Y,$COURT_NAME,$DO_AH,$CASE_TYPE,$LA_DATE,$AN_REASON,$BZXR_NAME,$BD,$THIS_AREA,$NOTE);
+    //         echo $data;
+    //     }else{
+    //         echo '请填写案号';
+    //     }
         
-    }
-    //删除数据
-    public function deleteCase()
-    {
-        $an_hao = $this->input->post('anHao');
-        if(!empty($an_hao))
-        {
-            $data = $this->mapcase->deleteCase($an_hao);
-            echo $data;
-        }else{
-            echo '请填写案号';
-        }
+    // }
+    // //删除数据
+    // public function deleteCase()
+    // {
+    //     $an_hao = $this->input->post('anHao');
+    //     if(!empty($an_hao))
+    //     {
+    //         $data = $this->mapcase->deleteCase($an_hao);
+    //         echo $data;
+    //     }else{
+    //         echo '请填写案号';
+    //     }
         
-    }
+    // }
     //获取个人简介和照片
     public function getPersonOtherInfo()
     {
@@ -195,26 +195,26 @@ class Welcome extends CI_Controller {
             echo $data;
         }
     }
-    //人员列表
-    public  function showPersonList()
-    {
-        $page = $this->input->post('page');
-        if(!empty($page)){
-            $perPageNum = $this->input->post('perPageNum');
-            $searchType = $this->input->post('searchType');
-            $typeVal = $this->input->post('typeVal');
-            $res = $this->mapcase->showPersonList($page,$perPageNum,$searchType,$typeVal);
-            echo json_encode($res);
-        }
-    }
-    //人员分页页数
-    public function showPageNum()
-    {
-        $type = $this->input->post('type');
-        $val = $this->input->post('val');
-        $pageNum = $this->mapcase->showPageNum($type,$val);
-        echo $pageNum;
-    }
+    // //人员列表
+    // public  function showPersonList()
+    // {
+    //     $page = $this->input->post('page');
+    //     if(!empty($page)){
+    //         $perPageNum = $this->input->post('perPageNum');
+    //         $searchType = $this->input->post('searchType');
+    //         $typeVal = $this->input->post('typeVal');
+    //         $res = $this->mapcase->showPersonList($page,$perPageNum,$searchType,$typeVal);
+    //         echo json_encode($res);
+    //     }
+    // }
+    // //人员分页页数
+    // public function showPageNum()
+    // {
+    //     $type = $this->input->post('type');
+    //     $val = $this->input->post('val');
+    //     $pageNum = $this->mapcase->showPageNum($type,$val);
+    //     echo $pageNum;
+    // }
     //查询人员
     public function searchPerson()
     {
@@ -230,15 +230,15 @@ class Welcome extends CI_Controller {
         $data = $this->mapcase->getAddName();
         echo json_encode($data);
     }
-    //插入数据库
-    public function insertPoint()
-    {
-        $add = $this->input->post('id');
-        $x = $this->input->post('x');
-        $y = $this->input->post('y');
-        $data = $this->mapcase->insertPoint($add,$x,$y);
-        echo $data;
-    }
+    // //插入数据库
+    // public function insertPoint()
+    // {
+    //     $add = $this->input->post('id');
+    //     $x = $this->input->post('x');
+    //     $y = $this->input->post('y');
+    //     $data = $this->mapcase->insertPoint($add,$x,$y);
+    //     echo $data;
+    // }
     //得到地区树形结构
     public function regionNode()
     {
@@ -266,18 +266,18 @@ class Welcome extends CI_Controller {
         $data = $this->mapcase->showPersonNum();
         echo json_encode($data);
     }
-    //展示案件信息
-    public function showCaseList()
-    {
-        $page = $this->input->post('page');
-        if(!empty($page)){
-            $perPageNum = $this->input->post('perPageNum');
-            $searchType = $this->input->post('searchType');
-            $typeVal = $this->input->post('typeVal');
-            $res = $this->mapcase->showCaseList($page,$perPageNum,$searchType,$typeVal);
-            echo json_encode($res);
-        }
-    }
+    // //展示案件信息
+    // public function showCaseList()
+    // {
+    //     $page = $this->input->post('page');
+    //     if(!empty($page)){
+    //         $perPageNum = $this->input->post('perPageNum');
+    //         $searchType = $this->input->post('searchType');
+    //         $typeVal = $this->input->post('typeVal');
+    //         $res = $this->mapcase->showCaseList($page,$perPageNum,$searchType,$typeVal);
+    //         echo json_encode($res);
+    //     }
+    // }
     // ------------------new----------
     //获取某地区案件数以及信息 废弃旧的 getOneRegionData
     public function getOneRData()

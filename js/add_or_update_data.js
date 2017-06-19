@@ -1,3 +1,4 @@
+	// 旧的案件管理
 	$(function () {
 		// console.log(saveSpAjDetail(ahStrReplace('(2016)桂刑终100号')));
 		// console.log(getYearByAH(ahStrReplace(' aa 测试（213)哈哈523')));
