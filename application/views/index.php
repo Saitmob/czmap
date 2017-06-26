@@ -46,6 +46,7 @@
   <div class="header">
 
   </div>
+  <!--ActiveXObject通话对象-->
   <object classid="clsid:F44CFA19-6B43-45EE-90A3-29AA08000510" id="qnviccub" data="DATA:application/x-oleobject;BASE64,GfpM9ENr7kWQoymqCAAFEAADAAD7FAAADhEAAA==
 " width="1" height="1"></object>
   <div class="main">
@@ -55,7 +56,7 @@
       <h3>法官人数：<span class="aj-num" >207</span> </h3>
       <h3>案件总数：<span class="aj-num" id="index_all_num_aj"></span> </h3>
       <h3>地点数：<span class="aj-num" id="index_all_num_add"></span> </h3>
-      <h3>案件更新时间：<span class="aj-num" >2017-06-09</span> </h3>
+      <h3>案件更新时间：<span class="aj-num" id="update_day">2017-06-09</span> </h3>
 
       <div style="position:absolute;width: 380px;height: 40px;background-color: rgba(0,0,0,0.4);line-height:40px;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;left: 50%;margin-left: -410px;"><span style="font-size:13px;margin-right:10px;"></span> 区/县：<span class="yj-num">7</span>&nbsp;&nbsp;乡/镇：<span class="yj-num">79</span>&nbsp;&nbsp;村/社区：<span class="yj-num">846</span> </div>
       <div style="position:absolute;width: 380px;height: 40px;background-color: rgba(0,0,0,0.4);line-height:40px;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;left: 50%;margin-left: 30px;"><span style="font-size:13px;margin-right:10px;"></span> 陪审员：<span class="yj-num">467</span>&nbsp;&nbsp;网格员：<span class="yj-num" id="index_all_num_wgy"></span>&nbsp;&nbsp;法律顾问：<span class="yj-num" id="index_all_num_flgw">205</span> </div>

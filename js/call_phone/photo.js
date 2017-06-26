@@ -475,7 +475,7 @@ function noteLayer(phone, name, address, rybs, aj_type, ajbs, time, timestamp, i
 }
 
 var note_layer_i;
-var need_del_files = [];
+var need_del_files = [];//需要删除的文件数组，由于限制文件上传为单选，但找不到jqfileUpload的文件上传队列，只能手动去上传后删除
 var files_num = 0; //文件总数
 var files_arr = [];
 

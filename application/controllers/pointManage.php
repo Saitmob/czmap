@@ -58,4 +58,53 @@ class pointManage extends CI_Controller {
             echo $data;
         }
     }
+    //检查当事人对应地址库的变化
+    public function checkIsChange()
+    {
+        $id = $this->input->post('id');
+        if(!empty($id))
+        {
+            $name = $this->input->post('name');
+            $data = $this->pointmm->checkIsChange($id,$name);
+            echo $data;
+        }
+    }
+    //更改当事人对应地址库
+    public function changeAddress()
+    {
+        $id = $this->input->post('id');
+        if(!empty($id))
+        {
+            $name = $this->input->post('name');
+            $type = $this->input->post('type');
+            $data = $this->pointmm->changeAddress($id,$name,$type);
+            echo $data;
+        }
+    }
+    //保存区域的坐标
+    public function save_region_x_y()
+    {
+        $gis_id = $this->input->post('gis_id');
+        if(!empty($gis_id))
+        {
+            $x = $this->input->post('x');
+            $y = $this->input->post('y');
+            $data = $this->pointmm->save_region_x_y($gis_id,$x,$y);
+            echo $data;
+        }
+    }
+    //保存当事人gis_id
+    public function save_dsr_gisId()
+    {
+        $dsr_id = $this->input->post('dsr_id');
+        if(!empty($dsr_id))
+        {
+            $gis_id = $this->input->post('gis_id');
+            $aj_type = $this->input->post('aj_type');
+            $x = $this->input->post('x');
+            $y = $this->input->post('y');
+            $data = $this->pointmm->save_dsr_gisId($dsr_id,$aj_type,$gis_id,$x,$y);
+            echo $data;
+        }
+    }
 }

@@ -321,7 +321,7 @@ public function getPointById($gisId)
     $data = array();
     if(!empty($gisId)&&$gisId!=0)
     {
-        $sql = "SELECT POINT_X,POINT_Y FROM cz_gis_library WHERE ID={$gisId}";
+        $sql = "SELECT POINT_X,POINT_Y FROM cz_gis_library_dsr WHERE ID={$gisId}";
         $query = $this->db->query($sql);
         $res=$query->row();
         $x=(isset($res->POINT_X))?$res->POINT_X:'';

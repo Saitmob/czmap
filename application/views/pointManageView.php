@@ -16,6 +16,8 @@
   <script src="<?=base_url()?>js/laydate/laydate.js"></script>
   <!--<script src="<?=base_url()?>js/getDataGraph.js"></script>-->
   <script src="<?=base_url()?>js/ztree/jquery.ztree.core.min.js"></script>
+  <script src="<?=base_url()?>js/ztree/jquery.ztree.exedit.min.js"></script>
+  <script src="<?=base_url()?>js/ztree/jquery.ztree.excheck.min.js"></script>
   <script src="<?=base_url()?>js/apiv1.3.min.js"></script>
   <script src="<?=base_url()?>js/common/region.js"></script>
   <script src="<?=base_url()?>js/point_manage.js"></script>
@@ -35,6 +37,9 @@
     text-align:right;
   }
 </style>
+<style type="text/css">
+.ztree li span.button.add {margin-left:2px; margin-right: -1px; background-position:-144px 0; vertical-align:top; *vertical-align:middle}
+	</style>
 
 <body>
   <div class="header">

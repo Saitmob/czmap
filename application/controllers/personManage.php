@@ -33,4 +33,12 @@ class personManage extends CI_Controller {
         $data = $this->person->show_list($this->input->post('range'),$this->input->post('persontype'),$name,$this->input->post('cur_page'),$this->input->post('per_page_num'));
         echo json_encode($data);
     }
+    public function update_gis_lib()
+    {
+        $this->person->update_gis_lib();
+    }
+    public function insert_tun()
+    {
+        $this->person->insert_tun();
+    }
 }

@@ -10,9 +10,9 @@ $(function () {
 	});
 });
 
-
+//案件列表面板
 function show_aj_list_panel(page, fjm) {
-	$('.ry-search-box').css('display','block');
+	$('.ry-search-box').css('display', 'block');
 	$('#aj-list-data').parent().find('thead tr').html('<th>序号</th>' +
 		'<th>案号</th>' +
 		'<th>立案状态</th>' +
@@ -25,9 +25,9 @@ function show_aj_list_panel(page, fjm) {
 		'<li class="cur-nav">案件列表</li>');
 	show_case_list(page, fjm);
 }
-
+//当事人列表面板
 function show_dsr_list_panel(ajbs, aj_type, page) {
-	$('.ry-search-box').css('display','none');
+	$('.ry-search-box').css('display', 'none');
 	$('#aj-list-data').parent().find('thead tr').html('<th>序号</th>' +
 		'<th>当事人姓名</th>' +
 		'<th>诉讼地位</th>' +
@@ -141,7 +141,9 @@ function show_dsr_list(ajbs, aj_type, page) {
 				str += '<td>' + ((isNull(v.lxdh)) ? '' : v.lxdh) + '</td>';
 				str += '<td>' + ((isNull(v.xxdz)) ? '' : v.xxdz) + '</td>';
 				str += '<td><button class="button bg-sub button-small ry-option-list-btn" onClick="dsr_p_panel(' + v.dsr_id + ',\'' + aj_type + '\',\'' + v.xxdz + '\',select_dsr_point)">查看 / 编辑</button></td>';
-				str += '<input type="hidden" id="sp_dsr_p_'+v.dsr_id+'" value="'+v.POINT_X+','+v.POINT_Y+'" />';
+				str += '<input type="hidden" id="sp_dsr_gisId_' + v.dsr_id + '" value="' + ((!isNull(v.gis_id)) ? v.gis_id : '') + '" />';
+				str += '<input type="hidden" id="sp_dsr_p_' + v.dsr_id + '" value="' + v.POINT_X + ',' + v.POINT_Y + '" />';
+				str += '<input type="hidden" id="sp_dsr_ajtype_' + v.dsr_id + '" value="' + v.POINT_X + ',' + v.POINT_Y + '" />';
 				str += '</tr>';
 				i++;
 			});
@@ -166,21 +168,44 @@ function show_dsr_list(ajbs, aj_type, page) {
 		}
 	});
 }
-
-function select_dsr_point(x, y) {
+//获取当事人坐标（gis_id  用于百度地图坐标拾取确定后的回调
+function select_dsr_point(x, y, gis_id) {
 	$('#dsr_p_point_x_y').html(x + ',' + y);
+	save_dsr_point(gis_id);
 }
-
+//保存当事人坐标（gis_id
+function save_dsr_point(gis_id)
+{
+	//保存当事人gis_id
+	var dsr_id = $('#dsr_panel_dsr_id').val();
+	var aj_type = $('#dsr_panel_ajtype').val();
+	$.ajax({
+		type: 'post',
+		url: weburl + 'index.php/pointManage/save_dsr_gisId',
+		data: {
+			gis_id: gis_id,
+			dsr_id:dsr_id,
+			aj_type,aj_type
+		},
+		success: function (data) {
+			if (data == '1') {
+				layer.alert('当事人坐标更新成功');
+			} else {
+				layer.alert('当事人坐标更新失败');
+			}
+		}
+	});
+}
 //当事人坐标级网格员信息
 function dsr_p_panel(dsr_id, aj_type, add, callback) {
-	var x=y='';
-	if($('#sp_dsr_p_'+dsr_id).val())
-	{
-		var xy = $('#sp_dsr_p_'+dsr_id).val().split(',');
-		x=xy[0];
-		y=xy[1];
+	var x = y = gis_id = '';
+	if ($('#sp_dsr_p_' + dsr_id).val()) {
+		var xy = $('#sp_dsr_p_' + dsr_id).val().split(',');
+		x = xy[0];
+		y = xy[1];
+		gis_id = (!isNull($('#sp_dsr_gisId_' + dsr_id).val())) ? $('#sp_dsr_gisId_' + dsr_id).val() : 0;
 	}
-	//拿到网格员和法律顾问
+	//拿到网格员和法律顾问和坐标，原来坐标直接存到当事人表里，后改成通过当事人表的gis_id获取
 	$.ajax({
 		type: 'post',
 		url: weburl + 'index.php/pointManage/get_wgy_tjy',
@@ -191,14 +216,16 @@ function dsr_p_panel(dsr_id, aj_type, add, callback) {
 		dataType: 'json',
 		success: function (data) {
 			console.log(data);
+			var wg_tj = data.wg_tj;
+			var x_y = data.x_y;
 			$('#wgy_id_str').val('');
 			$('#wgy_name_str').val('');
 			$('#flgw_id_str').val('');
 			$('#flgw_name_str').val('');
 			var wgy_str = '';
 			var flgw_str = '';
-			if (data.length > 0) {
-				$.each(data, function (k, v) {
+			if (wg_tj.length > 0) {
+				$.each(wg_tj, function (k, v) {
 					if (v.rybs == '网格员') {
 						wgy_str += v.name + '<span class="c_bd01" style="margin-right:10px;">(' + v.xxdz + ')</span>';
 						set_wgy_tjy('wgy', v.person_id, v.name, v.xxdz);
@@ -227,10 +254,23 @@ function dsr_p_panel(dsr_id, aj_type, add, callback) {
 				},
 				end: function () {}
 			});
-			var btn_str = '<button class="button bg-sub button-small ry-option-list-btn" onClick="bd_point_get(' + x + ',' + y + ',' + callback + ')">选择</button>'
+			//当前人员id和案件类型隐藏域
+			if($('#dsr_panel_ajtype').length<1&&$('#dsr_panel_dsr_id').length<1)
+			{
+				$('#p_manage_dsr_panel').append('<input type="hidden" id="dsr_panel_ajtype" />');
+				$('#p_manage_dsr_panel').append('<input type="hidden" id="dsr_panel_dsr_id" />');
+			}
+			$('#dsr_panel_dsr_id').val(dsr_id);
+			$('#dsr_panel_ajtype').val(aj_type);
+			var btn_str = '<button class="button bg-sub button-small ry-option-list-btn" onClick="bd_point_get(' + gis_id + ',' + x + ',' + y + ',' + callback + ')">选择</button>';
 			$('#dsr_p_point_btn').html('坐标：' + btn_str);
 			$('#dsr_p_add').html(add);
-			$('#dsr_p_point_x_y').html(x + ',' + y);
+			//原来直接通过当事人表里的point_x,point_y字段拿到坐标，后改成gis_id拿
+			if (!isNull(x)) {
+				$('#dsr_p_point_x_y').html(x + ',' + y);
+			} else {
+				$('#dsr_p_point_x_y').html(x_y.POINT_X + ',' + x_y.POINT_Y);
+			}
 			$('#dsr_p_wgy').html(wgy_str);
 			$('#dsr_p_wgy').prev().html('网格员：<button class="button bg-sub button-small ry-option-list-btn" onClick="select_wgy_tjy(\'wgy\',' + true + ',' +
 				set_wgy_tjy + ',' + show_dsr_wgy_tjy + ')">选择</button>');
@@ -245,32 +285,17 @@ function dsr_p_panel(dsr_id, aj_type, add, callback) {
 	});
 	//隐藏域赋值
 	function set_wgy_tjy(p_type, id, name, add) {
-		if (p_type == 'flgw') {
-			var f_i_str = $('#flgw_id_str').val();
-			var f_n_str = $('#flgw_name_str').val();
-			var f_a_str = $('#flgw_add_str').val();
-			if (f_i_str.length > 0) {
-				$('#flgw_id_str').val(f_i_str + ',' + id);
-				$('#flgw_name_str').val(f_n_str + ',' + name);
-				$('#flgw_add_str').val(f_a_str + ',' + add);
-			} else {
-				$('#flgw_id_str').val(id);
-				$('#flgw_name_str').val(name);
-				$('#flgw_add_str').val(add);
-			}
+		var f_i_str = $('#' + p_type + '_id_str').val();
+		var f_n_str = $('#' + p_type + '_name_str').val();
+		var f_a_str = $('#' + p_type + '_add_str').val();
+		if (f_i_str.length > 0) {
+			$('#' + p_type + '_id_str').val(f_i_str + ',' + id);
+			$('#' + p_type + '_name_str').val(f_n_str + ',' + name);
+			$('#' + p_type + '_add_str').val(f_a_str + ',' + add);
 		} else {
-			var w_i_str = $('#wgy_id_str').val();
-			var w_n_str = $('#wgy_name_str').val();
-			var w_a_str = $('#wgy_add_str').val();
-			if (w_i_str.length > 0) {
-				$('#wgy_id_str').val(w_i_str + ',' + id);
-				$('#wgy_name_str').val(w_n_str + ',' + name);
-				$('#wgy_add_str').val(w_a_str + ',' + add);
-			} else {
-				$('#wgy_id_str').val(id);
-				$('#wgy_name_str').val(name);
-				$('#wgy_add_str').val(add);
-			}
+			$('#' + p_type + '_id_str').val(id);
+			$('#' + p_type + '_name_str').val(name);
+			$('#' + p_type + '_add_str').val(add);
 		}
 	}
 	//展示该当事人已选的网格员和调解员列表
@@ -285,20 +310,18 @@ function dsr_p_panel(dsr_id, aj_type, add, callback) {
 		var person_id_arr;
 		var wgy_id_arr;
 		var flgw_id_arr;
-		if($('#wgy_id_str').val().length>0)
-		{
+		if ($('#wgy_id_str').val().length > 0) {
 			wgy_id_arr = $('#wgy_id_str').val().split(',');
-		}else{
+		} else {
 			wgy_id_arr = [];
 		}
-		if($('#flgw_id_str').val().length>0)
-		{
+		if ($('#flgw_id_str').val().length > 0) {
 			flgw_id_arr = $('#flgw_id_str').val().split(',');
-		}else{
+		} else {
 			flgw_id_arr = [];
 		}
 		person_id_arr = wgy_id_arr.concat(flgw_id_arr);
-		person_id_str = (person_id_arr.length>0)?person_id_arr.join(','):'';
+		person_id_str = (person_id_arr.length > 0) ? person_id_arr.join(',') : '';
 		$.ajax({
 			type: 'post',
 			url: weburl + 'index.php/pointManage/save_dsr_p_w_t',
@@ -306,14 +329,13 @@ function dsr_p_panel(dsr_id, aj_type, add, callback) {
 				dsr_id: dsr_id,
 				aj_type: aj_type,
 				person_id_str: person_id_str,
-				point:$('#dsr_p_point_x_y').html()
+				point: $('#dsr_p_point_x_y').html()
 			},
 			success: function (data) {
-				if(data=='1')
-				{
-					$('#sp_dsr_p_'+dsr_id).val($('#dsr_p_point_x_y').html());
+				if (data == '1') {
+					$('#sp_dsr_p_' + dsr_id).val($('#dsr_p_point_x_y').html());
 					layer.alert('保存成功');
-				}else{
+				} else {
 					layer.alert('保存失败');
 				}
 			}

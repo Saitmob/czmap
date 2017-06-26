@@ -419,9 +419,10 @@ function showPersonInfoPanel(pId) {
 	});
 }
 
-function changeRangeText(idarr, namearr, name) {
+function changeRangeText(idarr, namearr) {
 	var namestring = namearr.join(',');
 	var idstring = idarr.join(',');
+	var name = namearr[namearr.length-1];
 	$('.layui-layer-content .icon-map-marker').data('name', namestring);
 	$('.icon-map-marker').css('font-size', '12px');
 	$('.layui-layer-content .editor-select-region t').html('修改区域');

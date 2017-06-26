@@ -1,49 +1,10 @@
-$(function () {
-
-})
-//获取地图区域案件数量
+//svg地图用于显示案件数对象
 var regionJsonObj = {};
-
-// function getregion_tc(argument) {
-// 	$.ajax({
-// 		type: 'post',
-// 		url: weburl + 'index.php/welcome/getRegionData',
-// 		dataType: 'json',
-// 		async: false, //设置为同步操作就可以给全局变量赋值成功
-// 		success: function (data) {
-// 			regionJsonObj = data;
-// 			console.log(data);
-// 			//崇左地区以及非崇左地区案件数赋值
-// 		},
-// 		error: function (XMLHttpRequest, textStatus, errorThrown) {
-// 			console.log(XMLHttpRequest + ';' + errorThrown);
-// 		}
-// 	});
 // }
-//获取该地区案件信息
-// var region_data = {}; //该地区未结案件数
-// var region_point = {}; //区域（右侧）坐标
-var region_address = {}; //该地区所有未结案件详细信息，包含地址、坐标、以及案件信息
-// var region_repeat_data = {};
-// function getregion_data(region) {
-//     $.ajax({
-//         type: 'post',
-//         url: weburl + 'index.php/welcome/getOneRegionData',
-//         data: { 'r_id': region },
-//         dataType: 'json',
-//         async: false, //设置为同步操作就可以给全局变量赋值成功
-//         success: function(data) {
-//             region_data = data.region_data;
-//             region_point = data.point;
-//             region_address = data.address;
-//             console.log(data);
-//             // region_repeat_data = data.repeat_region_data;
-//         },
-//         error: function(XMLHttpRequest, textStatus, errorThrown) {
-//             console.log(XMLHttpRequest + ';' + errorThrown);
-//         }
-//     });
+//百度地图用于绘制坐标对象
+var region_address = {}; 
 // }
+//获取整个法院的案件及坐标地址，此时由于标注点过多，绘制的时候会很慢，数据获取只需要零点几秒，dom结构的添加以及绘制可能要1-4s不等
 function getregion_data(fjm) {
 		var deferred = $.Deferred();
 		$.ajax({
@@ -53,7 +14,6 @@ function getregion_data(fjm) {
 				'fjm': fjm
 			},
 			dataType: 'json',
-			// async: false, //设置为同步操作就可以给全局变量赋值成功
 			success: function (data) {
 				deferred.resolve(data);
 			},
@@ -62,11 +22,9 @@ function getregion_data(fjm) {
 			}
 		});
 		return deferred.promise();
-	// setTimeout(layer.close(i),2000);
-	// var t=setTimeout("layer.closeAll()",2000);
 }
 // getregion_data('K00');
-
+//获取单个案件的坐标数据
 function getRdataById(fjm, aj_type, aj_bs) {
 	var deferred = $.Deferred();
 	$.ajax({
@@ -79,10 +37,7 @@ function getRdataById(fjm, aj_type, aj_bs) {
 		},
 		dataType: 'json',
 		success: function (data) {
-			// region_data = data.region_data;
-			// region_point = data.point;
 			deferred.resolve(data);
-			// region_repeat_data = data.repeat_region_data;
 		},
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
 			console.log(XMLHttpRequest + ';' + errorThrown);
@@ -94,7 +49,7 @@ function getRdataById(fjm, aj_type, aj_bs) {
 var sp_zx_obj = {};
 
 function get_sp_zx_num() {
-	//9号演示写死的数据
+	//10号演示写死的数据，过后请取消下面注释
 	sp_zx_obj = {
 		K6A:{sp:366,zx:83},
 		K6B:{sp:341,zx:53},

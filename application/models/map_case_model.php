@@ -841,10 +841,10 @@ class map_case_model extends CI_Model {
     // }
     //更新重复坐标
     
-    //获得区域树形结构
+    //获得当事人区域树形结构
     public function regionNode()
     {
-        $sql = "SELECT ID,P_ID,ADDRESS FROM cz_gis_library WHERE ID!=1 and ID!=2 order by P_ID,ID";
+        $sql = "SELECT ID,P_ID,ADDRESS FROM cz_gis_library_dsr WHERE ID!=1 and ID!=2 order by P_ID,ID";
         $query=$this->db->query($sql);
         $res=$query->result();
         $data = array();

@@ -73,13 +73,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 // 基本数据库地址
-// $p_db_ip = '192.168.1.199';
-$p_db_ip = '147.1.4.104';
+$p_db_ip = '192.168.1.199';
+// $p_db_ip = '147.1.4.104';
 //单点登录数据库地址
 $dd_ip = '147.1.6.23';
 //基本数据库账号密码
-$user_name = 'lby';
-$password = 'lby/1234';
+// $user_name = 'lby';
+// $password = 'lby/1234';
+$user_name = 'root';
+$password = 'lby/2015';
 
 $db['default'] = array(
 	'dsn'	=> '',
@@ -104,35 +106,12 @@ $db['default'] = array(
 );
 
 
-$db['portal'] = array(
-    'dsn'	=> '',
-    'hostname' => $dd_ip,
-    'port' => 3306,
-    'username' => 'portal_user',
-    'password' => 'GXfyoa888',
-    'database' => 'portal',
-    'dbdriver' => 'mysqli',
-    'dbprefix' => '',
-    'pconnect' => FALSE,
-    'db_debug' => (ENVIRONMENT !== 'production'),
-    'cache_on' => FALSE,
-    'cachedir' => '',
-    'char_set' => 'utf8',
-    'dbcollat' => 'utf8_general_ci',
-    'swap_pre' => '',
-    'encrypt' => FALSE,
-    'compress' => FALSE,
-    'stricton' => FALSE,
-    'failover' => array(),
-    'save_queries' => TRUE
-);
 // $db['portal'] = array(
 //     'dsn'	=> '',
-//     'hostname' => '192.168.1.199',
+//     'hostname' => $dd_ip,
 //     'port' => 3306,
-//     'hostname' => $p_db_ip,
-// 	'username' => $user_name,
-//     'password' => $password,
+//     'username' => 'portal_user',
+//     'password' => 'GXfyoa888',
 //     'database' => 'portal',
 //     'dbdriver' => 'mysqli',
 //     'dbprefix' => '',
@@ -149,6 +128,29 @@ $db['portal'] = array(
 //     'failover' => array(),
 //     'save_queries' => TRUE
 // );
+$db['portal'] = array(
+    'dsn'	=> '',
+    'hostname' => '192.168.1.199',
+    'port' => 3306,
+    'hostname' => $p_db_ip,
+	'username' => $user_name,
+    'password' => $password,
+    'database' => 'portal',
+    'dbdriver' => 'mysqli',
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => (ENVIRONMENT !== 'production'),
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE
+);
 //案件详情
 $db['ajxq'] = array(
     'dsn'	=> '',

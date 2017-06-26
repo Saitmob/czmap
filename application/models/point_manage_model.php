@@ -28,6 +28,7 @@ class point_manage_model extends CI_Model {
     //拿到当事人匹配的网格员和法律顾问
     public function get_wgy_tjy($dsr_id,$aj_type)
     {
+        // $dsr_id = (int)$dsr_id;
         $sql = "SELECT a.person_id,b.name,b.rybs,c.xxdz FROM
         (SELECT person_id FROM dsr_to_person WHERE dsr_id=? AND aj_type=?) a
         LEFT JOIN (SELECT id,name,rybs FROM person) b on a.person_id=b.id
@@ -36,7 +37,15 @@ class point_manage_model extends CI_Model {
         ";
         $query = $this->db->query($sql,array($dsr_id,$aj_type));
         $res = $query->result();
-        return $res;
+        $sql = "SELECT POINT_X,POINT_Y FROM cz_gis_library_dsr WHERE ID=(SELECT gis_id FROM inputaj.{$aj_type}_dsr WHERE dsr_id=?)";
+        $query = $this->db->query($sql,array($dsr_id));
+        $res_p = $query->result();
+        $data = array();
+
+        return $data = array(
+            'wg_tj'=>$res,
+            'x_y'=>$res_p
+        );
     }
     //通过gisid拿到其下的网格员、法律顾问
     public function get_wgy_tjy_by_gisid($gis_id,$p_type)
@@ -106,6 +115,123 @@ class point_manage_model extends CI_Model {
         $rows_p = $this->db->affected_rows();
         $this->db->trans_complete();
         if($rows==count($person_id_arr)&&$rows_p==1)
+        {
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+    //检查当事人对应地址库的变化
+    public function checkIsChange($id,$name)
+    {
+        $sql = "SELECT ADDRESS FROM cz_gis_library_dsr WHERE ID=?";
+        $query = $this->db->query($sql,array((int)$id));
+        $res = $query->row();
+        if(!empty($res))
+        {
+            if($name==$res->ADDRESS)
+            {
+                return 0;//未发生改变
+            }
+            else{
+                return 1;
+            }
+        }else{
+            return 1;
+        }
+    }
+    //更改当事人对应地址库，return 0,1,2,3,4 表示更改失败、修改成功，删除成功，
+    public function changeAddress($id,$name,$type)
+    {
+        // var_dump($id);
+        // var_dump($name);
+        // var_dump($type);
+        // die();
+        if($type=='rename')
+        {
+            $sql = "UPDATE cz_gis_library_dsr SET ADDRESS = ? WHERE ID=?";
+            $query = $this->db->query($sql,array($name,(int)$id));
+            $affect_row=$this->db->affected_rows();
+            if($affect_row==1){
+                return 1;
+            }else{
+                return 0;
+            }
+        }elseif ($type=="remove") {
+            $sql = "DELETE FROM cz_gis_library_dsr WHERE ID=?";
+            $query = $this->db->query($sql,array($id));
+            $affect_row=$this->db->affected_rows();
+            if($affect_row==1){
+                return 2;
+            }else{
+                return 0;
+            }
+        }elseif ($type=="add") {
+            $sql = "SELECT * FROM cz_gis_library_dsr WHERE ID=?";
+            $query = $this->db->query($sql,array($id));
+            $res = $query->row();
+            if($res->level<6&&$res->level>=3)//前端已验证，这里再验证一次
+            {
+                $affect_row = 0;
+                $sql = "INSERT INTO cz_gis_library_dsr (ADDRESS,P_ID,POINT_X,POINT_Y,province,city,xian,village,cun,tun,level,provinceId,cityId,xianId,villageId,cunId,tunId)
+                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                $query = $query = $this->db->query($sql,array(
+                    $name,$id,null,null,$res->province,$res->city,$res->xian,$res->village,$res->cun,$res->tun,$res->level+1,$res->provinceId,$res->cityId,$res->xianId,$res->villageId,
+                    $res->cunId,$res->tunId
+                ));
+                $affect_row+=$this->db->affected_rows();
+                $insert_id = $this->db->insert_id();
+                // var_dump($insert_id);die();
+                switch ($res->level) {
+                    case 3:
+                        $village = $name;
+                        $sql_update = "SET village='{$village}',villageId={$insert_id}";
+                    break;
+                    case 4:
+                        $cun = $name;
+                        $sql_update = "SET cun='{$cun}',cunId={$insert_id}";
+                    break;
+                    case 5:
+                        $tun = $name;
+                        $sql_update = "SET tun='{$tun}',tunId={$insert_id}";
+                    break;
+                }
+                $sql = "UPDATE cz_gis_library_dsr ".$sql_update." WHERE ID={$insert_id}";
+                $query = $this->db->query($sql);
+                $affect_row+=$this->db->affected_rows();
+                if($affect_row==2)
+                {
+                    return 3;
+                }else{
+                    return 0;
+                }
+            }else{//不能在屯级添加子节点，屯已经是最小级
+                return 0;
+            }
+        }
+    }
+
+    public function save_region_x_y($gis_id,$x,$y)
+    {
+        $gis_id = (int)$gis_id;
+        if($gis_id!=0)
+        {//保存到区域表
+            $sql = "UPDATE cz_gis_library_dsr SET POINT_X=?,POINT_Y=? WHERE ID=?";
+            $query = $this->db->query($sql,array($x,$y,$gis_id));
+        }
+        if($this->db->affected_rows()>=1)
+        {
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+    public function save_dsr_gisId($dsr_id,$aj_type,$gis_id,$x,$y)
+    {
+        $gis_id = (int)$gis_id;
+        $sql = "UPDATE {$aj_type}_dsr SET gis_id = ? WHERE dsr_id=?";
+        $query = $this->ajxq->query($sql,array($gis_id,$dsr_id));
+        if($this->ajxq->affected_rows()>=1)
         {
             return 1;
         }else{

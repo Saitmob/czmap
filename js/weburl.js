@@ -1,4 +1,4 @@
-var weburl = 'http://147.1.7.45/czmapgit/';
+var weburl = 'http://localhost/czmapgit/';
 // var weburl = 'http://qxp.tunnel.2bdata.com/czmapn/';
 // var weburl = 'http://192.168.118.68/czmapn/';
 var CONNECT_ERROR = 0;
@@ -21,6 +21,7 @@ $(function () {
 		'<div class="user-box" style="display:inline-block;">' +
 		'<div>欢迎：<span class="user-name">...</span></div>' +
 		'<div class="logout"><a href="' + weburl + 'index.php/welcome/logout">退出</a></div>' +
+		'<div class="fr" style="clear:right;margin-top:9px;"><a href="多元化解矛盾系统操作手册.docx" style="color:#5AAFCC;font-size:10px;">操作手册</a></div>'+
 		'</div>' +
 		'<div class="manager-entrance">' +
 		'<ul>' +

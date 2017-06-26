@@ -45,7 +45,12 @@ A:active {
 	position: relative;
 }
 
-
+.fl{
+	float: left;
+}
+.fr{
+	float: right;
+}
 /*鼠标提示*/
 
 #map_tips {

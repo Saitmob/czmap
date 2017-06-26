@@ -25,6 +25,8 @@ $(function () {
 	$("#show_search_button").click(function () {
 		show_case_list(1, $('#current_fjm').val(), $("#show_type option:selected").val(), $("#show_search").val(), $("#case_type option:selected").val());
 	});
+	var d=new Date();
+	$('#update_day').html(d.toLocaleDateString());
 });
 // 绘制svg地图
 function cz_map() {
@@ -315,7 +317,7 @@ function show_ajList() {
 		'left': '0'
 	}, 300);
 }
-//案件展示地图
+//案件展示地图 （案件选项卡
 function show_aj_box() {
 	$('#map1_is_show').val('0');
 	$('#map2_is_show').val('0');
@@ -324,7 +326,7 @@ function show_aj_box() {
 	var r_id = $('#current_region').val();
 	show_ajList();
 }
-// 地图展示案件
+// 地图展示案件 （地图选项卡
 function show_map_box() {
 	if (userObj.user_qx_level != 1) {
 		layer.alert('无权限查看该信息');
@@ -598,7 +600,7 @@ function get_person_info(id, address, aj_type, ajbs) {
 			// console.log(callIsEnd);
 		}
 	});
-	// 政治e通电话拨打
+	// 综治e通电话拨打
 	if(person_info.zzet!=null&&person_info.zzet!='')
 	{
 		var zzet_str = '<li>综治 E 通：<select class="input input-small " '+
