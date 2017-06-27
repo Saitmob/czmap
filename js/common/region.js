@@ -1,7 +1,7 @@
 //选择人员所属区域
 var regionSelectMultiple;
 //bd_map_gisId是点击区域时存储的gisId，selected_gis_id_str是确认时存储的gis_id
-function selectRegion(multiple, callbackFun, callbackFun2) { //是否多选，点击节点回调，确认回调；已选选择列表在selected_gis_id_str中，自行生成
+function selectRegion(multiple, callbackFun, callbackFun2) { //是否多选，点击节点回调，确认后回调；已选选择列表在selected_gis_id_str中，自行生成
 	var zTree;
 	var demoIframe;
 	regionSelectMultiple = multiple || false; //默认不多选
